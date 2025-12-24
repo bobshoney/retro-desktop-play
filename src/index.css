@@ -2,95 +2,69 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+@import url('https://fonts.googleapis.com/css2?family=Tahoma:wght@400;700&display=swap');
 
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --foreground: 0 0% 0%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 0 0% 94%;
+    --card-foreground: 0 0% 0%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 94%;
+    --popover-foreground: 0 0% 0%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 221 85% 53%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 210 14% 83%;
+    --secondary-foreground: 0 0% 0%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 210 14% 89%;
+    --muted-foreground: 0 0% 40%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 120 50% 36%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 210 14% 75%;
+    --input: 210 14% 83%;
+    --ring: 221 85% 53%;
 
-    --radius: 0.5rem;
+    --radius: 0px;
+
+    /* Windows XP specific */
+    --xp-taskbar-start: 221 85% 50%;
+    --xp-taskbar-end: 207 70% 54%;
+    --xp-window-title-start: 221 100% 45%;
+    --xp-window-title-end: 207 75% 55%;
+    --xp-window-title-inactive: 210 14% 60%;
+    --xp-start-green: 120 50% 36%;
+    --xp-start-green-light: 120 50% 45%;
+    --xp-window-chrome: 210 20% 93%;
+    --xp-button-face: 210 14% 89%;
+    --xp-button-highlight: 0 0% 100%;
+    --xp-button-shadow: 210 14% 65%;
+    --xp-selection: 221 85% 53%;
+    --xp-boot-bg: 0 0% 0%;
+    --xp-boot-bar: 221 85% 50%;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
   }
 }
 
@@ -101,5 +75,242 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+}
+
+@layer components {
+  .xp-button {
+    @apply px-4 py-1 text-sm cursor-pointer select-none;
+    background: linear-gradient(180deg, 
+      hsl(var(--xp-button-highlight)) 0%, 
+      hsl(var(--xp-button-face)) 45%, 
+      hsl(var(--xp-button-face)) 55%, 
+      hsl(var(--xp-button-shadow)) 100%
+    );
+    border: 1px solid hsl(var(--xp-button-shadow));
+    border-radius: 3px;
+    box-shadow: 
+      inset 1px 1px 0 hsl(var(--xp-button-highlight)),
+      inset -1px -1px 0 hsl(var(--xp-button-shadow) / 0.5);
+  }
+
+  .xp-button:active {
+    background: linear-gradient(180deg, 
+      hsl(var(--xp-button-shadow)) 0%, 
+      hsl(var(--xp-button-face)) 100%
+    );
+    box-shadow: inset 1px 1px 2px hsl(var(--xp-button-shadow));
+  }
+
+  .xp-window {
+    @apply flex flex-col;
+    background: hsl(var(--xp-window-chrome));
+    border-radius: 8px 8px 0 0;
+    box-shadow: 
+      0 0 0 1px hsl(var(--primary) / 0.8),
+      2px 2px 10px hsl(0 0% 0% / 0.3),
+      inset 0 0 0 1px hsl(var(--xp-button-highlight) / 0.5);
+  }
+
+  .xp-title-bar {
+    @apply flex items-center justify-between px-2 py-1 text-primary-foreground font-bold text-sm select-none;
+    background: linear-gradient(180deg, 
+      hsl(var(--xp-window-title-start)) 0%, 
+      hsl(var(--xp-window-title-end)) 8%,
+      hsl(var(--xp-window-title-start)) 40%,
+      hsl(var(--xp-window-title-end)) 88%,
+      hsl(var(--xp-window-title-start)) 93%,
+      hsl(var(--xp-window-title-end)) 95%,
+      hsl(var(--xp-window-title-start)) 100%
+    );
+    border-radius: 6px 6px 0 0;
+    text-shadow: 1px 1px 1px hsl(0 0% 0% / 0.5);
+  }
+
+  .xp-title-bar.inactive {
+    background: linear-gradient(180deg, 
+      hsl(var(--xp-window-title-inactive)) 0%, 
+      hsl(210 14% 70%) 50%,
+      hsl(var(--xp-window-title-inactive)) 100%
+    );
+  }
+
+  .xp-window-button {
+    @apply w-5 h-5 flex items-center justify-center text-xs font-bold rounded-sm;
+    background: linear-gradient(180deg, 
+      hsl(var(--xp-button-highlight)) 0%, 
+      hsl(var(--xp-button-face)) 45%, 
+      hsl(var(--xp-button-shadow) / 0.7) 100%
+    );
+    border: 1px solid hsl(0 0% 40%);
+    box-shadow: inset 1px 1px 0 hsl(var(--xp-button-highlight));
+  }
+
+  .xp-window-button:hover {
+    filter: brightness(1.1);
+  }
+
+  .xp-window-button.close {
+    background: linear-gradient(180deg, 
+      hsl(0 70% 60%) 0%, 
+      hsl(0 70% 45%) 45%, 
+      hsl(0 70% 35%) 100%
+    );
+    color: white;
+  }
+
+  .xp-window-content {
+    @apply flex-1 bg-white overflow-auto;
+    border: 2px inset hsl(var(--border));
+    margin: 3px;
+  }
+
+  .xp-taskbar {
+    @apply fixed bottom-0 left-0 right-0 h-8 flex items-center px-1;
+    background: linear-gradient(180deg, 
+      hsl(var(--xp-taskbar-start)) 0%, 
+      hsl(var(--xp-taskbar-end)) 3%,
+      hsl(var(--xp-taskbar-start)) 6%,
+      hsl(var(--xp-taskbar-end)) 90%,
+      hsl(var(--xp-taskbar-start)) 100%
+    );
+    z-index: 9999;
+  }
+
+  .xp-start-button {
+    @apply flex items-center gap-1 px-2 py-0.5 text-white font-bold text-sm rounded-r-lg cursor-pointer select-none;
+    background: linear-gradient(180deg, 
+      hsl(var(--xp-start-green-light)) 0%, 
+      hsl(var(--xp-start-green)) 50%,
+      hsl(120 50% 28%) 100%
+    );
+    border: none;
+    text-shadow: 1px 1px 1px hsl(0 0% 0% / 0.5);
+    box-shadow: 
+      inset 1px 1px 0 hsl(120 50% 55% / 0.5),
+      1px 0 2px hsl(0 0% 0% / 0.3);
+  }
+
+  .xp-start-button:hover {
+    filter: brightness(1.1);
+  }
+
+  .xp-start-button:active, .xp-start-button.active {
+    filter: brightness(0.9);
+    box-shadow: inset 2px 2px 3px hsl(0 0% 0% / 0.3);
+  }
+
+  .xp-desktop-icon {
+    @apply flex flex-col items-center gap-1 p-2 cursor-pointer select-none;
+    width: 75px;
+    text-align: center;
+  }
+
+  .xp-desktop-icon:hover {
+    background: hsl(var(--xp-selection) / 0.3);
+  }
+
+  .xp-desktop-icon.selected {
+    background: hsl(var(--xp-selection) / 0.5);
+  }
+
+  .xp-desktop-icon span {
+    @apply text-xs text-white;
+    text-shadow: 1px 1px 2px hsl(0 0% 0%);
+  }
+
+  .xp-start-menu {
+    @apply fixed bottom-8 left-0;
+    width: 380px;
+    background: linear-gradient(180deg, 
+      hsl(var(--xp-taskbar-start)) 0%,
+      hsl(var(--xp-taskbar-end)) 100%
+    );
+    border-radius: 8px 8px 0 0;
+    box-shadow: 
+      3px 0 8px hsl(0 0% 0% / 0.4),
+      inset 0 1px 0 hsl(var(--xp-button-highlight) / 0.3);
+    z-index: 10000;
+  }
+
+  .xp-menu-header {
+    @apply flex items-center gap-3 p-3;
+    background: linear-gradient(90deg, 
+      hsl(var(--xp-taskbar-start)) 0%,
+      hsl(var(--xp-taskbar-end)) 100%
+    );
+    border-radius: 8px 8px 0 0;
+  }
+
+  .xp-menu-content {
+    @apply flex bg-white;
+    min-height: 300px;
+  }
+
+  .xp-menu-left {
+    @apply flex-1 py-2 bg-white;
+  }
+
+  .xp-menu-right {
+    @apply py-2;
+    width: 160px;
+    background: hsl(var(--xp-taskbar-end));
+  }
+
+  .xp-menu-item {
+    @apply flex items-center gap-3 px-3 py-2 cursor-pointer text-sm;
+  }
+
+  .xp-menu-item:hover {
+    background: hsl(var(--xp-selection));
+    color: white;
+  }
+
+  .xp-menu-item-right {
+    @apply flex items-center gap-2 px-3 py-1.5 cursor-pointer text-sm text-white;
+  }
+
+  .xp-menu-item-right:hover {
+    background: hsl(var(--xp-selection));
+  }
+
+  .xp-boot-screen {
+    @apply fixed inset-0 flex flex-col items-center justify-center;
+    background: hsl(var(--xp-boot-bg));
+    z-index: 99999;
+  }
+
+  .xp-boot-bar {
+    @apply h-2 overflow-hidden;
+    width: 200px;
+    background: hsl(0 0% 20%);
+    border-radius: 2px;
+  }
+
+  .xp-boot-progress {
+    @apply h-full;
+    background: linear-gradient(90deg, 
+      hsl(var(--xp-boot-bar)) 0%, 
+      hsl(207 70% 60%) 50%,
+      hsl(var(--xp-boot-bar)) 100%
+    );
+    animation: bootProgress 2s ease-in-out infinite;
+  }
+
+  @keyframes bootProgress {
+    0% { transform: translateX(-100%); width: 50%; }
+    50% { width: 30%; }
+    100% { transform: translateX(300%); width: 50%; }
+  }
+
+  .xp-login-screen {
+    @apply fixed inset-0 flex flex-col items-center justify-center;
+    background: linear-gradient(180deg, 
+      hsl(221 100% 25%) 0%, 
+      hsl(221 85% 45%) 50%,
+      hsl(207 70% 54%) 100%
+    );
+    z-index: 99998;
   }
 }
