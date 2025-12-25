@@ -25,11 +25,21 @@ const Desktop: React.FC = () => {
     { id: 'mediaplayer', title: 'Media Player', icon: Music, component: 'mediaplayer' },
   ];
 
+  const getWindowSize = (id: string) => {
+    const sizes: Record<string, [number, number]> = {
+      minesweeper: [300, 380],
+      paint: [600, 450],
+      ie: [700, 500],
+      aol: [600, 480],
+      napster: [550, 420],
+      limewire: [580, 450],
+    };
+    return sizes[id] || [500, 400];
+  };
+
   const handleIconDoubleClick = (icon: typeof desktopIcons[0]) => {
-    openWindow(icon.id, icon.title, icon.component, 
-      icon.id === 'minesweeper' ? 300 : icon.id === 'paint' ? 600 : 500,
-      icon.id === 'minesweeper' ? 380 : icon.id === 'paint' ? 450 : 400
-    );
+    const [width, height] = getWindowSize(icon.id);
+    openWindow(icon.id, icon.title, icon.component, width, height);
   };
 
   const handleDesktopClick = () => {

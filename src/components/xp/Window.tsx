@@ -8,6 +8,10 @@ import MinesweeperApp from './apps/MinesweeperApp';
 import PaintApp from './apps/PaintApp';
 import NotepadApp from './apps/NotepadApp';
 import MediaPlayerApp from './apps/MediaPlayerApp';
+import NapsterApp from './apps/NapsterApp';
+import LimeWireApp from './apps/LimeWireApp';
+import AOLApp from './apps/AOLApp';
+import InternetExplorerApp from './apps/InternetExplorerApp';
 
 interface WindowProps {
   window: {
@@ -73,6 +77,10 @@ const Window: React.FC<WindowProps> = ({ window: win }) => {
       case 'paint': return <PaintApp />;
       case 'notepad': return <NotepadApp />;
       case 'mediaplayer': return <MediaPlayerApp />;
+      case 'napster': return <NapsterApp />;
+      case 'limewire': return <LimeWireApp />;
+      case 'aol': return <AOLApp />;
+      case 'ie': return <InternetExplorerApp />;
       default: return <div className="p-4">Unknown application</div>;
     }
   };
