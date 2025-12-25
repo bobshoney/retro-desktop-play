@@ -5,7 +5,7 @@ import Taskbar from './Taskbar';
 import StartMenu from './StartMenu';
 import Window from './Window';
 import { useWindows } from '@/pages/Index';
-import { FileText, User, Mail, Bomb, Palette, StickyNote, Music } from 'lucide-react';
+import { FileText, User, Mail, Bomb, Palette, StickyNote, Music, Globe, Disc, Zap, MessageCircle } from 'lucide-react';
 
 const Desktop: React.FC = () => {
   const [startMenuOpen, setStartMenuOpen] = useState(false);
@@ -15,6 +15,10 @@ const Desktop: React.FC = () => {
     { id: 'resume', title: 'My Resume', icon: FileText, component: 'resume' },
     { id: 'about', title: 'About Me', icon: User, component: 'about' },
     { id: 'contact', title: 'Contact', icon: Mail, component: 'contact' },
+    { id: 'ie', title: 'Internet Explorer', icon: Globe, component: 'ie' },
+    { id: 'aol', title: 'AOL 9.0', icon: MessageCircle, component: 'aol' },
+    { id: 'napster', title: 'Napster', icon: Disc, component: 'napster' },
+    { id: 'limewire', title: 'LimeWire', icon: Zap, component: 'limewire' },
     { id: 'minesweeper', title: 'Minesweeper', icon: Bomb, component: 'minesweeper' },
     { id: 'paint', title: 'Paint', icon: Palette, component: 'paint' },
     { id: 'notepad', title: 'Notepad', icon: StickyNote, component: 'notepad' },
