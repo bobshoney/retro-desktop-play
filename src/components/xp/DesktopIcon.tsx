@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
-import { LucideIcon } from 'lucide-react';
 
 interface DesktopIconProps {
   title: string;
-  Icon: LucideIcon;
+  iconSrc: string;
   onDoubleClick: () => void;
 }
 
-const DesktopIcon: React.FC<DesktopIconProps> = ({ title, Icon, onDoubleClick }) => {
+const DesktopIcon: React.FC<DesktopIconProps> = ({ title, iconSrc, onDoubleClick }) => {
   const [selected, setSelected] = useState(false);
 
   return (
@@ -24,8 +23,13 @@ const DesktopIcon: React.FC<DesktopIconProps> = ({ title, Icon, onDoubleClick })
       onBlur={() => setSelected(false)}
       tabIndex={0}
     >
-      <div className="w-10 h-10 flex items-center justify-center">
-        <Icon className="w-8 h-8 text-white drop-shadow-lg" />
+      <div className="w-12 h-12 flex items-center justify-center">
+        <img 
+          src={iconSrc} 
+          alt={title} 
+          className="w-10 h-10 object-contain drop-shadow-lg"
+          draggable={false}
+        />
       </div>
       <span className="leading-tight">{title}</span>
     </div>
