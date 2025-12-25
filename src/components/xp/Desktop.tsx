@@ -5,24 +5,36 @@ import Taskbar from './Taskbar';
 import StartMenu from './StartMenu';
 import Window from './Window';
 import { useWindows } from '@/pages/Index';
-import { FileText, User, Mail, Bomb, Palette, StickyNote, Music, Globe, Disc, Zap, MessageCircle } from 'lucide-react';
+
+// Import icons
+import resumeIcon from '@/assets/icons/resume-icon.png';
+import userIcon from '@/assets/icons/user-icon.png';
+import mailIcon from '@/assets/icons/mail-icon.png';
+import ieIcon from '@/assets/icons/ie-icon.png';
+import aolIcon from '@/assets/icons/aol-icon.png';
+import napsterIcon from '@/assets/icons/napster-icon.png';
+import limewireIcon from '@/assets/icons/limewire-icon.png';
+import minesweeperIcon from '@/assets/icons/minesweeper-icon.png';
+import paintIcon from '@/assets/icons/paint-icon.png';
+import notepadIcon from '@/assets/icons/notepad-icon.png';
+import mediaplayerIcon from '@/assets/icons/mediaplayer-icon.png';
 
 const Desktop: React.FC = () => {
   const [startMenuOpen, setStartMenuOpen] = useState(false);
   const { windows, openWindow } = useWindows();
 
   const desktopIcons = [
-    { id: 'resume', title: 'My Resume', icon: FileText, component: 'resume' },
-    { id: 'about', title: 'About Me', icon: User, component: 'about' },
-    { id: 'contact', title: 'Contact', icon: Mail, component: 'contact' },
-    { id: 'ie', title: 'Internet Explorer', icon: Globe, component: 'ie' },
-    { id: 'aol', title: 'AOL 9.0', icon: MessageCircle, component: 'aol' },
-    { id: 'napster', title: 'Napster', icon: Disc, component: 'napster' },
-    { id: 'limewire', title: 'LimeWire', icon: Zap, component: 'limewire' },
-    { id: 'minesweeper', title: 'Minesweeper', icon: Bomb, component: 'minesweeper' },
-    { id: 'paint', title: 'Paint', icon: Palette, component: 'paint' },
-    { id: 'notepad', title: 'Notepad', icon: StickyNote, component: 'notepad' },
-    { id: 'mediaplayer', title: 'Media Player', icon: Music, component: 'mediaplayer' },
+    { id: 'resume', title: 'My Resume', iconSrc: resumeIcon, component: 'resume' },
+    { id: 'about', title: 'About Me', iconSrc: userIcon, component: 'about' },
+    { id: 'contact', title: 'Contact', iconSrc: mailIcon, component: 'contact' },
+    { id: 'ie', title: 'Internet Explorer', iconSrc: ieIcon, component: 'ie' },
+    { id: 'aol', title: 'AOL 9.0', iconSrc: aolIcon, component: 'aol' },
+    { id: 'napster', title: 'Napster', iconSrc: napsterIcon, component: 'napster' },
+    { id: 'limewire', title: 'LimeWire', iconSrc: limewireIcon, component: 'limewire' },
+    { id: 'minesweeper', title: 'Minesweeper', iconSrc: minesweeperIcon, component: 'minesweeper' },
+    { id: 'paint', title: 'Paint', iconSrc: paintIcon, component: 'paint' },
+    { id: 'notepad', title: 'Notepad', iconSrc: notepadIcon, component: 'notepad' },
+    { id: 'mediaplayer', title: 'Media Player', iconSrc: mediaplayerIcon, component: 'mediaplayer' },
   ];
 
   const getWindowSize = (id: string) => {
@@ -62,7 +74,7 @@ const Desktop: React.FC = () => {
           <DesktopIcon
             key={icon.id}
             title={icon.title}
-            Icon={icon.icon}
+            iconSrc={icon.iconSrc}
             onDoubleClick={() => handleIconDoubleClick(icon)}
           />
         ))}
