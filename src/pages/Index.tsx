@@ -25,6 +25,7 @@ interface WindowContextType {
   focusWindow: (id: string) => void;
   minimizeWindow: (id: string) => void;
   updateWindowPosition: (id: string, x: number, y: number) => void;
+  updateWindowSize: (id: string, width: number, height: number) => void;
   activeWindowId: string | null;
   playClick: () => void;
 }
@@ -98,6 +99,12 @@ const Index = () => {
     ));
   }, []);
 
+  const updateWindowSize = useCallback((id: string, width: number, height: number) => {
+    setWindows(prev => prev.map(w => 
+      w.id === id ? { ...w, width: Math.max(200, width), height: Math.max(150, height) } : w
+    ));
+  }, []);
+
   const handleLogin = () => setAppState('desktop');
 
   if (appState === 'boot') return <BootScreen />;
@@ -111,6 +118,7 @@ const Index = () => {
       focusWindow,
       minimizeWindow,
       updateWindowPosition,
+      updateWindowSize,
       activeWindowId,
       playClick
     }}>
