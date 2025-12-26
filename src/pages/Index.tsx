@@ -42,17 +42,12 @@ const Index = () => {
   const [windows, setWindows] = useState<WindowState[]>([]);
   const [activeWindowId, setActiveWindowId] = useState<string | null>(null);
   const [zCounter, setZCounter] = useState(100);
-  const { playStartup, playClick } = useXPSounds();
+  const { playClick } = useXPSounds();
 
   useEffect(() => {
-    // Play startup sound when boot begins
-    const soundTimer = setTimeout(() => playStartup(), 500);
     const bootTimer = setTimeout(() => setAppState('login'), 3500);
-    return () => {
-      clearTimeout(bootTimer);
-      clearTimeout(soundTimer);
-    };
-  }, [playStartup]);
+    return () => clearTimeout(bootTimer);
+  }, []);
 
   const openWindow = useCallback((id: string, title: string, component: string, width = 500, height = 400) => {
     setWindows(prev => {

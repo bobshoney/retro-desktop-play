@@ -7,9 +7,11 @@ interface LoginScreenProps {
 }
 
 const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
-  const { playClick } = useXPSounds();
+  const { playClick, playStartup } = useXPSounds();
 
   const handleLogin = () => {
+    // Play startup sound on login (requires user interaction for browser autoplay policy)
+    playStartup();
     playClick();
     onLogin();
   };
