@@ -7,7 +7,7 @@ interface StartMenuProps {
 }
 
 const StartMenu: React.FC<StartMenuProps> = ({ onClose }) => {
-  const { openWindow } = useWindows();
+  const { openWindow, playClick } = useWindows();
 
   const leftItems = [
     { icon: FileText, label: 'My Resume', id: 'resume', component: 'resume' },
@@ -32,6 +32,7 @@ const StartMenu: React.FC<StartMenuProps> = ({ onClose }) => {
   ];
 
   const handleItemClick = (item: typeof leftItems[0]) => {
+    playClick();
     if ('component' in item && item.component) {
       openWindow(item.id!, item.label, item.component,
         item.id === 'minesweeper' ? 300 : item.id === 'paint' ? 600 : 500,
@@ -77,7 +78,7 @@ const StartMenu: React.FC<StartMenuProps> = ({ onClose }) => {
             'divider' in item ? (
               <div key={index} className="h-px bg-blue-400/30 my-2 mx-3"></div>
             ) : (
-              <div key={index} className="xp-menu-item-right">
+              <div key={index} className="xp-menu-item-right" onClick={playClick}>
                 <item.icon className="w-4 h-4" />
                 <span>{item.label}</span>
               </div>
@@ -88,11 +89,17 @@ const StartMenu: React.FC<StartMenuProps> = ({ onClose }) => {
 
       {/* Footer */}
       <div className="flex items-center justify-end gap-4 p-2 bg-gradient-to-r from-blue-600 to-blue-500">
-        <button className="flex items-center gap-2 text-white text-sm hover:bg-blue-700/50 px-3 py-1 rounded">
+        <button 
+          className="flex items-center gap-2 text-white text-sm hover:bg-blue-700/50 px-3 py-1 rounded"
+          onClick={playClick}
+        >
           <LogOut className="w-4 h-4" />
           Log Off
         </button>
-        <button className="flex items-center gap-2 text-white text-sm hover:bg-blue-700/50 px-3 py-1 rounded">
+        <button 
+          className="flex items-center gap-2 text-white text-sm hover:bg-blue-700/50 px-3 py-1 rounded"
+          onClick={playClick}
+        >
           <div className="w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
             <div className="w-2 h-2 bg-white rounded-full"></div>
           </div>

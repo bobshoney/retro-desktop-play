@@ -2,6 +2,7 @@ import React, { useState, useEffect, createContext, useContext, useCallback } fr
 import BootScreen from '@/components/xp/BootScreen';
 import LoginScreen from '@/components/xp/LoginScreen';
 import Desktop from '@/components/xp/Desktop';
+import { useXPSounds } from '@/hooks/useXPSounds';
 
 type AppState = 'boot' | 'login' | 'desktop';
 
@@ -25,6 +26,7 @@ interface WindowContextType {
   minimizeWindow: (id: string) => void;
   updateWindowPosition: (id: string, x: number, y: number) => void;
   activeWindowId: string | null;
+  playClick: () => void;
 }
 
 export const WindowContext = createContext<WindowContextType | null>(null);
@@ -40,11 +42,17 @@ const Index = () => {
   const [windows, setWindows] = useState<WindowState[]>([]);
   const [activeWindowId, setActiveWindowId] = useState<string | null>(null);
   const [zCounter, setZCounter] = useState(100);
+  const { playStartup, playClick } = useXPSounds();
 
   useEffect(() => {
+    // Play startup sound when boot begins
+    const soundTimer = setTimeout(() => playStartup(), 500);
     const bootTimer = setTimeout(() => setAppState('login'), 3500);
-    return () => clearTimeout(bootTimer);
-  }, []);
+    return () => {
+      clearTimeout(bootTimer);
+      clearTimeout(soundTimer);
+    };
+  }, [playStartup]);
 
   const openWindow = useCallback((id: string, title: string, component: string, width = 500, height = 400) => {
     setWindows(prev => {
@@ -108,7 +116,8 @@ const Index = () => {
       focusWindow,
       minimizeWindow,
       updateWindowPosition,
-      activeWindowId
+      activeWindowId,
+      playClick
     }}>
       <Desktop />
     </WindowContext.Provider>

@@ -1,11 +1,19 @@
 import React from 'react';
 import { User } from 'lucide-react';
+import { useXPSounds } from '@/hooks/useXPSounds';
 
 interface LoginScreenProps {
   onLogin: () => void;
 }
 
 const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
+  const { playClick } = useXPSounds();
+
+  const handleLogin = () => {
+    playClick();
+    onLogin();
+  };
+
   return (
     <div className="xp-login-screen">
       {/* Header */}
@@ -27,7 +35,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
       {/* User selection */}
       <div className="flex flex-col items-center">
         <div 
-          onClick={onLogin}
+          onClick={handleLogin}
           className="flex items-center gap-4 p-4 rounded-lg cursor-pointer hover:bg-white/10 transition-colors group"
         >
           <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center shadow-lg">
