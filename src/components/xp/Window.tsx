@@ -28,7 +28,7 @@ interface WindowProps {
 }
 
 const Window: React.FC<WindowProps> = ({ window: win }) => {
-  const { closeWindow, focusWindow, minimizeWindow, updateWindowPosition, activeWindowId } = useWindows();
+  const { closeWindow, focusWindow, minimizeWindow, updateWindowPosition, activeWindowId, playClick } = useWindows();
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const windowRef = useRef<HTMLDivElement>(null);
@@ -110,16 +110,16 @@ const Window: React.FC<WindowProps> = ({ window: win }) => {
         <div className="window-buttons flex items-center gap-0.5">
           <button 
             className="xp-window-button"
-            onClick={(e) => { e.stopPropagation(); minimizeWindow(win.id); }}
+            onClick={(e) => { e.stopPropagation(); playClick(); minimizeWindow(win.id); }}
           >
             <Minus className="w-3 h-3" />
           </button>
-          <button className="xp-window-button">
+          <button className="xp-window-button" onClick={playClick}>
             <Square className="w-2.5 h-2.5" />
           </button>
           <button 
             className="xp-window-button close"
-            onClick={(e) => { e.stopPropagation(); closeWindow(win.id); }}
+            onClick={(e) => { e.stopPropagation(); playClick(); closeWindow(win.id); }}
           >
             <X className="w-3 h-3" />
           </button>

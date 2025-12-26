@@ -9,7 +9,7 @@ interface TaskbarProps {
 
 const Taskbar: React.FC<TaskbarProps> = ({ startMenuOpen, onStartClick }) => {
   const [time, setTime] = useState(new Date());
-  const { windows, focusWindow } = useWindows();
+  const { windows, focusWindow, playClick } = useWindows();
 
   useEffect(() => {
     const timer = setInterval(() => setTime(new Date()), 1000);
@@ -29,7 +29,10 @@ const Taskbar: React.FC<TaskbarProps> = ({ startMenuOpen, onStartClick }) => {
       {/* Start Button */}
       <button 
         className={`xp-start-button ${startMenuOpen ? 'active' : ''}`}
-        onClick={onStartClick}
+        onClick={(e) => {
+          playClick();
+          onStartClick(e);
+        }}
       >
         <div className="grid grid-cols-2 gap-0.5 w-4 h-4">
           <div className="w-1.5 h-1.5 bg-[#f65314] rounded-sm"></div>
@@ -48,7 +51,10 @@ const Taskbar: React.FC<TaskbarProps> = ({ startMenuOpen, onStartClick }) => {
         {windows.map((window) => (
           <button
             key={window.id}
-            onClick={() => focusWindow(window.id)}
+            onClick={() => {
+              playClick();
+              focusWindow(window.id);
+            }}
             className={`h-6 px-2 text-xs text-white truncate max-w-32 rounded-sm
               ${window.isMinimized 
                 ? 'bg-blue-700/50' 
