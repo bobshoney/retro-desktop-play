@@ -27,16 +27,21 @@ interface WindowProps {
   };
 }
 
+type ResizeDirection = 'n' | 's' | 'e' | 'w' | 'ne' | 'nw' | 'se' | 'sw' | null;
+
 const Window: React.FC<WindowProps> = ({ window: win }) => {
-  const { closeWindow, focusWindow, minimizeWindow, updateWindowPosition, activeWindowId, playClick } = useWindows();
+  const { closeWindow, focusWindow, minimizeWindow, updateWindowPosition, updateWindowSize, activeWindowId, playClick } = useWindows();
   const [isDragging, setIsDragging] = useState(false);
+  const [isResizing, setIsResizing] = useState<ResizeDirection>(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [resizeStart, setResizeStart] = useState({ x: 0, y: 0, width: 0, height: 0, winX: 0, winY: 0 });
   const windowRef = useRef<HTMLDivElement>(null);
 
   const isActive = activeWindowId === win.id;
 
   const handleMouseDown = (e: React.MouseEvent) => {
     if ((e.target as HTMLElement).closest('.window-buttons')) return;
+    if ((e.target as HTMLElement).closest('.resize-handle')) return;
     setIsDragging(true);
     setDragOffset({
       x: e.clientX - win.x,
@@ -45,19 +50,75 @@ const Window: React.FC<WindowProps> = ({ window: win }) => {
     focusWindow(win.id);
   };
 
+  const handleResizeStart = (e: React.MouseEvent, direction: ResizeDirection) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setIsResizing(direction);
+    setResizeStart({
+      x: e.clientX,
+      y: e.clientY,
+      width: win.width,
+      height: win.height,
+      winX: win.x,
+      winY: win.y
+    });
+    focusWindow(win.id);
+  };
+
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      if (!isDragging) return;
-      const newX = Math.max(0, Math.min(e.clientX - dragOffset.x, window.innerWidth - win.width));
-      const newY = Math.max(0, Math.min(e.clientY - dragOffset.y, window.innerHeight - win.height - 32));
-      updateWindowPosition(win.id, newX, newY);
+      if (isDragging) {
+        const newX = Math.max(0, Math.min(e.clientX - dragOffset.x, window.innerWidth - win.width));
+        const newY = Math.max(0, Math.min(e.clientY - dragOffset.y, window.innerHeight - win.height - 32));
+        updateWindowPosition(win.id, newX, newY);
+      }
+      
+      if (isResizing) {
+        const deltaX = e.clientX - resizeStart.x;
+        const deltaY = e.clientY - resizeStart.y;
+        
+        let newWidth = resizeStart.width;
+        let newHeight = resizeStart.height;
+        let newX = resizeStart.winX;
+        let newY = resizeStart.winY;
+
+        // Handle horizontal resize
+        if (isResizing.includes('e')) {
+          newWidth = Math.max(200, resizeStart.width + deltaX);
+        }
+        if (isResizing.includes('w')) {
+          const potentialWidth = resizeStart.width - deltaX;
+          if (potentialWidth >= 200) {
+            newWidth = potentialWidth;
+            newX = resizeStart.winX + deltaX;
+          }
+        }
+
+        // Handle vertical resize
+        if (isResizing.includes('s')) {
+          newHeight = Math.max(150, resizeStart.height + deltaY);
+        }
+        if (isResizing.includes('n')) {
+          const potentialHeight = resizeStart.height - deltaY;
+          if (potentialHeight >= 150) {
+            newHeight = potentialHeight;
+            newY = resizeStart.winY + deltaY;
+          }
+        }
+
+        updateWindowSize(win.id, newWidth, newHeight);
+        if (newX !== resizeStart.winX || newY !== resizeStart.winY) {
+          updateWindowPosition(win.id, newX, newY);
+        }
+      }
     };
 
     const handleMouseUp = () => {
       setIsDragging(false);
+      setIsResizing(null);
     };
 
-    if (isDragging) {
+    if (isDragging || isResizing) {
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
     }
@@ -66,7 +127,7 @@ const Window: React.FC<WindowProps> = ({ window: win }) => {
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [isDragging, dragOffset, win.id, win.width, win.height, updateWindowPosition]);
+  }, [isDragging, isResizing, dragOffset, resizeStart, win.id, win.width, win.height, updateWindowPosition, updateWindowSize]);
 
   const renderContent = () => {
     switch (win.component) {
@@ -100,6 +161,40 @@ const Window: React.FC<WindowProps> = ({ window: win }) => {
       }}
       onClick={() => focusWindow(win.id)}
     >
+      {/* Resize Handles */}
+      <div 
+        className="resize-handle absolute top-0 left-0 right-0 h-1 cursor-n-resize" 
+        onMouseDown={(e) => handleResizeStart(e, 'n')}
+      />
+      <div 
+        className="resize-handle absolute bottom-0 left-0 right-0 h-1 cursor-s-resize" 
+        onMouseDown={(e) => handleResizeStart(e, 's')}
+      />
+      <div 
+        className="resize-handle absolute top-0 bottom-0 left-0 w-1 cursor-w-resize" 
+        onMouseDown={(e) => handleResizeStart(e, 'w')}
+      />
+      <div 
+        className="resize-handle absolute top-0 bottom-0 right-0 w-1 cursor-e-resize" 
+        onMouseDown={(e) => handleResizeStart(e, 'e')}
+      />
+      <div 
+        className="resize-handle absolute top-0 left-0 w-3 h-3 cursor-nw-resize" 
+        onMouseDown={(e) => handleResizeStart(e, 'nw')}
+      />
+      <div 
+        className="resize-handle absolute top-0 right-0 w-3 h-3 cursor-ne-resize" 
+        onMouseDown={(e) => handleResizeStart(e, 'ne')}
+      />
+      <div 
+        className="resize-handle absolute bottom-0 left-0 w-3 h-3 cursor-sw-resize" 
+        onMouseDown={(e) => handleResizeStart(e, 'sw')}
+      />
+      <div 
+        className="resize-handle absolute bottom-0 right-0 w-3 h-3 cursor-se-resize" 
+        onMouseDown={(e) => handleResizeStart(e, 'se')}
+      />
+
       {/* Title Bar */}
       <div 
         className={`xp-title-bar ${!isActive ? 'inactive' : ''}`}
