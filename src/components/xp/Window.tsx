@@ -23,14 +23,16 @@ interface WindowProps {
     width: number;
     height: number;
     isMinimized: boolean;
+    isMaximized: boolean;
     zIndex: number;
+    prevBounds?: { x: number; y: number; width: number; height: number };
   };
 }
 
 type ResizeDirection = 'n' | 's' | 'e' | 'w' | 'ne' | 'nw' | 'se' | 'sw' | null;
 
 const Window: React.FC<WindowProps> = ({ window: win }) => {
-  const { closeWindow, focusWindow, minimizeWindow, updateWindowPosition, updateWindowSize, activeWindowId, playClick } = useWindows();
+  const { closeWindow, focusWindow, minimizeWindow, toggleMaximize, updateWindowPosition, updateWindowSize, activeWindowId, playClick } = useWindows();
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState<ResizeDirection>(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
@@ -148,17 +150,15 @@ const Window: React.FC<WindowProps> = ({ window: win }) => {
 
   if (win.isMinimized) return null;
 
+  const windowStyle = win.isMaximized 
+    ? { left: 0, top: 0, width: '100%', height: 'calc(100vh - 32px)', zIndex: win.zIndex }
+    : { left: win.x, top: win.y, width: win.width, height: win.height, zIndex: win.zIndex };
+
   return (
     <div
       ref={windowRef}
       className="xp-window absolute"
-      style={{
-        left: win.x,
-        top: win.y,
-        width: win.width,
-        height: win.height,
-        zIndex: win.zIndex,
-      }}
+      style={windowStyle}
       onClick={() => focusWindow(win.id)}
     >
       {/* Resize Handles */}
@@ -209,7 +209,10 @@ const Window: React.FC<WindowProps> = ({ window: win }) => {
           >
             <Minus className="w-3 h-3" />
           </button>
-          <button className="xp-window-button" onClick={playClick}>
+          <button 
+            className="xp-window-button" 
+            onClick={(e) => { e.stopPropagation(); playClick(); toggleMaximize(win.id); }}
+          >
             <Square className="w-2.5 h-2.5" />
           </button>
           <button 
