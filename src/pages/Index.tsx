@@ -15,7 +15,9 @@ interface WindowState {
   width: number;
   height: number;
   isMinimized: boolean;
+  isMaximized: boolean;
   zIndex: number;
+  prevBounds?: { x: number; y: number; width: number; height: number };
 }
 
 interface WindowContextType {
@@ -24,6 +26,7 @@ interface WindowContextType {
   closeWindow: (id: string) => void;
   focusWindow: (id: string) => void;
   minimizeWindow: (id: string) => void;
+  toggleMaximize: (id: string) => void;
   updateWindowPosition: (id: string, x: number, y: number) => void;
   updateWindowSize: (id: string, width: number, height: number) => void;
   activeWindowId: string | null;
@@ -66,6 +69,7 @@ const Index = () => {
         width,
         height,
         isMinimized: false,
+        isMaximized: false,
         zIndex: zCounter + 1
       }];
     });
@@ -93,6 +97,31 @@ const Index = () => {
     setActiveWindowId(null);
   }, []);
 
+  const toggleMaximize = useCallback((id: string) => {
+    setWindows(prev => prev.map(w => {
+      if (w.id !== id) return w;
+      if (w.isMaximized) {
+        // Restore to previous bounds
+        return {
+          ...w,
+          isMaximized: false,
+          x: w.prevBounds?.x ?? w.x,
+          y: w.prevBounds?.y ?? w.y,
+          width: w.prevBounds?.width ?? w.width,
+          height: w.prevBounds?.height ?? w.height,
+          prevBounds: undefined
+        };
+      } else {
+        // Save current bounds and maximize
+        return {
+          ...w,
+          isMaximized: true,
+          prevBounds: { x: w.x, y: w.y, width: w.width, height: w.height }
+        };
+      }
+    }));
+  }, []);
+
   const updateWindowPosition = useCallback((id: string, x: number, y: number) => {
     setWindows(prev => prev.map(w => 
       w.id === id ? { ...w, x, y } : w
@@ -117,6 +146,7 @@ const Index = () => {
       closeWindow,
       focusWindow,
       minimizeWindow,
+      toggleMaximize,
       updateWindowPosition,
       updateWindowSize,
       activeWindowId,
