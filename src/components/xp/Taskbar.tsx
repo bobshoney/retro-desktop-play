@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Volume2, Wifi } from 'lucide-react';
+import { Volume2, Wifi, Minus, Square, X } from 'lucide-react';
 import { useWindows } from '@/pages/Index';
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuTrigger,
+} from '@/components/ui/context-menu';
 
 interface TaskbarProps {
   startMenuOpen: boolean;
@@ -9,7 +16,7 @@ interface TaskbarProps {
 
 const Taskbar: React.FC<TaskbarProps> = ({ startMenuOpen, onStartClick }) => {
   const [time, setTime] = useState(new Date());
-  const { windows, focusWindow, minimizeWindow, activeWindowId, playClick } = useWindows();
+  const { windows, focusWindow, minimizeWindow, toggleMaximize, closeWindow, activeWindowId, playClick } = useWindows();
 
   useEffect(() => {
     const timer = setInterval(() => setTime(new Date()), 1000);
@@ -62,27 +69,61 @@ const Taskbar: React.FC<TaskbarProps> = ({ startMenuOpen, onStartClick }) => {
         {windows.map((window) => {
           const isActive = activeWindowId === window.id && !window.isMinimized;
           return (
-            <button
-              key={window.id}
-              onClick={() => handleWindowClick(window.id, window.isMinimized)}
-              className={`h-7 px-2 text-xs text-white truncate max-w-44 rounded-sm border transition-all flex items-center gap-1.5
-                ${isActive 
-                  ? 'border-blue-300/50 shadow-inner' 
-                  : 'border-transparent hover:border-blue-400/30'
-                }`}
-              style={{
-                background: isActive
-                  ? 'linear-gradient(180deg, #1e4a8a 0%, #0d3a6e 50%, #0a2d52 100%)'
-                  : window.isMinimized 
-                    ? 'linear-gradient(180deg, #4a7fc5 0%, #3b6eb5 100%)'
-                    : 'linear-gradient(180deg, #3b7dd8 0%, #2a6bc8 50%, #1e5ab8 100%)'
-              }}
-            >
-              {window.iconSrc && (
-                <img src={window.iconSrc} alt="" className="w-4 h-4 flex-shrink-0" />
-              )}
-              <span className="truncate">{window.title}</span>
-            </button>
+            <ContextMenu key={window.id}>
+              <ContextMenuTrigger asChild>
+                <button
+                  onClick={() => handleWindowClick(window.id, window.isMinimized)}
+                  className={`h-7 px-2 text-xs text-white truncate max-w-44 rounded-sm border transition-all flex items-center gap-1.5
+                    ${isActive 
+                      ? 'border-blue-300/50 shadow-inner' 
+                      : 'border-transparent hover:border-blue-400/30'
+                    }`}
+                  style={{
+                    background: isActive
+                      ? 'linear-gradient(180deg, #1e4a8a 0%, #0d3a6e 50%, #0a2d52 100%)'
+                      : window.isMinimized 
+                        ? 'linear-gradient(180deg, #4a7fc5 0%, #3b6eb5 100%)'
+                        : 'linear-gradient(180deg, #3b7dd8 0%, #2a6bc8 50%, #1e5ab8 100%)'
+                  }}
+                >
+                  {window.iconSrc && (
+                    <img src={window.iconSrc} alt="" className="w-4 h-4 flex-shrink-0" />
+                  )}
+                  <span className="truncate">{window.title}</span>
+                </button>
+              </ContextMenuTrigger>
+              <ContextMenuContent className="w-40 bg-[#ece9d8] border-[#0054e3] shadow-md">
+                <ContextMenuItem 
+                  className="flex items-center gap-2 text-xs cursor-pointer hover:bg-[#316ac5] hover:text-white"
+                  onClick={() => { playClick(); focusWindow(window.id); }}
+                >
+                  <Square className="w-3 h-3" />
+                  Restore
+                </ContextMenuItem>
+                <ContextMenuItem 
+                  className="flex items-center gap-2 text-xs cursor-pointer hover:bg-[#316ac5] hover:text-white"
+                  onClick={() => { playClick(); minimizeWindow(window.id); }}
+                >
+                  <Minus className="w-3 h-3" />
+                  Minimize
+                </ContextMenuItem>
+                <ContextMenuItem 
+                  className="flex items-center gap-2 text-xs cursor-pointer hover:bg-[#316ac5] hover:text-white"
+                  onClick={() => { playClick(); toggleMaximize(window.id); }}
+                >
+                  <Square className="w-3 h-3" />
+                  {window.isMaximized ? 'Restore' : 'Maximize'}
+                </ContextMenuItem>
+                <ContextMenuSeparator className="bg-gray-400" />
+                <ContextMenuItem 
+                  className="flex items-center gap-2 text-xs cursor-pointer hover:bg-[#316ac5] hover:text-white font-bold"
+                  onClick={() => { playClick(); closeWindow(window.id); }}
+                >
+                  <X className="w-3 h-3" />
+                  Close
+                </ContextMenuItem>
+              </ContextMenuContent>
+            </ContextMenu>
           );
         })}
       </div>
