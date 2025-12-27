@@ -2,6 +2,15 @@ import React from 'react';
 import { User, FileText, Mail, Settings, HelpCircle, LogOut, Folder, Search, Play, Bomb, Palette, StickyNote, Music } from 'lucide-react';
 import { useWindows } from '@/pages/Index';
 
+// Import icons
+import resumeIcon from '@/assets/icons/resume-icon.png';
+import userIcon from '@/assets/icons/user-icon.png';
+import mailIcon from '@/assets/icons/mail-icon.png';
+import minesweeperIcon from '@/assets/icons/minesweeper-icon.png';
+import paintIcon from '@/assets/icons/paint-icon.png';
+import notepadIcon from '@/assets/icons/notepad-icon.png';
+import mediaplayerIcon from '@/assets/icons/mediaplayer-icon.png';
+
 interface StartMenuProps {
   onClose: () => void;
 }
@@ -10,14 +19,14 @@ const StartMenu: React.FC<StartMenuProps> = ({ onClose }) => {
   const { openWindow, playClick } = useWindows();
 
   const leftItems = [
-    { icon: FileText, label: 'My Resume', id: 'resume', component: 'resume' },
-    { icon: User, label: 'About Me', id: 'about', component: 'about' },
-    { icon: Mail, label: 'Contact', id: 'contact', component: 'contact' },
+    { icon: FileText, label: 'My Resume', id: 'resume', component: 'resume', iconSrc: resumeIcon },
+    { icon: User, label: 'About Me', id: 'about', component: 'about', iconSrc: userIcon },
+    { icon: Mail, label: 'Contact', id: 'contact', component: 'contact', iconSrc: mailIcon },
     { divider: true },
-    { icon: Bomb, label: 'Minesweeper', id: 'minesweeper', component: 'minesweeper' },
-    { icon: Palette, label: 'Paint', id: 'paint', component: 'paint' },
-    { icon: StickyNote, label: 'Notepad', id: 'notepad', component: 'notepad' },
-    { icon: Music, label: 'Media Player', id: 'mediaplayer', component: 'mediaplayer' },
+    { icon: Bomb, label: 'Minesweeper', id: 'minesweeper', component: 'minesweeper', iconSrc: minesweeperIcon },
+    { icon: Palette, label: 'Paint', id: 'paint', component: 'paint', iconSrc: paintIcon },
+    { icon: StickyNote, label: 'Notepad', id: 'notepad', component: 'notepad', iconSrc: notepadIcon },
+    { icon: Music, label: 'Media Player', id: 'mediaplayer', component: 'mediaplayer', iconSrc: mediaplayerIcon },
   ];
 
   const rightItems = [
@@ -34,7 +43,7 @@ const StartMenu: React.FC<StartMenuProps> = ({ onClose }) => {
   const handleItemClick = (item: typeof leftItems[0]) => {
     playClick();
     if ('component' in item && item.component) {
-      openWindow(item.id!, item.label, item.component,
+      openWindow(item.id!, item.label, item.component, item.iconSrc,
         item.id === 'minesweeper' ? 300 : item.id === 'paint' ? 600 : 500,
         item.id === 'minesweeper' ? 380 : item.id === 'paint' ? 450 : 400
       );

@@ -10,6 +10,7 @@ interface WindowState {
   id: string;
   title: string;
   component: string;
+  iconSrc?: string;
   x: number;
   y: number;
   width: number;
@@ -22,7 +23,7 @@ interface WindowState {
 
 interface WindowContextType {
   windows: WindowState[];
-  openWindow: (id: string, title: string, component: string, width?: number, height?: number) => void;
+  openWindow: (id: string, title: string, component: string, iconSrc?: string, width?: number, height?: number) => void;
   closeWindow: (id: string) => void;
   focusWindow: (id: string) => void;
   minimizeWindow: (id: string) => void;
@@ -53,7 +54,7 @@ const Index = () => {
     return () => clearTimeout(bootTimer);
   }, []);
 
-  const openWindow = useCallback((id: string, title: string, component: string, width = 500, height = 400) => {
+  const openWindow = useCallback((id: string, title: string, component: string, iconSrc?: string, width = 500, height = 400) => {
     setWindows(prev => {
       const existing = prev.find(w => w.id === id);
       if (existing) {
@@ -64,6 +65,7 @@ const Index = () => {
         id,
         title,
         component,
+        iconSrc,
         x: 100 + offset,
         y: 50 + offset,
         width,
