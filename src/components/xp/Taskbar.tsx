@@ -65,7 +65,7 @@ const Taskbar: React.FC<TaskbarProps> = ({ startMenuOpen, onStartClick }) => {
             <button
               key={window.id}
               onClick={() => handleWindowClick(window.id, window.isMinimized)}
-              className={`h-7 px-3 text-xs text-white truncate max-w-40 rounded-sm border transition-all
+              className={`h-7 px-2 text-xs text-white truncate max-w-44 rounded-sm border transition-all flex items-center gap-1.5
                 ${isActive 
                   ? 'border-blue-300/50 shadow-inner' 
                   : 'border-transparent hover:border-blue-400/30'
@@ -78,7 +78,10 @@ const Taskbar: React.FC<TaskbarProps> = ({ startMenuOpen, onStartClick }) => {
                     : 'linear-gradient(180deg, #3b7dd8 0%, #2a6bc8 50%, #1e5ab8 100%)'
               }}
             >
-              {window.title}
+              {window.iconSrc && (
+                <img src={window.iconSrc} alt="" className="w-4 h-4 flex-shrink-0" />
+              )}
+              <span className="truncate">{window.title}</span>
             </button>
           );
         })}

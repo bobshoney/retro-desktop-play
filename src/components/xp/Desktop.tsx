@@ -51,7 +51,7 @@ const Desktop: React.FC = () => {
 
   const handleIconDoubleClick = (icon: typeof desktopIcons[0]) => {
     const [width, height] = getWindowSize(icon.id);
-    openWindow(icon.id, icon.title, icon.component, width, height);
+    openWindow(icon.id, icon.title, icon.component, icon.iconSrc, width, height);
   };
 
   const handleDesktopClick = () => {
