@@ -32,7 +32,7 @@ interface WindowProps {
 type ResizeDirection = 'n' | 's' | 'e' | 'w' | 'ne' | 'nw' | 'se' | 'sw' | null;
 
 const Window: React.FC<WindowProps> = ({ window: win }) => {
-  const { closeWindow, focusWindow, minimizeWindow, toggleMaximize, updateWindowPosition, updateWindowSize, activeWindowId, playClick } = useWindows();
+  const { closeWindow, focusWindow, minimizeWindow, toggleMaximize, updateWindowPosition, updateWindowSize, activeWindowId, playClick, playWindowClose, playMinimize, playMaximize } = useWindows();
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState<ResizeDirection>(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
@@ -206,19 +206,19 @@ const Window: React.FC<WindowProps> = ({ window: win }) => {
         <div className="window-buttons flex items-center gap-0.5">
           <button 
             className="xp-window-button"
-            onClick={(e) => { e.stopPropagation(); playClick(); minimizeWindow(win.id); }}
+            onClick={(e) => { e.stopPropagation(); playMinimize(); minimizeWindow(win.id); }}
           >
             <Minus className="w-3 h-3" />
           </button>
           <button 
             className="xp-window-button" 
-            onClick={(e) => { e.stopPropagation(); playClick(); toggleMaximize(win.id); }}
+            onClick={(e) => { e.stopPropagation(); playMaximize(); toggleMaximize(win.id); }}
           >
             <Square className="w-2.5 h-2.5" />
           </button>
           <button 
             className="xp-window-button close"
-            onClick={(e) => { e.stopPropagation(); playClick(); closeWindow(win.id); }}
+            onClick={(e) => { e.stopPropagation(); playWindowClose(); closeWindow(win.id); }}
           >
             <X className="w-3 h-3" />
           </button>
