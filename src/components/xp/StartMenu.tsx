@@ -16,7 +16,7 @@ interface StartMenuProps {
 }
 
 const StartMenu: React.FC<StartMenuProps> = ({ onClose }) => {
-  const { openWindow, playClick } = useWindows();
+  const { openWindow, playClick, playWindowOpen } = useWindows();
 
   const leftItems = [
     { icon: FileText, label: 'My Resume', id: 'resume', component: 'resume', iconSrc: resumeIcon },
@@ -41,13 +41,15 @@ const StartMenu: React.FC<StartMenuProps> = ({ onClose }) => {
   ];
 
   const handleItemClick = (item: typeof leftItems[0]) => {
-    playClick();
     if ('component' in item && item.component) {
+      playWindowOpen();
       openWindow(item.id!, item.label, item.component, item.iconSrc,
         item.id === 'minesweeper' ? 300 : item.id === 'paint' ? 600 : 500,
         item.id === 'minesweeper' ? 380 : item.id === 'paint' ? 450 : 400
       );
       onClose();
+    } else {
+      playClick();
     }
   };
 
