@@ -36,6 +36,8 @@ interface WindowContextType {
   playWindowClose: () => void;
   playMinimize: () => void;
   playMaximize: () => void;
+  logOff: () => void;
+  shutDown: () => void;
 }
 
 export const WindowContext = createContext<WindowContextType | null>(null);
@@ -51,7 +53,7 @@ const Index = () => {
   const [windows, setWindows] = useState<WindowState[]>([]);
   const [activeWindowId, setActiveWindowId] = useState<string | null>(null);
   const [zCounter, setZCounter] = useState(100);
-  const { playClick, playWindowOpen, playWindowClose, playMinimize, playMaximize } = useXPSounds();
+  const { playClick, playWindowOpen, playWindowClose, playMinimize, playMaximize, playShutdown } = useXPSounds();
 
   useEffect(() => {
     const bootTimer = setTimeout(() => setAppState('login'), 3500);
@@ -142,6 +144,21 @@ const Index = () => {
 
   const handleLogin = () => setAppState('desktop');
 
+  const logOff = useCallback(() => {
+    setWindows([]);
+    setActiveWindowId(null);
+    setAppState('login');
+  }, []);
+
+  const shutDown = useCallback(() => {
+    playShutdown();
+    setWindows([]);
+    setActiveWindowId(null);
+    setTimeout(() => {
+      setAppState('boot');
+    }, 3000);
+  }, [playShutdown]);
+
   if (appState === 'boot') return <BootScreen />;
   if (appState === 'login') return <LoginScreen onLogin={handleLogin} />;
 
@@ -160,7 +177,9 @@ const Index = () => {
       playWindowOpen,
       playWindowClose,
       playMinimize,
-      playMaximize
+      playMaximize,
+      logOff,
+      shutDown
     }}>
       <Desktop />
     </WindowContext.Provider>
