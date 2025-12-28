@@ -199,6 +199,7 @@ const Window: React.FC<WindowProps> = ({ window: win }) => {
       <div 
         className={`xp-title-bar ${!isActive ? 'inactive' : ''}`}
         onMouseDown={handleMouseDown}
+        onDoubleClick={() => { playClick(); toggleMaximize(win.id); }}
         style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
       >
         <span className="truncate">{win.title}</span>
