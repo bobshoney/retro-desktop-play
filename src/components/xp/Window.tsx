@@ -12,6 +12,11 @@ import NapsterApp from './apps/NapsterApp';
 import LimeWireApp from './apps/LimeWireApp';
 import AOLApp from './apps/AOLApp';
 import InternetExplorerApp from './apps/InternetExplorerApp';
+import MyDocumentsApp from './apps/MyDocumentsApp';
+import ControlPanelApp from './apps/ControlPanelApp';
+import HelpApp from './apps/HelpApp';
+import SearchApp from './apps/SearchApp';
+import RunApp from './apps/RunApp';
 
 interface WindowProps {
   window: {
@@ -144,6 +149,13 @@ const Window: React.FC<WindowProps> = ({ window: win }) => {
       case 'limewire': return <LimeWireApp />;
       case 'aol': return <AOLApp />;
       case 'ie': return <InternetExplorerApp />;
+      case 'mydocuments': return <MyDocumentsApp />;
+      case 'mypictures': return <MyDocumentsApp />;
+      case 'mymusic': return <MyDocumentsApp />;
+      case 'controlpanel': return <ControlPanelApp />;
+      case 'help': return <HelpApp />;
+      case 'search': return <SearchApp />;
+      case 'run': return <RunApp />;
       default: return <div className="p-4">Unknown application</div>;
     }
   };

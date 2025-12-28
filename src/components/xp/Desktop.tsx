@@ -21,7 +21,7 @@ import mediaplayerIcon from '@/assets/icons/mediaplayer-icon.png';
 
 const Desktop: React.FC = () => {
   const [startMenuOpen, setStartMenuOpen] = useState(false);
-  const { windows, openWindow, playWindowOpen } = useWindows();
+  const { windows, openWindow, playWindowOpen, logOff, shutDown } = useWindows();
 
   const desktopIcons = [
     { id: 'resume', title: 'My Resume', iconSrc: resumeIcon, component: 'resume' },
@@ -88,7 +88,11 @@ const Desktop: React.FC = () => {
 
       {/* Start Menu */}
       {startMenuOpen && (
-        <StartMenu onClose={() => setStartMenuOpen(false)} />
+        <StartMenu 
+          onClose={() => setStartMenuOpen(false)} 
+          onLogOff={logOff}
+          onShutDown={shutDown}
+        />
       )}
 
       {/* Taskbar */}
