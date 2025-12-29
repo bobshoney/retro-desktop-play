@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Volume2, Wifi, Minus, Square, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Volume2, Volume1, VolumeX, Wifi, Minus, Square, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useWindows } from '@/pages/Index';
 import {
   ContextMenu,
@@ -13,6 +13,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { Slider } from '@/components/ui/slider';
 
 interface TaskbarProps {
   startMenuOpen: boolean;
@@ -26,6 +27,8 @@ const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June',
 const Taskbar: React.FC<TaskbarProps> = ({ startMenuOpen, onStartClick }) => {
   const [time, setTime] = useState(new Date());
   const [calendarDate, setCalendarDate] = useState(new Date());
+  const [volume, setVolume] = useState(75);
+  const [isMuted, setIsMuted] = useState(false);
   const { windows, focusWindow, minimizeWindow, toggleMaximize, closeWindow, activeWindowId, playClick } = useWindows();
 
   useEffect(() => {
@@ -205,7 +208,65 @@ const Taskbar: React.FC<TaskbarProps> = ({ startMenuOpen, onStartClick }) => {
           background: 'linear-gradient(180deg, #0f4c9c 0%, #1565c0 50%, #0d47a1 100%)'
         }}
       >
-        <Volume2 className="w-4 h-4 text-white/80" />
+        {/* Volume Control Popup */}
+        <Popover>
+          <PopoverTrigger asChild>
+            <button 
+              className="hover:bg-white/10 p-0.5 rounded cursor-pointer"
+              onClick={() => playClick()}
+            >
+              {isMuted || volume === 0 ? (
+                <VolumeX className="w-4 h-4 text-white/80" />
+              ) : volume < 50 ? (
+                <Volume1 className="w-4 h-4 text-white/80" />
+              ) : (
+                <Volume2 className="w-4 h-4 text-white/80" />
+              )}
+            </button>
+          </PopoverTrigger>
+          <PopoverContent 
+            className="w-24 p-3 bg-[#ece9d8] border-2 border-[#0054e3] shadow-lg"
+            align="center"
+            sideOffset={8}
+          >
+            <div className="flex flex-col items-center gap-3">
+              <div className="text-xs font-bold text-[#003399]">Volume</div>
+              
+              {/* Vertical Slider Container */}
+              <div className="h-24 flex items-center justify-center">
+                <Slider
+                  orientation="vertical"
+                  value={[isMuted ? 0 : volume]}
+                  onValueChange={(value) => {
+                    setVolume(value[0]);
+                    if (value[0] > 0) setIsMuted(false);
+                  }}
+                  max={100}
+                  step={1}
+                  className="h-full"
+                />
+              </div>
+              
+              {/* Volume Percentage */}
+              <div className="text-xs font-mono">{isMuted ? 0 : volume}%</div>
+              
+              {/* Mute Checkbox */}
+              <label className="flex items-center gap-1 text-xs cursor-pointer">
+                <input 
+                  type="checkbox" 
+                  checked={isMuted}
+                  onChange={(e) => {
+                    playClick();
+                    setIsMuted(e.target.checked);
+                  }}
+                  className="w-3 h-3"
+                />
+                Mute
+              </label>
+            </div>
+          </PopoverContent>
+        </Popover>
+        
         <Wifi className="w-4 h-4 text-white/80" />
         
         {/* Clock with Calendar Popup */}
