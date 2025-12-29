@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Volume2, Wifi, Minus, Square, X } from 'lucide-react';
+import { Volume2, Wifi, Minus, Square, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useWindows } from '@/pages/Index';
 import {
   ContextMenu,
@@ -8,14 +8,24 @@ import {
   ContextMenuSeparator,
   ContextMenuTrigger,
 } from '@/components/ui/context-menu';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 
 interface TaskbarProps {
   startMenuOpen: boolean;
   onStartClick: (e: React.MouseEvent) => void;
 }
 
+const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 
+                'July', 'August', 'September', 'October', 'November', 'December'];
+
 const Taskbar: React.FC<TaskbarProps> = ({ startMenuOpen, onStartClick }) => {
   const [time, setTime] = useState(new Date());
+  const [calendarDate, setCalendarDate] = useState(new Date());
   const { windows, focusWindow, minimizeWindow, toggleMaximize, closeWindow, activeWindowId, playClick } = useWindows();
 
   useEffect(() => {
@@ -31,6 +41,15 @@ const Taskbar: React.FC<TaskbarProps> = ({ startMenuOpen, onStartClick }) => {
     });
   };
 
+  const formatFullTime = (date: Date) => {
+    return date.toLocaleTimeString('en-US', { 
+      hour: 'numeric', 
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true 
+    });
+  };
+
   const handleWindowClick = (windowId: string, isMinimized: boolean) => {
     playClick();
     if (isMinimized) {
@@ -40,6 +59,57 @@ const Taskbar: React.FC<TaskbarProps> = ({ startMenuOpen, onStartClick }) => {
     } else {
       focusWindow(windowId);
     }
+  };
+
+  const getDaysInMonth = (year: number, month: number) => {
+    return new Date(year, month + 1, 0).getDate();
+  };
+
+  const getFirstDayOfMonth = (year: number, month: number) => {
+    return new Date(year, month, 1).getDay();
+  };
+
+  const prevMonth = () => {
+    playClick();
+    setCalendarDate(new Date(calendarDate.getFullYear(), calendarDate.getMonth() - 1, 1));
+  };
+
+  const nextMonth = () => {
+    playClick();
+    setCalendarDate(new Date(calendarDate.getFullYear(), calendarDate.getMonth() + 1, 1));
+  };
+
+  const renderCalendar = () => {
+    const year = calendarDate.getFullYear();
+    const month = calendarDate.getMonth();
+    const daysInMonth = getDaysInMonth(year, month);
+    const firstDay = getFirstDayOfMonth(year, month);
+    const today = new Date();
+    
+    const days: React.ReactNode[] = [];
+    
+    // Empty cells for days before the first day of month
+    for (let i = 0; i < firstDay; i++) {
+      days.push(<div key={`empty-${i}`} className="w-6 h-5"></div>);
+    }
+    
+    // Days of the month
+    for (let day = 1; day <= daysInMonth; day++) {
+      const isToday = today.getDate() === day && 
+                      today.getMonth() === month && 
+                      today.getFullYear() === year;
+      days.push(
+        <div 
+          key={day} 
+          className={`w-6 h-5 flex items-center justify-center text-xs cursor-pointer hover:bg-[#316ac5] hover:text-white rounded-sm
+            ${isToday ? 'bg-[#316ac5] text-white font-bold' : ''}`}
+        >
+          {day}
+        </div>
+      );
+    }
+    
+    return days;
   };
 
   return (
@@ -137,9 +207,70 @@ const Taskbar: React.FC<TaskbarProps> = ({ startMenuOpen, onStartClick }) => {
       >
         <Volume2 className="w-4 h-4 text-white/80" />
         <Wifi className="w-4 h-4 text-white/80" />
-        <div className="text-white text-xs font-medium pl-2">
-          {formatTime(time)}
-        </div>
+        
+        {/* Clock with Calendar Popup */}
+        <Popover>
+          <PopoverTrigger asChild>
+            <button 
+              className="text-white text-xs font-medium pl-2 hover:bg-white/10 px-1 py-0.5 rounded cursor-pointer"
+              onClick={() => {
+                playClick();
+                setCalendarDate(new Date());
+              }}
+            >
+              {formatTime(time)}
+            </button>
+          </PopoverTrigger>
+          <PopoverContent 
+            className="w-56 p-0 bg-[#ece9d8] border-2 border-[#0054e3] shadow-lg"
+            align="end"
+            sideOffset={8}
+          >
+            {/* Digital Clock */}
+            <div className="bg-gradient-to-b from-[#0054e3] to-[#003399] text-white p-2 text-center">
+              <div className="text-2xl font-bold font-mono">{formatFullTime(time)}</div>
+              <div className="text-xs opacity-80">
+                {DAYS[time.getDay()]}, {MONTHS[time.getMonth()]} {time.getDate()}, {time.getFullYear()}
+              </div>
+            </div>
+            
+            {/* Calendar */}
+            <div className="p-2">
+              {/* Month Navigation */}
+              <div className="flex items-center justify-between mb-2">
+                <button 
+                  onClick={prevMonth}
+                  className="p-0.5 hover:bg-[#316ac5] hover:text-white rounded"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <span className="text-sm font-bold">
+                  {MONTHS[calendarDate.getMonth()]} {calendarDate.getFullYear()}
+                </span>
+                <button 
+                  onClick={nextMonth}
+                  className="p-0.5 hover:bg-[#316ac5] hover:text-white rounded"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+              
+              {/* Day Headers */}
+              <div className="grid grid-cols-7 gap-0.5 mb-1">
+                {DAYS.map(day => (
+                  <div key={day} className="w-6 h-5 flex items-center justify-center text-xs font-bold text-[#003399]">
+                    {day.charAt(0)}
+                  </div>
+                ))}
+              </div>
+              
+              {/* Calendar Days */}
+              <div className="grid grid-cols-7 gap-0.5">
+                {renderCalendar()}
+              </div>
+            </div>
+          </PopoverContent>
+        </Popover>
       </div>
     </div>
   );
