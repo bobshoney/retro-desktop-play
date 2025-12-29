@@ -5,6 +5,17 @@ import Taskbar from './Taskbar';
 import StartMenu from './StartMenu';
 import Window from './Window';
 import { useWindows } from '@/pages/Index';
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuSub,
+  ContextMenuSubContent,
+  ContextMenuSubTrigger,
+  ContextMenuTrigger,
+} from '@/components/ui/context-menu';
+import { RefreshCw, FolderPlus, Settings, Monitor, ArrowUpDown, LayoutGrid, List } from 'lucide-react';
 
 // Import icons
 import resumeIcon from '@/assets/icons/resume-icon.png';
@@ -21,7 +32,8 @@ import mediaplayerIcon from '@/assets/icons/mediaplayer-icon.png';
 
 const Desktop: React.FC = () => {
   const [startMenuOpen, setStartMenuOpen] = useState(false);
-  const { windows, openWindow, playWindowOpen, logOff, shutDown } = useWindows();
+  const [refreshKey, setRefreshKey] = useState(0);
+  const { windows, openWindow, playWindowOpen, playClick, logOff, shutDown } = useWindows();
 
   const desktopIcons = [
     { id: 'resume', title: 'My Resume', iconSrc: resumeIcon, component: 'resume' },
@@ -59,51 +71,170 @@ const Desktop: React.FC = () => {
     setStartMenuOpen(false);
   };
 
+  const handleRefresh = () => {
+    playClick();
+    setRefreshKey(k => k + 1);
+  };
+
+  const handleNewFolder = () => {
+    playClick();
+    // Simulated - in real app would create folder
+  };
+
+  const handleProperties = () => {
+    playClick();
+    playWindowOpen();
+    openWindow('controlpanel', 'Display Properties', 'controlpanel', undefined, 450, 400);
+  };
+
   return (
-    <div 
-      className="fixed inset-0 overflow-hidden"
-      style={{
-        backgroundImage: `url(${blissWallpaper})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center'
-      }}
-      onClick={handleDesktopClick}
-    >
-      {/* Desktop Icons */}
-      <div className="absolute top-4 left-4 flex flex-col gap-2">
-        {desktopIcons.map((icon) => (
-          <DesktopIcon
-            key={icon.id}
-            title={icon.title}
-            iconSrc={icon.iconSrc}
-            onDoubleClick={() => handleIconDoubleClick(icon)}
+    <ContextMenu>
+      <ContextMenuTrigger asChild>
+        <div 
+          className="fixed inset-0 overflow-hidden"
+          style={{
+            backgroundImage: `url(${blissWallpaper})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
+          }}
+          onClick={handleDesktopClick}
+        >
+          {/* Desktop Icons */}
+          <div className="absolute top-4 left-4 flex flex-col gap-2" key={refreshKey}>
+            {desktopIcons.map((icon) => (
+              <DesktopIcon
+                key={icon.id}
+                title={icon.title}
+                iconSrc={icon.iconSrc}
+                onDoubleClick={() => handleIconDoubleClick(icon)}
+              />
+            ))}
+          </div>
+
+          {/* Windows */}
+          {windows.map((window) => (
+            <Window key={window.id} window={window} />
+          ))}
+
+          {/* Start Menu */}
+          {startMenuOpen && (
+            <StartMenu 
+              onClose={() => setStartMenuOpen(false)} 
+              onLogOff={logOff}
+              onShutDown={shutDown}
+            />
+          )}
+
+          {/* Taskbar */}
+          <Taskbar 
+            startMenuOpen={startMenuOpen}
+            onStartClick={(e) => {
+              e.stopPropagation();
+              setStartMenuOpen(!startMenuOpen);
+            }}
           />
-        ))}
-      </div>
-
-      {/* Windows */}
-      {windows.map((window) => (
-        <Window key={window.id} window={window} />
-      ))}
-
-      {/* Start Menu */}
-      {startMenuOpen && (
-        <StartMenu 
-          onClose={() => setStartMenuOpen(false)} 
-          onLogOff={logOff}
-          onShutDown={shutDown}
-        />
-      )}
-
-      {/* Taskbar */}
-      <Taskbar 
-        startMenuOpen={startMenuOpen}
-        onStartClick={(e) => {
-          e.stopPropagation();
-          setStartMenuOpen(!startMenuOpen);
-        }}
-      />
-    </div>
+        </div>
+      </ContextMenuTrigger>
+      
+      <ContextMenuContent className="w-52 bg-[#ece9d8] border-[#0054e3] shadow-md">
+        {/* View Submenu */}
+        <ContextMenuSub>
+          <ContextMenuSubTrigger className="flex items-center gap-2 text-xs cursor-pointer hover:bg-[#316ac5] hover:text-white">
+            <LayoutGrid className="w-4 h-4" />
+            View
+          </ContextMenuSubTrigger>
+          <ContextMenuSubContent className="w-40 bg-[#ece9d8] border-[#0054e3] shadow-md">
+            <ContextMenuItem className="flex items-center gap-2 text-xs cursor-pointer hover:bg-[#316ac5] hover:text-white">
+              <LayoutGrid className="w-4 h-4" />
+              Thumbnails
+            </ContextMenuItem>
+            <ContextMenuItem className="flex items-center gap-2 text-xs cursor-pointer hover:bg-[#316ac5] hover:text-white">
+              <LayoutGrid className="w-4 h-4" />
+              Tiles
+            </ContextMenuItem>
+            <ContextMenuItem className="flex items-center gap-2 text-xs cursor-pointer hover:bg-[#316ac5] hover:text-white">
+              <LayoutGrid className="w-4 h-4" />
+              Icons
+            </ContextMenuItem>
+            <ContextMenuItem className="flex items-center gap-2 text-xs cursor-pointer hover:bg-[#316ac5] hover:text-white">
+              <List className="w-4 h-4" />
+              List
+            </ContextMenuItem>
+          </ContextMenuSubContent>
+        </ContextMenuSub>
+        
+        {/* Sort By Submenu */}
+        <ContextMenuSub>
+          <ContextMenuSubTrigger className="flex items-center gap-2 text-xs cursor-pointer hover:bg-[#316ac5] hover:text-white">
+            <ArrowUpDown className="w-4 h-4" />
+            Arrange Icons By
+          </ContextMenuSubTrigger>
+          <ContextMenuSubContent className="w-36 bg-[#ece9d8] border-[#0054e3] shadow-md">
+            <ContextMenuItem className="text-xs cursor-pointer hover:bg-[#316ac5] hover:text-white">
+              Name
+            </ContextMenuItem>
+            <ContextMenuItem className="text-xs cursor-pointer hover:bg-[#316ac5] hover:text-white">
+              Size
+            </ContextMenuItem>
+            <ContextMenuItem className="text-xs cursor-pointer hover:bg-[#316ac5] hover:text-white">
+              Type
+            </ContextMenuItem>
+            <ContextMenuItem className="text-xs cursor-pointer hover:bg-[#316ac5] hover:text-white">
+              Modified
+            </ContextMenuItem>
+          </ContextMenuSubContent>
+        </ContextMenuSub>
+        
+        <ContextMenuSeparator className="bg-gray-400" />
+        
+        <ContextMenuItem 
+          className="flex items-center gap-2 text-xs cursor-pointer hover:bg-[#316ac5] hover:text-white"
+          onClick={handleRefresh}
+        >
+          <RefreshCw className="w-4 h-4" />
+          Refresh
+        </ContextMenuItem>
+        
+        <ContextMenuSeparator className="bg-gray-400" />
+        
+        {/* New Submenu */}
+        <ContextMenuSub>
+          <ContextMenuSubTrigger className="flex items-center gap-2 text-xs cursor-pointer hover:bg-[#316ac5] hover:text-white">
+            <FolderPlus className="w-4 h-4" />
+            New
+          </ContextMenuSubTrigger>
+          <ContextMenuSubContent className="w-40 bg-[#ece9d8] border-[#0054e3] shadow-md">
+            <ContextMenuItem 
+              className="flex items-center gap-2 text-xs cursor-pointer hover:bg-[#316ac5] hover:text-white"
+              onClick={handleNewFolder}
+            >
+              <FolderPlus className="w-4 h-4" />
+              Folder
+            </ContextMenuItem>
+            <ContextMenuSeparator className="bg-gray-400" />
+            <ContextMenuItem className="text-xs cursor-pointer hover:bg-[#316ac5] hover:text-white">
+              Shortcut
+            </ContextMenuItem>
+            <ContextMenuItem className="text-xs cursor-pointer hover:bg-[#316ac5] hover:text-white">
+              Text Document
+            </ContextMenuItem>
+            <ContextMenuItem className="text-xs cursor-pointer hover:bg-[#316ac5] hover:text-white">
+              Bitmap Image
+            </ContextMenuItem>
+          </ContextMenuSubContent>
+        </ContextMenuSub>
+        
+        <ContextMenuSeparator className="bg-gray-400" />
+        
+        <ContextMenuItem 
+          className="flex items-center gap-2 text-xs cursor-pointer hover:bg-[#316ac5] hover:text-white"
+          onClick={handleProperties}
+        >
+          <Monitor className="w-4 h-4" />
+          Properties
+        </ContextMenuItem>
+      </ContextMenuContent>
+    </ContextMenu>
   );
 };
 
