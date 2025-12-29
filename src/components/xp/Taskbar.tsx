@@ -267,7 +267,94 @@ const Taskbar: React.FC<TaskbarProps> = ({ startMenuOpen, onStartClick }) => {
           </PopoverContent>
         </Popover>
         
-        <Wifi className="w-4 h-4 text-white/80" />
+        {/* Network Status Popup */}
+        <Popover>
+          <PopoverTrigger asChild>
+            <button 
+              className="hover:bg-white/10 p-0.5 rounded cursor-pointer"
+              onClick={() => playClick()}
+            >
+              <Wifi className="w-4 h-4 text-white/80" />
+            </button>
+          </PopoverTrigger>
+          <PopoverContent 
+            className="w-64 p-0 bg-[#ece9d8] border-2 border-[#0054e3] shadow-lg"
+            align="center"
+            sideOffset={8}
+          >
+            {/* Header */}
+            <div className="bg-gradient-to-b from-[#0054e3] to-[#003399] text-white p-2 flex items-center gap-2">
+              <Wifi className="w-5 h-5" />
+              <span className="font-bold text-sm">Network Connections</span>
+            </div>
+            
+            {/* Connection Status */}
+            <div className="p-3 space-y-3">
+              {/* Current Connection */}
+              <div className="bg-white border border-gray-300 rounded p-2">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-8 h-8 bg-[#316ac5] rounded flex items-center justify-center">
+                    <Wifi className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <div className="text-sm font-bold">Local Area Connection</div>
+                    <div className="text-xs text-green-600">Connected</div>
+                  </div>
+                </div>
+                
+                <div className="text-xs space-y-1 border-t pt-2 mt-2">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Status:</span>
+                    <span className="font-medium text-green-600">Connected</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Speed:</span>
+                    <span className="font-medium">100.0 Mbps</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Signal Strength:</span>
+                    <span className="font-medium">Excellent</span>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Network Details */}
+              <div className="text-xs space-y-1">
+                <div className="flex justify-between">
+                  <span className="text-gray-600">IP Address:</span>
+                  <span className="font-mono">192.168.1.42</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Subnet Mask:</span>
+                  <span className="font-mono">255.255.255.0</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Gateway:</span>
+                  <span className="font-mono">192.168.1.1</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">DNS Server:</span>
+                  <span className="font-mono">8.8.8.8</span>
+                </div>
+              </div>
+              
+              {/* Activity */}
+              <div className="bg-gray-100 rounded p-2">
+                <div className="text-xs font-bold mb-1">Activity</div>
+                <div className="flex justify-between text-xs">
+                  <div>
+                    <span className="text-gray-600">Sent: </span>
+                    <span className="font-medium">1,247 packets</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-600">Received: </span>
+                    <span className="font-medium">3,891 packets</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </PopoverContent>
+        </Popover>
         
         {/* Clock with Calendar Popup */}
         <Popover>
