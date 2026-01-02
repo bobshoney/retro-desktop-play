@@ -1,11 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Mail, Users, Globe, Search, MessageCircle, Settings, Home, Star, ShoppingCart } from 'lucide-react';
+import { useXPSounds } from '@/hooks/useXPSounds';
 
 const AOLApp: React.FC = () => {
   const [isConnecting, setIsConnecting] = useState(true);
   const [showWelcome, setShowWelcome] = useState(false);
   const [currentSection, setCurrentSection] = useState<'home' | 'mail' | 'im' | 'search'>('home');
   const [dialupProgress, setDialupProgress] = useState(0);
+  const { playDialup, stopDialup, playAOLWelcome, playIMReceive, playBuddySignOn, playClick } = useXPSounds();
+  const dialupStarted = useRef(false);
+
+  // Start dialup sound on mount
+  useEffect(() => {
+    if (isConnecting && !dialupStarted.current) {
+      dialupStarted.current = true;
+      playDialup();
+    }
+  }, [isConnecting, playDialup]);
 
   useEffect(() => {
     if (isConnecting) {
@@ -13,9 +24,14 @@ const AOLApp: React.FC = () => {
         setDialupProgress(prev => {
           if (prev >= 100) {
             clearInterval(interval);
+            stopDialup();
             setIsConnecting(false);
             setShowWelcome(true);
-            setTimeout(() => setShowWelcome(false), 2000);
+            playAOLWelcome();
+            setTimeout(() => {
+              setShowWelcome(false);
+              playBuddySignOn();
+            }, 2500);
             return 100;
           }
           return prev + Math.random() * 15;
@@ -23,7 +39,7 @@ const AOLApp: React.FC = () => {
       }, 400);
       return () => clearInterval(interval);
     }
-  }, [isConnecting]);
+  }, [isConnecting, stopDialup, playAOLWelcome, playBuddySignOn]);
 
   if (isConnecting) {
     return (
@@ -82,7 +98,11 @@ const AOLApp: React.FC = () => {
             ].map(item => (
               <button
                 key={item.id}
-                onClick={() => setCurrentSection(item.id as typeof currentSection)}
+                onClick={() => {
+                  playClick();
+                  if (item.id === 'mail') playIMReceive();
+                  setCurrentSection(item.id as typeof currentSection);
+                }}
                 className={`flex items-center gap-1 px-2 py-1 rounded text-xs text-white hover:bg-white/20 ${
                   currentSection === item.id ? 'bg-white/30' : ''
                 }`}

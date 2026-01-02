@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Trash2, FileText, Image, Folder, RefreshCw } from 'lucide-react';
+import { useXPSounds } from '@/hooks/useXPSounds';
 
 interface DeletedItem {
   id: string;
@@ -11,6 +12,7 @@ interface DeletedItem {
 }
 
 const RecycleBinApp: React.FC = () => {
+  const { playEmptyRecycle, playDelete, playClick, playExclamation } = useXPSounds();
   const [deletedItems, setDeletedItems] = useState<DeletedItem[]>([
     { id: '1', name: 'Old Resume.doc', type: 'document', originalLocation: 'C:\\My Documents', deletedDate: '12/15/2003 2:34 PM', size: '24 KB' },
     { id: '2', name: 'vacation_photo.jpg', type: 'image', originalLocation: 'C:\\My Pictures', deletedDate: '12/14/2003 10:22 AM', size: '1.2 MB' },
@@ -35,22 +37,27 @@ const RecycleBinApp: React.FC = () => {
 
   const handleEmptyRecycleBin = () => {
     if (deletedItems.length === 0) return;
+    playExclamation();
     const confirmed = window.confirm('Are you sure you want to permanently delete all items in the Recycle Bin?');
     if (confirmed) {
+      playEmptyRecycle();
       setDeletedItems([]);
     }
   };
 
   const handleRestoreItem = () => {
     if (!selectedItem) return;
+    playClick();
     setDeletedItems(items => items.filter(item => item.id !== selectedItem));
     setSelectedItem(null);
   };
 
   const handleDeletePermanently = () => {
     if (!selectedItem) return;
+    playExclamation();
     const confirmed = window.confirm('Are you sure you want to permanently delete this item?');
     if (confirmed) {
+      playDelete();
       setDeletedItems(items => items.filter(item => item.id !== selectedItem));
       setSelectedItem(null);
     }
