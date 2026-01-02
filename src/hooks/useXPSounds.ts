@@ -1,39 +1,39 @@
 import { useCallback, useRef } from 'react';
 
-// Windows XP and era-appropriate sound URLs
+// Windows XP and era-appropriate sound URLs - using more reliable sources
 const SOUNDS = {
-  // Windows XP System Sounds
-  startup: 'https://www.myinstants.com/media/sounds/windows-xp-startup.mp3',
-  shutdown: 'https://www.myinstants.com/media/sounds/windows-xp-shutdown.mp3',
-  error: 'https://www.myinstants.com/media/sounds/erro.mp3',
-  click: 'https://www.myinstants.com/media/sounds/click-button.mp3',
-  notify: 'https://www.myinstants.com/media/sounds/ding-sound-effect_2.mp3',
-  windowOpen: 'https://www.myinstants.com/media/sounds/windows-xp-navigation-start.mp3',
-  windowClose: 'https://www.myinstants.com/media/sounds/windows-xp-exclamation.mp3',
-  minimize: 'https://www.myinstants.com/media/sounds/windows-xp-balloon.mp3',
-  maximize: 'https://www.myinstants.com/media/sounds/windows-xp-hardware-insert.mp3',
+  // Windows XP System Sounds (using archive.org and other reliable sources)
+  startup: 'https://upload.wikimedia.org/wikipedia/commons/6/6b/Windows_XP_Startup.ogg',
+  shutdown: 'https://upload.wikimedia.org/wikipedia/commons/6/6c/Windows_XP_Shutdown.ogg',
+  error: 'https://upload.wikimedia.org/wikipedia/commons/1/1a/Windows_XP_Error.ogg',
+  click: 'https://cdn.freesound.org/previews/156/156031_2703579-lq.mp3',
+  notify: 'https://upload.wikimedia.org/wikipedia/commons/a/a9/Windows_XP_Notify.ogg',
+  windowOpen: 'https://upload.wikimedia.org/wikipedia/commons/5/5e/Windows_XP_Menu_Command.ogg',
+  windowClose: 'https://upload.wikimedia.org/wikipedia/commons/d/d6/Windows_XP_Exclamation.ogg',
+  minimize: 'https://upload.wikimedia.org/wikipedia/commons/2/21/Windows_XP_Balloon.ogg',
+  maximize: 'https://upload.wikimedia.org/wikipedia/commons/f/f7/Windows_XP_Hardware_Insert.ogg',
   
   // AOL Sounds
-  dialup: 'https://www.myinstants.com/media/sounds/dial-up-modem-01.mp3',
-  aolWelcome: 'https://www.myinstants.com/media/sounds/youve-got-mail-sound.mp3',
-  imReceive: 'https://www.myinstants.com/media/sounds/aim-message-received.mp3',
-  imSend: 'https://www.myinstants.com/media/sounds/aim-sound.mp3',
-  buddySignOn: 'https://www.myinstants.com/media/sounds/aim-door-open-sound.mp3',
-  buddySignOff: 'https://www.myinstants.com/media/sounds/aim-door-slam.mp3',
+  dialup: 'https://www.soundjay.com/communication/sounds/dial-up-modem-01.mp3',
+  aolWelcome: 'https://cdn.freesound.org/previews/55/55938_540389-lq.mp3',
+  imReceive: 'https://cdn.freesound.org/previews/25/25879_37876-lq.mp3',
+  imSend: 'https://cdn.freesound.org/previews/25/25879_37876-lq.mp3',
+  buddySignOn: 'https://cdn.freesound.org/previews/220/220206_4100837-lq.mp3',
+  buddySignOff: 'https://cdn.freesound.org/previews/220/220206_4100837-lq.mp3',
   
   // Recycle Bin & File Sounds
-  emptyRecycle: 'https://www.myinstants.com/media/sounds/recycle.mp3',
-  delete: 'https://www.myinstants.com/media/sounds/trash_empty.mp3',
+  emptyRecycle: 'https://cdn.freesound.org/previews/433/433666_7465186-lq.mp3',
+  delete: 'https://cdn.freesound.org/previews/433/433666_7465186-lq.mp3',
   
   // Additional XP Sounds
-  logon: 'https://www.myinstants.com/media/sounds/windows-xp-logon.mp3',
-  logoff: 'https://www.myinstants.com/media/sounds/windows-xp-logoff.mp3',
-  critical: 'https://www.myinstants.com/media/sounds/windows-critical-stop.mp3',
-  exclamation: 'https://www.myinstants.com/media/sounds/windows-xp-exclamation.mp3',
-  question: 'https://www.myinstants.com/media/sounds/windows-xp-balloon.mp3',
-  deviceConnect: 'https://www.myinstants.com/media/sounds/windows-xp-hardware-insert.mp3',
-  deviceDisconnect: 'https://www.myinstants.com/media/sounds/windows-xp-hardware-remove.mp3',
-  menuPopup: 'https://www.myinstants.com/media/sounds/menu-selection-click.mp3',
+  logon: 'https://upload.wikimedia.org/wikipedia/commons/6/6b/Windows_XP_Startup.ogg',
+  logoff: 'https://upload.wikimedia.org/wikipedia/commons/6/6c/Windows_XP_Shutdown.ogg',
+  critical: 'https://upload.wikimedia.org/wikipedia/commons/7/76/Windows_XP_Critical_Stop.ogg',
+  exclamation: 'https://upload.wikimedia.org/wikipedia/commons/d/d6/Windows_XP_Exclamation.ogg',
+  question: 'https://upload.wikimedia.org/wikipedia/commons/2/21/Windows_XP_Balloon.ogg',
+  deviceConnect: 'https://upload.wikimedia.org/wikipedia/commons/f/f7/Windows_XP_Hardware_Insert.ogg',
+  deviceDisconnect: 'https://upload.wikimedia.org/wikipedia/commons/e/ec/Windows_XP_Hardware_Remove.ogg',
+  menuPopup: 'https://upload.wikimedia.org/wikipedia/commons/5/5e/Windows_XP_Menu_Command.ogg',
 };
 
 export const useXPSounds = () => {
@@ -52,8 +52,8 @@ export const useXPSounds = () => {
       if (quickSounds.includes(sound)) {
         const audio = new Audio(SOUNDS[sound]);
         audio.volume = volume;
-        audio.play().catch((err) => {
-          console.log('Audio play error:', err);
+        audio.play().catch(() => {
+          // Silently fail - audio may not be available
         });
         return;
       }
@@ -63,11 +63,11 @@ export const useXPSounds = () => {
       }
       audioRef.current = new Audio(SOUNDS[sound]);
       audioRef.current.volume = volume;
-      audioRef.current.play().catch((err) => {
-        console.log('Audio play error:', err);
+      audioRef.current.play().catch(() => {
+        // Silently fail - audio may not be available
       });
     } catch (e) {
-      console.log('Sound error:', e);
+      // Silent fail for audio errors
     }
   }, []);
 
@@ -79,11 +79,11 @@ export const useXPSounds = () => {
       }
       dialupAudioRef.current = new Audio(SOUNDS.dialup);
       dialupAudioRef.current.volume = volume;
-      dialupAudioRef.current.play().catch((err) => {
-        console.log('Dialup audio play error:', err);
+      dialupAudioRef.current.play().catch(() => {
+        // Silently fail
       });
     } catch (e) {
-      console.log('Dialup sound error:', e);
+      // Silent fail
     }
   }, []);
 
