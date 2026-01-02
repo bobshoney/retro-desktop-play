@@ -17,6 +17,7 @@ import ControlPanelApp from './apps/ControlPanelApp';
 import HelpApp from './apps/HelpApp';
 import SearchApp from './apps/SearchApp';
 import RunApp from './apps/RunApp';
+import RecycleBinApp from './apps/RecycleBinApp';
 
 interface WindowProps {
   window: {
@@ -156,6 +157,7 @@ const Window: React.FC<WindowProps> = ({ window: win }) => {
       case 'help': return <HelpApp />;
       case 'search': return <SearchApp />;
       case 'run': return <RunApp />;
+      case 'recyclebin': return <RecycleBinApp />;
       default: return <div className="p-4">Unknown application</div>;
     }
   };

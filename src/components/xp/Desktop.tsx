@@ -15,7 +15,7 @@ import {
   ContextMenuSubTrigger,
   ContextMenuTrigger,
 } from '@/components/ui/context-menu';
-import { RefreshCw, FolderPlus, Settings, Monitor, ArrowUpDown, LayoutGrid, List } from 'lucide-react';
+import { RefreshCw, FolderPlus, Settings, Monitor, ArrowUpDown, LayoutGrid, List, Trash2 } from 'lucide-react';
 
 // Import icons
 import resumeIcon from '@/assets/icons/resume-icon.png';
@@ -47,6 +47,7 @@ const Desktop: React.FC = () => {
     { id: 'paint', title: 'Paint', iconSrc: paintIcon, component: 'paint' },
     { id: 'notepad', title: 'Notepad', iconSrc: notepadIcon, component: 'notepad' },
     { id: 'mediaplayer', title: 'Media Player', iconSrc: mediaplayerIcon, component: 'mediaplayer' },
+    { id: 'recyclebin', title: 'Recycle Bin', iconSrc: 'recyclebin', component: 'recyclebin', isSystemIcon: true },
   ];
 
   const getWindowSize = (id: string) => {
@@ -57,6 +58,7 @@ const Desktop: React.FC = () => {
       aol: [600, 480],
       napster: [550, 420],
       limewire: [580, 450],
+      recyclebin: [550, 380],
     };
     return sizes[id] || [500, 400];
   };
@@ -101,13 +103,30 @@ const Desktop: React.FC = () => {
         >
           {/* Desktop Icons */}
           <div className="absolute top-4 left-4 flex flex-col gap-2" key={refreshKey}>
-            {desktopIcons.map((icon) => (
+            {desktopIcons.filter(icon => !('isSystemIcon' in icon)).map((icon) => (
               <DesktopIcon
                 key={icon.id}
                 title={icon.title}
                 iconSrc={icon.iconSrc}
                 onDoubleClick={() => handleIconDoubleClick(icon)}
               />
+            ))}
+          </div>
+          
+          {/* Recycle Bin - Bottom Right */}
+          <div className="absolute bottom-12 right-4">
+            {desktopIcons.filter(icon => 'isSystemIcon' in icon).map((icon) => (
+              <div
+                key={icon.id}
+                className="xp-desktop-icon"
+                onDoubleClick={() => handleIconDoubleClick(icon)}
+                tabIndex={0}
+              >
+                <div className="w-12 h-12 flex items-center justify-center">
+                  <Trash2 className="w-10 h-10 text-gray-600 drop-shadow-lg" />
+                </div>
+                <span className="leading-tight">{icon.title}</span>
+              </div>
             ))}
           </div>
 
