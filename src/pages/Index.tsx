@@ -53,7 +53,7 @@ const Index = () => {
   const [windows, setWindows] = useState<WindowState[]>([]);
   const [activeWindowId, setActiveWindowId] = useState<string | null>(null);
   const [zCounter, setZCounter] = useState(100);
-  const { playClick, playWindowOpen, playWindowClose, playMinimize, playMaximize, playShutdown } = useXPSounds();
+  const { playClick, playDing, playChord, playRestore, playLogoff } = useXPSounds();
 
   useEffect(() => {
     const bootTimer = setTimeout(() => setAppState('login'), 3500);
@@ -151,13 +151,13 @@ const Index = () => {
   }, []);
 
   const shutDown = useCallback(() => {
-    playShutdown();
+    playLogoff();
     setWindows([]);
     setActiveWindowId(null);
     setTimeout(() => {
       setAppState('boot');
     }, 3000);
-  }, [playShutdown]);
+  }, [playLogoff]);
 
   if (appState === 'boot') return <BootScreen />;
   if (appState === 'login') return <LoginScreen onLogin={handleLogin} />;
@@ -174,10 +174,10 @@ const Index = () => {
       updateWindowSize,
       activeWindowId,
       playClick,
-      playWindowOpen,
-      playWindowClose,
-      playMinimize,
-      playMaximize,
+      playWindowOpen: playDing,
+      playWindowClose: playChord,
+      playMinimize: playRestore,
+      playMaximize: playRestore,
       logOff,
       shutDown
     }}>
