@@ -37,33 +37,28 @@ const SOUNDS = {
 };
 
 export const useXPSounds = () => {
-  const audioRef = useRef<HTMLAudioElement | null>(null);
   const dialupAudioRef = useRef<HTMLAudioElement | null>(null);
+  const longSoundRef = useRef<HTMLAudioElement | null>(null);
 
   const playSound = useCallback((sound: keyof typeof SOUNDS, volume = 0.3) => {
     try {
-      // Quick sounds that shouldn't interrupt others
-      const quickSounds = [
-        'click', 'minimize', 'maximize', 'windowOpen', 'windowClose',
-        'imReceive', 'imSend', 'buddySignOn', 'buddySignOff', 'menuPopup',
-        'delete', 'deviceConnect', 'deviceDisconnect'
-      ];
+      // Long sounds that should be stoppable (startup, shutdown, etc.)
+      const longSounds = ['startup', 'shutdown', 'logon', 'logoff', 'aolWelcome'];
       
-      if (quickSounds.includes(sound)) {
-        const audio = new Audio(SOUNDS[sound]);
-        audio.volume = volume;
-        audio.play().catch(() => {
-          // Silently fail - audio may not be available
-        });
-        return;
+      // Create a new audio instance for each sound - allows overlapping
+      const audio = new Audio(SOUNDS[sound]);
+      audio.volume = volume;
+      
+      // For long sounds, track them so they can be stopped if needed
+      if (longSounds.includes(sound)) {
+        if (longSoundRef.current) {
+          longSoundRef.current.pause();
+          longSoundRef.current.currentTime = 0;
+        }
+        longSoundRef.current = audio;
       }
       
-      if (audioRef.current) {
-        audioRef.current.pause();
-      }
-      audioRef.current = new Audio(SOUNDS[sound]);
-      audioRef.current.volume = volume;
-      audioRef.current.play().catch(() => {
+      audio.play().catch(() => {
         // Silently fail - audio may not be available
       });
     } catch (e) {
