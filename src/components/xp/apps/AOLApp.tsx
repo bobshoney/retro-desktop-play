@@ -7,16 +7,7 @@ const AOLApp: React.FC = () => {
   const [showWelcome, setShowWelcome] = useState(false);
   const [currentSection, setCurrentSection] = useState<'home' | 'mail' | 'im' | 'search'>('home');
   const [dialupProgress, setDialupProgress] = useState(0);
-  const { playDialup, stopDialup, playAOLWelcome, playIMReceive, playBuddySignOn, playClick } = useXPSounds();
-  const dialupStarted = useRef(false);
-
-  // Start dialup sound on mount
-  useEffect(() => {
-    if (isConnecting && !dialupStarted.current) {
-      dialupStarted.current = true;
-      playDialup();
-    }
-  }, [isConnecting, playDialup]);
+  const { playClick, playNotify, playDing } = useXPSounds();
 
   useEffect(() => {
     if (isConnecting) {
@@ -24,13 +15,12 @@ const AOLApp: React.FC = () => {
         setDialupProgress(prev => {
           if (prev >= 100) {
             clearInterval(interval);
-            stopDialup();
             setIsConnecting(false);
             setShowWelcome(true);
-            playAOLWelcome();
+            playNotify();
             setTimeout(() => {
               setShowWelcome(false);
-              playBuddySignOn();
+              playDing();
             }, 2500);
             return 100;
           }
@@ -39,7 +29,7 @@ const AOLApp: React.FC = () => {
       }, 400);
       return () => clearInterval(interval);
     }
-  }, [isConnecting, stopDialup, playAOLWelcome, playBuddySignOn]);
+  }, [isConnecting, playNotify, playDing]);
 
   if (isConnecting) {
     return (
@@ -100,7 +90,7 @@ const AOLApp: React.FC = () => {
                 key={item.id}
                 onClick={() => {
                   playClick();
-                  if (item.id === 'mail') playIMReceive();
+                  if (item.id === 'mail') playNotify();
                   setCurrentSection(item.id as typeof currentSection);
                 }}
                 className={`flex items-center gap-1 px-2 py-1 rounded text-xs text-white hover:bg-white/20 ${
