@@ -7,7 +7,7 @@ const AOLApp: React.FC = () => {
   const [showWelcome, setShowWelcome] = useState(false);
   const [currentSection, setCurrentSection] = useState<'home' | 'mail' | 'im' | 'search'>('home');
   const [dialupProgress, setDialupProgress] = useState(0);
-  const { playClick, playNotify, playDing } = useXPSounds();
+  const { playNotify, playDing } = useXPSounds();
 
   useEffect(() => {
     if (isConnecting) {
@@ -89,7 +89,6 @@ const AOLApp: React.FC = () => {
               <button
                 key={item.id}
                 onClick={() => {
-                  playClick();
                   if (item.id === 'mail') playNotify();
                   setCurrentSection(item.id as typeof currentSection);
                 }}

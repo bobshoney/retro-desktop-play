@@ -12,7 +12,7 @@ interface DeletedItem {
 }
 
 const RecycleBinApp: React.FC = () => {
-  const { playRecycle, playClick, playError } = useXPSounds();
+  const { playRecycle, playError } = useXPSounds();
   const [deletedItems, setDeletedItems] = useState<DeletedItem[]>([
     { id: '1', name: 'Old Resume.doc', type: 'document', originalLocation: 'C:\\My Documents', deletedDate: '12/15/2003 2:34 PM', size: '24 KB' },
     { id: '2', name: 'vacation_photo.jpg', type: 'image', originalLocation: 'C:\\My Pictures', deletedDate: '12/14/2003 10:22 AM', size: '1.2 MB' },
@@ -47,7 +47,6 @@ const RecycleBinApp: React.FC = () => {
 
   const handleRestoreItem = () => {
     if (!selectedItem) return;
-    playClick();
     setDeletedItems(items => items.filter(item => item.id !== selectedItem));
     setSelectedItem(null);
   };

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useXPSounds } from '@/hooks/useXPSounds';
 
 interface DesktopIconProps {
   title: string;
@@ -9,18 +8,15 @@ interface DesktopIconProps {
 
 const DesktopIcon: React.FC<DesktopIconProps> = ({ title, iconSrc, onDoubleClick }) => {
   const [selected, setSelected] = useState(false);
-  const { playClick } = useXPSounds();
   return (
     <div
       className={`xp-desktop-icon ${selected ? 'selected' : ''}`}
       onClick={(e) => {
         e.stopPropagation();
-        playClick();
         setSelected(true);
       }}
       onDoubleClick={(e) => {
         e.stopPropagation();
-        playClick();
         onDoubleClick();
       }}
       onBlur={() => setSelected(false)}

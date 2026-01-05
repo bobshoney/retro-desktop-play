@@ -31,11 +31,8 @@ interface WindowContextType {
   updateWindowPosition: (id: string, x: number, y: number) => void;
   updateWindowSize: (id: string, width: number, height: number) => void;
   activeWindowId: string | null;
-  playClick: () => void;
   playWindowOpen: () => void;
   playWindowClose: () => void;
-  playMinimize: () => void;
-  playMaximize: () => void;
   logOff: () => void;
   shutDown: () => void;
 }
@@ -53,7 +50,7 @@ const Index = () => {
   const [windows, setWindows] = useState<WindowState[]>([]);
   const [activeWindowId, setActiveWindowId] = useState<string | null>(null);
   const [zCounter, setZCounter] = useState(100);
-  const { playClick, playDing, playChord, playRestore, playLogoff } = useXPSounds();
+  const { playDing, playChord, playLogoff } = useXPSounds();
 
   useEffect(() => {
     const bootTimer = setTimeout(() => setAppState('login'), 3500);
@@ -173,11 +170,8 @@ const Index = () => {
       updateWindowPosition,
       updateWindowSize,
       activeWindowId,
-      playClick,
       playWindowOpen: playDing,
       playWindowClose: playChord,
-      playMinimize: playRestore,
-      playMaximize: playRestore,
       logOff,
       shutDown
     }}>

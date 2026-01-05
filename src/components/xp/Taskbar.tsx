@@ -29,7 +29,7 @@ const Taskbar: React.FC<TaskbarProps> = ({ startMenuOpen, onStartClick }) => {
   const [calendarDate, setCalendarDate] = useState(new Date());
   const [volume, setVolume] = useState(75);
   const [isMuted, setIsMuted] = useState(false);
-  const { windows, focusWindow, minimizeWindow, toggleMaximize, closeWindow, activeWindowId, playClick } = useWindows();
+  const { windows, focusWindow, minimizeWindow, toggleMaximize, closeWindow, activeWindowId } = useWindows();
 
   useEffect(() => {
     const timer = setInterval(() => setTime(new Date()), 1000);
@@ -54,7 +54,6 @@ const Taskbar: React.FC<TaskbarProps> = ({ startMenuOpen, onStartClick }) => {
   };
 
   const handleWindowClick = (windowId: string, isMinimized: boolean) => {
-    playClick();
     if (isMinimized) {
       focusWindow(windowId);
     } else if (activeWindowId === windowId) {
@@ -73,12 +72,10 @@ const Taskbar: React.FC<TaskbarProps> = ({ startMenuOpen, onStartClick }) => {
   };
 
   const prevMonth = () => {
-    playClick();
     setCalendarDate(new Date(calendarDate.getFullYear(), calendarDate.getMonth() - 1, 1));
   };
 
   const nextMonth = () => {
-    playClick();
     setCalendarDate(new Date(calendarDate.getFullYear(), calendarDate.getMonth() + 1, 1));
   };
 
@@ -120,10 +117,7 @@ const Taskbar: React.FC<TaskbarProps> = ({ startMenuOpen, onStartClick }) => {
       {/* Start Button */}
       <button 
         className={`xp-start-button ${startMenuOpen ? 'active' : ''}`}
-        onClick={(e) => {
-          playClick();
-          onStartClick(e);
-        }}
+        onClick={onStartClick}
       >
         <div className="grid grid-cols-2 gap-0.5 w-4 h-4">
           <div className="w-1.5 h-1.5 bg-[#f65314] rounded-sm"></div>
@@ -168,21 +162,21 @@ const Taskbar: React.FC<TaskbarProps> = ({ startMenuOpen, onStartClick }) => {
               <ContextMenuContent className="w-40 bg-[#ece9d8] border-[#0054e3] shadow-md">
                 <ContextMenuItem 
                   className="flex items-center gap-2 text-xs cursor-pointer hover:bg-[#316ac5] hover:text-white"
-                  onClick={() => { playClick(); focusWindow(window.id); }}
+                  onClick={() => focusWindow(window.id)}
                 >
                   <Square className="w-3 h-3" />
                   Restore
                 </ContextMenuItem>
                 <ContextMenuItem 
                   className="flex items-center gap-2 text-xs cursor-pointer hover:bg-[#316ac5] hover:text-white"
-                  onClick={() => { playClick(); minimizeWindow(window.id); }}
+                  onClick={() => minimizeWindow(window.id)}
                 >
                   <Minus className="w-3 h-3" />
                   Minimize
                 </ContextMenuItem>
                 <ContextMenuItem 
                   className="flex items-center gap-2 text-xs cursor-pointer hover:bg-[#316ac5] hover:text-white"
-                  onClick={() => { playClick(); toggleMaximize(window.id); }}
+                  onClick={() => toggleMaximize(window.id)}
                 >
                   <Square className="w-3 h-3" />
                   {window.isMaximized ? 'Restore' : 'Maximize'}
@@ -190,7 +184,7 @@ const Taskbar: React.FC<TaskbarProps> = ({ startMenuOpen, onStartClick }) => {
                 <ContextMenuSeparator className="bg-gray-400" />
                 <ContextMenuItem 
                   className="flex items-center gap-2 text-xs cursor-pointer hover:bg-[#316ac5] hover:text-white font-bold"
-                  onClick={() => { playClick(); closeWindow(window.id); }}
+                  onClick={() => closeWindow(window.id)}
                 >
                   <X className="w-3 h-3" />
                   Close
@@ -213,7 +207,6 @@ const Taskbar: React.FC<TaskbarProps> = ({ startMenuOpen, onStartClick }) => {
           <PopoverTrigger asChild>
             <button 
               className="hover:bg-white/10 p-0.5 rounded cursor-pointer"
-              onClick={() => playClick()}
             >
               {isMuted || volume === 0 ? (
                 <VolumeX className="w-4 h-4 text-white/80" />
@@ -255,10 +248,7 @@ const Taskbar: React.FC<TaskbarProps> = ({ startMenuOpen, onStartClick }) => {
                 <input 
                   type="checkbox" 
                   checked={isMuted}
-                  onChange={(e) => {
-                    playClick();
-                    setIsMuted(e.target.checked);
-                  }}
+                  onChange={(e) => setIsMuted(e.target.checked)}
                   className="w-3 h-3"
                 />
                 Mute
@@ -272,7 +262,6 @@ const Taskbar: React.FC<TaskbarProps> = ({ startMenuOpen, onStartClick }) => {
           <PopoverTrigger asChild>
             <button 
               className="hover:bg-white/10 p-0.5 rounded cursor-pointer"
-              onClick={() => playClick()}
             >
               <Wifi className="w-4 h-4 text-white/80" />
             </button>
@@ -361,10 +350,7 @@ const Taskbar: React.FC<TaskbarProps> = ({ startMenuOpen, onStartClick }) => {
           <PopoverTrigger asChild>
             <button 
               className="text-white text-xs font-medium pl-2 hover:bg-white/10 px-1 py-0.5 rounded cursor-pointer"
-              onClick={() => {
-                playClick();
-                setCalendarDate(new Date());
-              }}
+              onClick={() => setCalendarDate(new Date())}
             >
               {formatTime(time)}
             </button>
