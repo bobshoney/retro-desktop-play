@@ -33,7 +33,7 @@ import mediaplayerIcon from '@/assets/icons/mediaplayer-icon.png';
 const Desktop: React.FC = () => {
   const [startMenuOpen, setStartMenuOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
-  const { windows, openWindow, playWindowOpen, logOff, shutDown } = useWindows();
+  const { windows, openWindow, logOff, shutDown } = useWindows();
 
   const desktopIcons = [
     { id: 'resume', title: 'My Resume', iconSrc: resumeIcon, component: 'resume' },
@@ -65,7 +65,6 @@ const Desktop: React.FC = () => {
 
   const handleIconDoubleClick = (icon: typeof desktopIcons[0]) => {
     const [width, height] = getWindowSize(icon.id);
-    playWindowOpen();
     openWindow(icon.id, icon.title, icon.component, icon.iconSrc, width, height);
   };
 
@@ -82,7 +81,6 @@ const Desktop: React.FC = () => {
   };
 
   const handleProperties = () => {
-    playWindowOpen();
     openWindow('controlpanel', 'Display Properties', 'controlpanel', undefined, 450, 400);
   };
 
