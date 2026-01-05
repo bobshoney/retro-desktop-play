@@ -5,7 +5,7 @@ import { useXPSounds } from '@/hooks/useXPSounds';
 
 const RunApp: React.FC = () => {
   const [command, setCommand] = useState('');
-  const { openWindow, closeWindow, playWindowOpen } = useWindows();
+  const { openWindow, closeWindow } = useWindows();
   const { playError } = useXPSounds();
 
   const handleRun = () => {
@@ -28,7 +28,6 @@ const RunApp: React.FC = () => {
     };
 
     if (commandMap[cmd]) {
-      playWindowOpen();
       openWindow(commandMap[cmd].id, commandMap[cmd].title, commandMap[cmd].component);
       closeWindow('run');
     } else {
