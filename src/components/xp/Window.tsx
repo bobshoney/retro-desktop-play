@@ -38,7 +38,7 @@ interface WindowProps {
 type ResizeDirection = 'n' | 's' | 'e' | 'w' | 'ne' | 'nw' | 'se' | 'sw' | null;
 
 const Window: React.FC<WindowProps> = ({ window: win }) => {
-  const { closeWindow, focusWindow, minimizeWindow, toggleMaximize, updateWindowPosition, updateWindowSize, activeWindowId, playWindowClose } = useWindows();
+  const { closeWindow, focusWindow, minimizeWindow, toggleMaximize, updateWindowPosition, updateWindowSize, activeWindowId } = useWindows();
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState<ResizeDirection>(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
@@ -232,7 +232,7 @@ const Window: React.FC<WindowProps> = ({ window: win }) => {
           </button>
           <button 
             className="xp-window-button close"
-            onClick={(e) => { e.stopPropagation(); playWindowClose(); closeWindow(win.id); }}
+            onClick={(e) => { e.stopPropagation(); closeWindow(win.id); }}
           >
             <X className="w-3 h-3" />
           </button>
