@@ -1,6 +1,17 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useXPSounds } from '@/hooks/useXPSounds';
 
 const BootScreen: React.FC = () => {
+  const { playStartup } = useXPSounds();
+
+  useEffect(() => {
+    // Play startup sound when boot screen is about to finish (at 3 seconds)
+    const timer = setTimeout(() => {
+      playStartup();
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [playStartup]);
+
   return (
     <div className="xp-boot-screen">
       <div className="flex flex-col items-center gap-8">

@@ -33,7 +33,7 @@ import mediaplayerIcon from '@/assets/icons/mediaplayer-icon.png';
 const Desktop: React.FC = () => {
   const [startMenuOpen, setStartMenuOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
-  const { windows, openWindow, playWindowOpen, playClick, logOff, shutDown } = useWindows();
+  const { windows, openWindow, playWindowOpen, logOff, shutDown } = useWindows();
 
   const desktopIcons = [
     { id: 'resume', title: 'My Resume', iconSrc: resumeIcon, component: 'resume' },
@@ -74,17 +74,14 @@ const Desktop: React.FC = () => {
   };
 
   const handleRefresh = () => {
-    playClick();
     setRefreshKey(k => k + 1);
   };
 
   const handleNewFolder = () => {
-    playClick();
     // Simulated - in real app would create folder
   };
 
   const handleProperties = () => {
-    playClick();
     playWindowOpen();
     openWindow('controlpanel', 'Display Properties', 'controlpanel', undefined, 450, 400);
   };

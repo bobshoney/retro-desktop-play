@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Terminal, Folder } from 'lucide-react';
 import { useWindows } from '@/pages/Index';
+import { useXPSounds } from '@/hooks/useXPSounds';
 
 const RunApp: React.FC = () => {
   const [command, setCommand] = useState('');
-  const { openWindow, closeWindow, playWindowOpen, playClick } = useWindows();
+  const { openWindow, closeWindow, playWindowOpen } = useWindows();
+  const { playError } = useXPSounds();
 
   const handleRun = () => {
     const cmd = command.toLowerCase().trim();
@@ -30,13 +32,12 @@ const RunApp: React.FC = () => {
       openWindow(commandMap[cmd].id, commandMap[cmd].title, commandMap[cmd].component);
       closeWindow('run');
     } else {
-      playClick();
+      playError();
       alert(`Windows cannot find '${command}'. Make sure you typed the name correctly, and then try again.`);
     }
   };
 
   const handleCancel = () => {
-    playClick();
     closeWindow('run');
   };
 

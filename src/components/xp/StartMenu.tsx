@@ -22,7 +22,7 @@ interface StartMenuProps {
 }
 
 const StartMenu: React.FC<StartMenuProps> = ({ onClose, onLogOff, onShutDown }) => {
-  const { openWindow, playClick, playWindowOpen } = useWindows();
+  const { openWindow, playWindowOpen } = useWindows();
   const [showAllPrograms, setShowAllPrograms] = useState(false);
 
   // Frequently used / pinned programs
@@ -89,19 +89,15 @@ const StartMenu: React.FC<StartMenuProps> = ({ onClose, onLogOff, onShutDown }) 
       const [width, height] = getWindowSize(item.id);
       openWindow(item.id!, item.label, item.component, item.iconSrc, width, height);
       onClose();
-    } else {
-      playClick();
     }
   };
 
   const handleLogOff = () => {
-    playClick();
     onLogOff?.();
     onClose();
   };
 
   const handleShutDown = () => {
-    playClick();
     onShutDown?.();
   };
 
