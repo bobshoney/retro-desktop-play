@@ -7,11 +7,12 @@ interface LoginScreenProps {
 }
 
 const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
-  const { playLogon } = useXPSounds();
+  const { playStartup } = useXPSounds();
 
   const handleLogin = () => {
-    // Play logon sound on login (requires user interaction for browser autoplay policy)
-    playLogon();
+    // Play startup sound on login (requires user interaction for browser autoplay policy)
+    // This is the iconic XP startup sound that plays when Windows loads
+    playStartup();
     onLogin();
   };
 
