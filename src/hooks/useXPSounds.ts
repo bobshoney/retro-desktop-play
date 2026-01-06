@@ -1,6 +1,6 @@
 import { useCallback, useRef } from 'react';
 
-// Local Windows XP sounds - downloaded from archive.org
+// Local Windows XP sounds
 const SOUNDS = {
   startup: '/sounds/xp-startup.opus',
   logoff: '/sounds/xp-logoff.opus',
@@ -21,28 +21,26 @@ export const useXPSounds = () => {
   const longSoundRef = useRef<HTMLAudioElement | null>(null);
 
   const playSound = useCallback((sound: keyof typeof SOUNDS, volume = 0.3) => {
-    try {
-      // Long sounds that should stop previous long sounds
-      const longSounds = ['startup', 'logoff', 'logon'];
-      
-      const audio = new Audio(SOUNDS[sound]);
-      audio.volume = volume;
-      
-      if (longSounds.includes(sound)) {
-        if (longSoundRef.current) {
-          longSoundRef.current.pause();
-          longSoundRef.current.currentTime = 0;
-        }
-        longSoundRef.current = audio;
+    // Long sounds that should stop previous long sounds
+    const longSounds = ['startup', 'logoff', 'logon'];
+    
+    const audio = new Audio(SOUNDS[sound]);
+    audio.volume = volume;
+    
+    if (longSounds.includes(sound)) {
+      if (longSoundRef.current) {
+        longSoundRef.current.pause();
+        longSoundRef.current.currentTime = 0;
       }
-      
-      audio.play().catch(() => {});
-    } catch {
-      // Silent fail
+      longSoundRef.current = audio;
     }
+    
+    audio.play().catch(() => {
+      // Silent fail - browser may block autoplay
+    });
   }, []);
 
-  // System sounds - play at appropriate moments
+  // System sounds
   const playStartup = useCallback(() => playSound('startup', 0.5), [playSound]);
   const playLogoff = useCallback(() => playSound('logoff', 0.5), [playSound]);
   const playLogon = useCallback(() => playSound('logon', 0.5), [playSound]);
@@ -68,32 +66,19 @@ export const useXPSounds = () => {
   const playRestore = useCallback(() => playSound('restore', 0.25), [playSound]);
 
   return {
-    // System
     playStartup,
     playLogoff,
     playLogon,
-    
-    // UI
     playClick,
     playError,
     playNotify,
     playDing,
     playChord,
-    
-    // Recycle bin
     playRecycle,
-    
-    // Critical
     playCritical,
-    
-    // Hardware
     playHardwareInsert,
     playHardwareRemove,
-    
-    // Window
     playRestore,
-    
-    // Generic
     playSound,
   };
 };
