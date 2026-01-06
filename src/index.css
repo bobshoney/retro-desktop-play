@@ -313,4 +313,33 @@
     );
     z-index: 99998;
   }
+
+  .xp-shutdown-screen {
+    @apply fixed inset-0 flex flex-col items-center justify-center;
+    background: linear-gradient(180deg, 
+      hsl(221 100% 20%) 0%, 
+      hsl(221 85% 35%) 50%,
+      hsl(207 70% 40%) 100%
+    );
+    z-index: 99999;
+    animation: shutdownFadeIn 0.5s ease-out forwards;
+  }
+
+  .xp-shutdown-fade {
+    @apply fixed inset-0;
+    background: hsl(0 0% 0%);
+    opacity: 0;
+    animation: shutdownFadeOut 2.5s ease-in 0.5s forwards;
+    pointer-events: none;
+  }
+
+  @keyframes shutdownFadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+
+  @keyframes shutdownFadeOut {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
 }

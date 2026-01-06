@@ -1,10 +1,11 @@
 import React, { useState, useEffect, createContext, useContext, useCallback } from 'react';
 import BootScreen from '@/components/xp/BootScreen';
 import LoginScreen from '@/components/xp/LoginScreen';
+import ShutdownScreen from '@/components/xp/ShutdownScreen';
 import Desktop from '@/components/xp/Desktop';
 import { useXPSounds } from '@/hooks/useXPSounds';
 
-type AppState = 'boot' | 'login' | 'desktop';
+type AppState = 'boot' | 'login' | 'desktop' | 'shutdown';
 
 interface WindowState {
   id: string;
@@ -149,13 +150,15 @@ const Index = () => {
     playLogoff();
     setWindows([]);
     setActiveWindowId(null);
+    setAppState('shutdown');
     setTimeout(() => {
       setAppState('boot');
-    }, 3000);
+    }, 3500);
   }, [playLogoff]);
 
   if (appState === 'boot') return <BootScreen />;
   if (appState === 'login') return <LoginScreen onLogin={handleLogin} />;
+  if (appState === 'shutdown') return <ShutdownScreen />;
 
   return (
     <WindowContext.Provider value={{
