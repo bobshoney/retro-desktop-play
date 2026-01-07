@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Volume2, Volume1, VolumeX, Wifi, Minus, Square, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useWindows } from '@/pages/Index';
+import { useSounds } from '@/contexts/SoundContext';
 import {
   ContextMenu,
   ContextMenuContent,
@@ -27,9 +28,8 @@ const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June',
 const Taskbar: React.FC<TaskbarProps> = ({ startMenuOpen, onStartClick }) => {
   const [time, setTime] = useState(new Date());
   const [calendarDate, setCalendarDate] = useState(new Date());
-  const [volume, setVolume] = useState(75);
-  const [isMuted, setIsMuted] = useState(false);
   const { windows, focusWindow, minimizeWindow, toggleMaximize, closeWindow, activeWindowId } = useWindows();
+  const { volume, isMuted, setVolume, setMuted } = useSounds();
 
   useEffect(() => {
     const timer = setInterval(() => setTime(new Date()), 1000);
@@ -232,7 +232,7 @@ const Taskbar: React.FC<TaskbarProps> = ({ startMenuOpen, onStartClick }) => {
                   value={[isMuted ? 0 : volume]}
                   onValueChange={(value) => {
                     setVolume(value[0]);
-                    if (value[0] > 0) setIsMuted(false);
+                    if (value[0] > 0) setMuted(false);
                   }}
                   max={100}
                   step={1}
@@ -248,7 +248,7 @@ const Taskbar: React.FC<TaskbarProps> = ({ startMenuOpen, onStartClick }) => {
                 <input 
                   type="checkbox" 
                   checked={isMuted}
-                  onChange={(e) => setIsMuted(e.target.checked)}
+                  onChange={(e) => setMuted(e.target.checked)}
                   className="w-3 h-3"
                 />
                 Mute
