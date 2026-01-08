@@ -137,27 +137,25 @@ const Taskbar: React.FC<TaskbarProps> = ({ startMenuOpen, onStartClick }) => {
           const isActive = activeWindowId === window.id && !window.isMinimized;
           return (
             <ContextMenu key={window.id}>
-              <ContextMenuTrigger asChild>
-                <button
-                  onClick={() => handleWindowClick(window.id, window.isMinimized)}
-                  className={`h-7 px-2 text-xs text-white truncate max-w-44 rounded-sm border transition-all flex items-center gap-1.5
-                    ${isActive 
-                      ? 'border-blue-300/50 shadow-inner' 
-                      : 'border-transparent hover:border-blue-400/30'
-                    }`}
-                  style={{
-                    background: isActive
-                      ? 'linear-gradient(180deg, #1e4a8a 0%, #0d3a6e 50%, #0a2d52 100%)'
-                      : window.isMinimized 
-                        ? 'linear-gradient(180deg, #4a7fc5 0%, #3b6eb5 100%)'
-                        : 'linear-gradient(180deg, #3b7dd8 0%, #2a6bc8 50%, #1e5ab8 100%)'
-                  }}
-                >
-                  {window.iconSrc && (
-                    <img src={window.iconSrc} alt="" className="w-4 h-4 flex-shrink-0" />
-                  )}
-                  <span className="truncate">{window.title}</span>
-                </button>
+              <ContextMenuTrigger
+                onClick={() => handleWindowClick(window.id, window.isMinimized)}
+                className={`h-7 px-2 text-xs text-white truncate max-w-44 rounded-sm border transition-all flex items-center gap-1.5 cursor-pointer
+                  ${isActive 
+                    ? 'border-blue-300/50 shadow-inner' 
+                    : 'border-transparent hover:border-blue-400/30'
+                  }`}
+                style={{
+                  background: isActive
+                    ? 'linear-gradient(180deg, #1e4a8a 0%, #0d3a6e 50%, #0a2d52 100%)'
+                    : window.isMinimized 
+                      ? 'linear-gradient(180deg, #4a7fc5 0%, #3b6eb5 100%)'
+                      : 'linear-gradient(180deg, #3b7dd8 0%, #2a6bc8 50%, #1e5ab8 100%)'
+                }}
+              >
+                {window.iconSrc && (
+                  <img src={window.iconSrc} alt="" className="w-4 h-4 flex-shrink-0" />
+                )}
+                <span className="truncate">{window.title}</span>
               </ContextMenuTrigger>
               <ContextMenuContent className="w-40 bg-[#ece9d8] border-[#0054e3] shadow-md">
                 <ContextMenuItem 
@@ -204,18 +202,14 @@ const Taskbar: React.FC<TaskbarProps> = ({ startMenuOpen, onStartClick }) => {
       >
         {/* Volume Control Popup */}
         <Popover>
-          <PopoverTrigger asChild>
-            <button 
-              className="hover:bg-white/10 p-0.5 rounded cursor-pointer"
-            >
-              {isMuted || volume === 0 ? (
-                <VolumeX className="w-4 h-4 text-white/80" />
-              ) : volume < 50 ? (
-                <Volume1 className="w-4 h-4 text-white/80" />
-              ) : (
-                <Volume2 className="w-4 h-4 text-white/80" />
-              )}
-            </button>
+          <PopoverTrigger className="hover:bg-white/10 p-0.5 rounded cursor-pointer">
+            {isMuted || volume === 0 ? (
+              <VolumeX className="w-4 h-4 text-white/80" />
+            ) : volume < 50 ? (
+              <Volume1 className="w-4 h-4 text-white/80" />
+            ) : (
+              <Volume2 className="w-4 h-4 text-white/80" />
+            )}
           </PopoverTrigger>
           <PopoverContent 
             className="w-24 p-3 bg-[#ece9d8] border-2 border-[#0054e3] shadow-lg"
@@ -259,12 +253,8 @@ const Taskbar: React.FC<TaskbarProps> = ({ startMenuOpen, onStartClick }) => {
         
         {/* Network Status Popup */}
         <Popover>
-          <PopoverTrigger asChild>
-            <button 
-              className="hover:bg-white/10 p-0.5 rounded cursor-pointer"
-            >
-              <Wifi className="w-4 h-4 text-white/80" />
-            </button>
+          <PopoverTrigger className="hover:bg-white/10 p-0.5 rounded cursor-pointer">
+            <Wifi className="w-4 h-4 text-white/80" />
           </PopoverTrigger>
           <PopoverContent 
             className="w-64 p-0 bg-[#ece9d8] border-2 border-[#0054e3] shadow-lg"
@@ -347,13 +337,11 @@ const Taskbar: React.FC<TaskbarProps> = ({ startMenuOpen, onStartClick }) => {
         
         {/* Clock with Calendar Popup */}
         <Popover>
-          <PopoverTrigger asChild>
-            <button 
-              className="text-white text-xs font-medium pl-2 hover:bg-white/10 px-1 py-0.5 rounded cursor-pointer"
-              onClick={() => setCalendarDate(new Date())}
-            >
-              {formatTime(time)}
-            </button>
+          <PopoverTrigger 
+            className="text-white text-xs font-medium pl-2 hover:bg-white/10 px-1 py-0.5 rounded cursor-pointer"
+            onClick={() => setCalendarDate(new Date())}
+          >
+            {formatTime(time)}
           </PopoverTrigger>
           <PopoverContent 
             className="w-56 p-0 bg-[#ece9d8] border-2 border-[#0054e3] shadow-lg"
