@@ -121,6 +121,8 @@ export const SoundProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, []);
 
   const playSound = useCallback((sound: SoundName, volumeMultiplier = 1) => {
+    console.log(`[XP Sounds] playSound called: ${sound}, muted: ${isMuted}, volume: ${volume}`);
+    
     if (isMuted || volume === 0) {
       console.log(`[XP Sounds] Skipped ${sound} (muted or volume 0)`);
       return;
@@ -128,6 +130,8 @@ export const SoundProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
     const basePath = SOUNDS[sound];
     const soundUrl = `${basePath}.${audioFormat}`;
+    
+    console.log(`[XP Sounds] Attempting to play: ${soundUrl}`);
     
     // Long sounds that should stop previous long sounds
     const longSounds: SoundName[] = ['startup', 'logoff', 'logon'];
@@ -145,24 +149,28 @@ export const SoundProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         longSoundRef.current = audio;
       }
       
-      audio.play()
-        .then(() => {
-          console.log(`[XP Sounds] Playing: ${sound} (format: ${audioFormat}, volume: ${Math.round(audio.volume * 100)}%)`);
-        })
-        .catch((err) => {
-          console.warn(`[XP Sounds] Failed to play ${sound}:`, err.message);
-          
-          // If opus failed, try mp3 fallback
-          if (audioFormat === 'opus' && err.message.includes('format')) {
-            console.log('[XP Sounds] Trying MP3 fallback...');
-            const fallbackUrl = `${basePath}.mp3`;
-            const fallbackAudio = new Audio(fallbackUrl);
-            fallbackAudio.volume = audio.volume;
-            fallbackAudio.play().catch(e => {
-              console.warn(`[XP Sounds] MP3 fallback also failed:`, e.message);
-            });
-          }
-        });
+      const playPromise = audio.play();
+      
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            console.log(`[XP Sounds] Playing: ${sound} (format: ${audioFormat}, volume: ${Math.round(audio.volume * 100)}%)`);
+          })
+          .catch((err) => {
+            console.warn(`[XP Sounds] Failed to play ${sound}:`, err.message);
+            
+            // If opus failed, try mp3 fallback
+            if (audioFormat === 'opus') {
+              console.log('[XP Sounds] Trying MP3 fallback...');
+              const fallbackUrl = `${basePath}.mp3`;
+              const fallbackAudio = new Audio(fallbackUrl);
+              fallbackAudio.volume = audio.volume;
+              fallbackAudio.play().catch(e => {
+                console.warn(`[XP Sounds] MP3 fallback also failed:`, e.message);
+              });
+            }
+          });
+      }
 
       // Clean up after playing
       audio.addEventListener('ended', () => {
