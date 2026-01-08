@@ -1,18 +1,23 @@
 import React from 'react';
 import { User } from 'lucide-react';
-import { useXPSounds } from '@/hooks/useXPSounds';
+import { useSounds } from '@/contexts/SoundContext';
 
 interface LoginScreenProps {
   onLogin: () => void;
 }
 
 const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
-  const { playStartup } = useXPSounds();
+  const { playStartup, unlockAudio } = useSounds();
 
   const handleLogin = () => {
-    // Play startup sound on login (requires user interaction for browser autoplay policy)
-    // This is the iconic XP startup sound that plays when Windows loads
-    playStartup();
+    // First unlock audio (required for first user interaction)
+    unlockAudio();
+    
+    // Play startup sound with a small delay to ensure audio is unlocked
+    setTimeout(() => {
+      playStartup();
+    }, 50);
+    
     onLogin();
   };
 
