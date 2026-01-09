@@ -10,6 +10,7 @@ import NotepadApp from './apps/NotepadApp';
 import MediaPlayerApp from './apps/MediaPlayerApp';
 import NapsterApp from './apps/NapsterApp';
 import LimeWireApp from './apps/LimeWireApp';
+import KazaaApp from './apps/KazaaApp';
 import WinampApp from './apps/WinampApp';
 import AOLApp from './apps/AOLApp';
 import InternetExplorerApp from './apps/InternetExplorerApp';
@@ -148,6 +149,7 @@ const Window: React.FC<WindowProps> = ({ window: win }) => {
       case 'mediaplayer': return <MediaPlayerApp />;
       case 'napster': return <NapsterApp />;
       case 'limewire': return <LimeWireApp />;
+      case 'kazaa': return <KazaaApp />;
       case 'winamp': return <WinampApp />;
       case 'aol': return <AOLApp />;
       case 'ie': return <InternetExplorerApp />;

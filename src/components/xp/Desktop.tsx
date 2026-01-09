@@ -25,11 +25,13 @@ import ieIcon from '@/assets/icons/ie-icon.png';
 import aolIcon from '@/assets/icons/aol-icon.png';
 import napsterIcon from '@/assets/icons/napster-icon.png';
 import limewireIcon from '@/assets/icons/limewire-icon.png';
+import kazaaIcon from '@/assets/icons/kazaa-icon.png';
 import winampIcon from '@/assets/icons/winamp-icon.png';
 import minesweeperIcon from '@/assets/icons/minesweeper-icon.png';
 import paintIcon from '@/assets/icons/paint-icon.png';
 import notepadIcon from '@/assets/icons/notepad-icon.png';
 import mediaplayerIcon from '@/assets/icons/mediaplayer-icon.png';
+
 const Desktop: React.FC = () => {
   const [startMenuOpen, setStartMenuOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
@@ -43,6 +45,7 @@ const Desktop: React.FC = () => {
     { id: 'aol', title: 'AOL 9.0', iconSrc: aolIcon, component: 'aol' },
     { id: 'napster', title: 'Napster', iconSrc: napsterIcon, component: 'napster' },
     { id: 'limewire', title: 'LimeWire', iconSrc: limewireIcon, component: 'limewire' },
+    { id: 'kazaa', title: 'Kazaa', iconSrc: kazaaIcon, component: 'kazaa' },
     { id: 'winamp', title: 'Winamp', iconSrc: winampIcon, component: 'winamp' },
     { id: 'minesweeper', title: 'Minesweeper', iconSrc: minesweeperIcon, component: 'minesweeper' },
     { id: 'paint', title: 'Paint', iconSrc: paintIcon, component: 'paint' },
@@ -59,6 +62,7 @@ const Desktop: React.FC = () => {
       aol: [600, 480],
       napster: [550, 420],
       limewire: [580, 450],
+      kazaa: [560, 440],
       winamp: [300, 400],
       recyclebin: [550, 380],
     };
