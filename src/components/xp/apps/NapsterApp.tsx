@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Download, Music, Search, User, Pause, Play } from 'lucide-react';
+import { Download, Music, Search, User } from 'lucide-react';
+import { useDownloads } from '@/contexts/DownloadsContext';
 
 interface Track {
   id: number;
@@ -9,31 +10,52 @@ interface Track {
   bitrate: string;
   status: 'available' | 'downloading' | 'complete';
   progress: number;
+  audioUrl: string;
+  duration: string;
 }
 
 const NapsterApp: React.FC = () => {
+  const { addDownload, downloads } = useDownloads();
   const [searchQuery, setSearchQuery] = useState('');
   const [tracks, setTracks] = useState<Track[]>([
-    { id: 1, title: 'Californication', artist: 'Red Hot Chili Peppers', size: '4.2 MB', bitrate: '128 kbps', status: 'available', progress: 0 },
-    { id: 2, title: 'In The End', artist: 'Linkin Park', size: '3.8 MB', bitrate: '128 kbps', status: 'available', progress: 0 },
-    { id: 3, title: 'Bring Me To Life', artist: 'Evanescence', size: '4.1 MB', bitrate: '128 kbps', status: 'available', progress: 0 },
-    { id: 4, title: 'Lose Yourself', artist: 'Eminem', size: '5.2 MB', bitrate: '192 kbps', status: 'available', progress: 0 },
-    { id: 5, title: 'Crazy In Love', artist: 'Beyonce ft. Jay-Z', size: '3.9 MB', bitrate: '128 kbps', status: 'available', progress: 0 },
-    { id: 6, title: 'Hey Ya!', artist: 'OutKast', size: '4.0 MB', bitrate: '128 kbps', status: 'available', progress: 0 },
-    { id: 7, title: 'Mr. Brightside', artist: 'The Killers', size: '3.7 MB', bitrate: '128 kbps', status: 'available', progress: 0 },
-    { id: 8, title: 'Boulevard of Broken Dreams', artist: 'Green Day', size: '4.5 MB', bitrate: '192 kbps', status: 'available', progress: 0 },
+    { id: 1, title: 'Windows XP Startup', artist: 'Microsoft', size: '142 KB', bitrate: '128 kbps', status: 'available', progress: 0, audioUrl: '/sounds/xp-startup.mp3', duration: '0:04' },
+    { id: 2, title: 'XP Logon Sound', artist: 'Microsoft', size: '189 KB', bitrate: '128 kbps', status: 'available', progress: 0, audioUrl: '/sounds/xp-logon.mp3', duration: '0:05' },
+    { id: 3, title: 'XP Chord', artist: 'Microsoft', size: '98 KB', bitrate: '128 kbps', status: 'available', progress: 0, audioUrl: '/sounds/xp-chord.mp3', duration: '0:02' },
+    { id: 4, title: 'XP Ding', artist: 'Microsoft', size: '45 KB', bitrate: '128 kbps', status: 'available', progress: 0, audioUrl: '/sounds/xp-ding.mp3', duration: '0:01' },
+    { id: 5, title: 'XP Notify', artist: 'Microsoft', size: '67 KB', bitrate: '128 kbps', status: 'available', progress: 0, audioUrl: '/sounds/xp-notify.mp3', duration: '0:01' },
+    { id: 6, title: 'AOL Welcome', artist: 'America Online', size: '89 KB', bitrate: '128 kbps', status: 'available', progress: 0, audioUrl: '/sounds/aol-welcome.ogg', duration: '0:02' },
+    { id: 7, title: 'You Got Mail', artist: 'America Online', size: '54 KB', bitrate: '128 kbps', status: 'available', progress: 0, audioUrl: '/sounds/aol-youvegotmail.ogg', duration: '0:01' },
+    { id: 8, title: 'Buddy Sign On', artist: 'America Online', size: '32 KB', bitrate: '128 kbps', status: 'available', progress: 0, audioUrl: '/sounds/aol-buddyin.ogg', duration: '0:01' },
   ]);
 
+  const isDownloaded = (trackId: number) => {
+    return downloads.some(d => d.id === `napster-${trackId}`);
+  };
+
   const startDownload = (id: number) => {
+    const track = tracks.find(t => t.id === id);
+    if (!track || isDownloaded(id)) return;
+
     setTracks(prev => prev.map(t => 
       t.id === id ? { ...t, status: 'downloading' as const, progress: 0 } : t
     ));
 
     const interval = setInterval(() => {
       setTracks(prev => {
-        const track = prev.find(t => t.id === id);
-        if (!track || track.progress >= 100) {
+        const currentTrack = prev.find(t => t.id === id);
+        if (!currentTrack || currentTrack.progress >= 100) {
           clearInterval(interval);
+          // Add to downloads when complete
+          if (track) {
+            addDownload({
+              id: `napster-${id}`,
+              title: track.title,
+              artist: track.artist,
+              source: 'napster',
+              audioUrl: track.audioUrl,
+              duration: track.duration,
+            });
+          }
           return prev.map(t => 
             t.id === id ? { ...t, status: 'complete' as const, progress: 100 } : t
           );
@@ -79,6 +101,8 @@ const NapsterApp: React.FC = () => {
         </span>
         <span>|</span>
         <span>4,234,567 songs shared</span>
+        <span>|</span>
+        <span className="text-green-400">📥 {downloads.filter(d => d.source === 'napster').length} downloaded</span>
       </div>
 
       {/* Track list */}
@@ -90,7 +114,7 @@ const NapsterApp: React.FC = () => {
               <th className="text-left p-2">Artist</th>
               <th className="text-left p-2">Size</th>
               <th className="text-left p-2">Bitrate</th>
-              <th className="text-left p-2 w-24">Action</th>
+              <th className="text-left p-2 w-28">Action</th>
             </tr>
           </thead>
           <tbody>
@@ -107,23 +131,23 @@ const NapsterApp: React.FC = () => {
                 <td className="p-2">{track.size}</td>
                 <td className="p-2">{track.bitrate}</td>
                 <td className="p-2">
-                  {track.status === 'available' && (
+                  {isDownloaded(track.id) ? (
+                    <span className="text-green-400 text-xs">✓ In Winamp</span>
+                  ) : track.status === 'available' ? (
                     <button 
                       onClick={() => startDownload(track.id)}
                       className="flex items-center gap-1 bg-[#e94560] hover:bg-[#ff6b6b] px-2 py-0.5 rounded text-xs"
                     >
                       <Download className="w-3 h-3" /> Get
                     </button>
-                  )}
-                  {track.status === 'downloading' && (
+                  ) : track.status === 'downloading' ? (
                     <div className="w-full bg-[#0f3460] rounded h-4 overflow-hidden">
                       <div 
                         className="h-full bg-[#e94560] transition-all duration-300"
                         style={{ width: `${track.progress}%` }}
                       />
                     </div>
-                  )}
-                  {track.status === 'complete' && (
+                  ) : (
                     <span className="text-green-400 text-xs">✓ Complete</span>
                   )}
                 </td>
@@ -134,8 +158,9 @@ const NapsterApp: React.FC = () => {
       </div>
 
       {/* Footer */}
-      <div className="bg-[#0f3460] px-3 py-2 text-xs text-gray-400">
-        ⚠️ Remember: Sharing copyrighted music is illegal... but this is just a simulation! 🎵
+      <div className="bg-[#0f3460] px-3 py-2 text-xs text-gray-400 flex justify-between">
+        <span>⚠️ Remember: Sharing copyrighted music is illegal... but this is just a simulation! 🎵</span>
+        <span className="text-green-400">Open Winamp to play downloads →</span>
       </div>
     </div>
   );

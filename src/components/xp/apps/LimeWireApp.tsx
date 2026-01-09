@@ -1,33 +1,43 @@
 import React, { useState } from 'react';
 import { Download, Search, AlertTriangle, Zap, File, Music, Film, Image } from 'lucide-react';
+import { useDownloads } from '@/contexts/DownloadsContext';
 
 interface TorrentFile {
   id: number;
   name: string;
+  displayName: string;
+  artist: string;
   type: 'music' | 'video' | 'software' | 'other';
   size: string;
   seeds: number;
   status: 'available' | 'downloading' | 'complete' | 'virus';
   progress: number;
   isVirus: boolean;
+  audioUrl?: string;
+  duration?: string;
 }
 
 const LimeWireApp: React.FC = () => {
+  const { addDownload, downloads } = useDownloads();
   const [searchQuery, setSearchQuery] = useState('');
   const [files, setFiles] = useState<TorrentFile[]>([
-    { id: 1, name: 'linkin_park_meteora_full_album.zip', type: 'music', size: '89.4 MB', seeds: 234, status: 'available', progress: 0, isVirus: false },
-    { id: 2, name: 'totally_legit_photoshop_cs2.exe', type: 'software', size: '12.3 MB', seeds: 45, status: 'available', progress: 0, isVirus: true },
-    { id: 3, name: 'the_matrix_dvdrip_xvid.avi', type: 'video', size: '702 MB', seeds: 567, status: 'available', progress: 0, isVirus: false },
-    { id: 4, name: 'definitely_not_a_virus.exe', type: 'other', size: '43 KB', seeds: 12, status: 'available', progress: 0, isVirus: true },
-    { id: 5, name: 'nelly_hot_in_herre.mp3', type: 'music', size: '4.2 MB', seeds: 89, status: 'available', progress: 0, isVirus: false },
-    { id: 6, name: 'spiderman_2002_cam_quality.avi', type: 'video', size: '1.2 GB', seeds: 23, status: 'available', progress: 0, isVirus: false },
-    { id: 7, name: 'kazaa_lite_resurrection.exe', type: 'software', size: '8.7 MB', seeds: 156, status: 'available', progress: 0, isVirus: true },
-    { id: 8, name: 'age_of_empires_2_nocd_crack.exe', type: 'software', size: '234 KB', seeds: 432, status: 'available', progress: 0, isVirus: false },
-    { id: 9, name: 'limewire_pro_free_download.exe', type: 'software', size: '1.2 MB', seeds: 3, status: 'available', progress: 0, isVirus: true },
-    { id: 10, name: 'shrek_2_screener.avi', type: 'video', size: '698 MB', seeds: 789, status: 'available', progress: 0, isVirus: false },
+    { id: 1, name: 'xp_startup_sound.mp3', displayName: 'Windows XP Startup', artist: 'Microsoft', type: 'music', size: '142 KB', seeds: 234, status: 'available', progress: 0, isVirus: false, audioUrl: '/sounds/xp-startup.mp3', duration: '0:04' },
+    { id: 2, name: 'totally_legit_photoshop_cs2.exe', displayName: 'Photoshop CS2', artist: 'Adobe', type: 'software', size: '12.3 MB', seeds: 45, status: 'available', progress: 0, isVirus: true },
+    { id: 3, name: 'xp_error_sound.mp3', displayName: 'XP Error Sound', artist: 'Microsoft', type: 'music', size: '98 KB', seeds: 567, status: 'available', progress: 0, isVirus: false, audioUrl: '/sounds/xp-error.mp3', duration: '0:02' },
+    { id: 4, name: 'definitely_not_a_virus.exe', displayName: 'Free Money Generator', artist: 'Unknown', type: 'other', size: '43 KB', seeds: 12, status: 'available', progress: 0, isVirus: true },
+    { id: 5, name: 'xp_critical_stop.mp3', displayName: 'XP Critical Stop', artist: 'Microsoft', type: 'music', size: '76 KB', seeds: 89, status: 'available', progress: 0, isVirus: false, audioUrl: '/sounds/xp-critical.mp3', duration: '0:02' },
+    { id: 6, name: 'aol_goodbye.ogg', displayName: 'AOL Goodbye', artist: 'America Online', type: 'music', size: '45 KB', seeds: 123, status: 'available', progress: 0, isVirus: false, audioUrl: '/sounds/aol-goodbye.ogg', duration: '0:01' },
+    { id: 7, name: 'kazaa_lite_resurrection.exe', displayName: 'Kazaa Lite', artist: 'Unknown', type: 'software', size: '8.7 MB', seeds: 156, status: 'available', progress: 0, isVirus: true },
+    { id: 8, name: 'xp_recycle.mp3', displayName: 'XP Recycle', artist: 'Microsoft', type: 'music', size: '52 KB', seeds: 432, status: 'available', progress: 0, isVirus: false, audioUrl: '/sounds/xp-recycle.mp3', duration: '0:01' },
+    { id: 9, name: 'limewire_pro_free_download.exe', displayName: 'LimeWire Pro FREE', artist: 'Unknown', type: 'software', size: '1.2 MB', seeds: 3, status: 'available', progress: 0, isVirus: true },
+    { id: 10, name: 'aol_im_sound.ogg', displayName: 'AOL IM Notification', artist: 'America Online', type: 'music', size: '34 KB', seeds: 789, status: 'available', progress: 0, isVirus: false, audioUrl: '/sounds/aol-im.ogg', duration: '0:01' },
   ]);
 
   const [virusAlert, setVirusAlert] = useState<string | null>(null);
+
+  const isDownloaded = (fileId: number) => {
+    return downloads.some(d => d.id === `limewire-${fileId}`);
+  };
 
   const getIcon = (type: string) => {
     switch (type) {
@@ -48,6 +58,8 @@ const LimeWireApp: React.FC = () => {
       return;
     }
 
+    if (isDownloaded(id)) return;
+
     setFiles(prev => prev.map(f => 
       f.id === id ? { ...f, status: 'downloading' as const, progress: 0 } : f
     ));
@@ -57,6 +69,17 @@ const LimeWireApp: React.FC = () => {
         const currentFile = prev.find(f => f.id === id);
         if (!currentFile || currentFile.progress >= 100) {
           clearInterval(interval);
+          // Add music files to downloads when complete
+          if (file.type === 'music' && file.audioUrl) {
+            addDownload({
+              id: `limewire-${id}`,
+              title: file.displayName,
+              artist: file.artist,
+              source: 'limewire',
+              audioUrl: file.audioUrl,
+              duration: file.duration || '0:00',
+            });
+          }
           return prev.map(f => 
             f.id === id ? { ...f, status: 'complete' as const, progress: 100 } : f
           );
@@ -69,7 +92,8 @@ const LimeWireApp: React.FC = () => {
   };
 
   const filteredFiles = files.filter(f => 
-    f.name.toLowerCase().includes(searchQuery.toLowerCase())
+    f.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    f.displayName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -132,6 +156,7 @@ const LimeWireApp: React.FC = () => {
           <label className="flex items-center gap-1">
             <input type="checkbox" /> Images
           </label>
+          <span className="ml-auto text-green-600">📥 {downloads.filter(d => d.source === 'limewire').length} in Winamp</span>
         </div>
       </div>
 
@@ -144,7 +169,7 @@ const LimeWireApp: React.FC = () => {
               <th className="text-left p-1">Type</th>
               <th className="text-left p-1">Size</th>
               <th className="text-left p-1">Seeds</th>
-              <th className="text-left p-1 w-24">Status</th>
+              <th className="text-left p-1 w-28">Status</th>
             </tr>
           </thead>
           <tbody>
@@ -168,23 +193,23 @@ const LimeWireApp: React.FC = () => {
                   </span>
                 </td>
                 <td className="p-1">
-                  {file.status === 'available' && (
+                  {isDownloaded(file.id) ? (
+                    <span className="text-green-600 text-xs">✓ In Winamp</span>
+                  ) : file.status === 'available' ? (
                     <button 
                       onClick={() => startDownload(file.id)}
                       className="flex items-center gap-1 bg-[#7bc043] hover:bg-[#4a8f29] text-white px-2 py-0.5 rounded text-xs"
                     >
                       <Download className="w-3 h-3" />
                     </button>
-                  )}
-                  {file.status === 'downloading' && (
+                  ) : file.status === 'downloading' ? (
                     <div className="w-full bg-gray-200 rounded h-3 overflow-hidden">
                       <div 
                         className="h-full bg-[#7bc043] transition-all duration-300"
                         style={{ width: `${file.progress}%` }}
                       />
                     </div>
-                  )}
-                  {file.status === 'complete' && (
+                  ) : (
                     <span className="text-green-600 text-xs">✓ Done</span>
                   )}
                 </td>
@@ -196,8 +221,8 @@ const LimeWireApp: React.FC = () => {
 
       {/* Status bar */}
       <div className="bg-[#ece9d8] border-t border-gray-400 px-2 py-1 text-xs flex justify-between text-gray-600">
-        <span>Downloads: 0 | Uploads: 0</span>
-        <span>⚡ 56.6 kbps (simulated dial-up experience)</span>
+        <span>Downloads: {downloads.filter(d => d.source === 'limewire').length} | Uploads: 0</span>
+        <span>⚡ 56.6 kbps (simulated dial-up experience) | Open Winamp to play →</span>
       </div>
     </div>
   );
