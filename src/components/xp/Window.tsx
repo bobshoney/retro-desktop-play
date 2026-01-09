@@ -10,6 +10,7 @@ import NotepadApp from './apps/NotepadApp';
 import MediaPlayerApp from './apps/MediaPlayerApp';
 import NapsterApp from './apps/NapsterApp';
 import LimeWireApp from './apps/LimeWireApp';
+import WinampApp from './apps/WinampApp';
 import AOLApp from './apps/AOLApp';
 import InternetExplorerApp from './apps/InternetExplorerApp';
 import MyDocumentsApp from './apps/MyDocumentsApp';
@@ -18,7 +19,6 @@ import HelpApp from './apps/HelpApp';
 import SearchApp from './apps/SearchApp';
 import RunApp from './apps/RunApp';
 import RecycleBinApp from './apps/RecycleBinApp';
-
 interface WindowProps {
   window: {
     id: string;
@@ -148,6 +148,7 @@ const Window: React.FC<WindowProps> = ({ window: win }) => {
       case 'mediaplayer': return <MediaPlayerApp />;
       case 'napster': return <NapsterApp />;
       case 'limewire': return <LimeWireApp />;
+      case 'winamp': return <WinampApp />;
       case 'aol': return <AOLApp />;
       case 'ie': return <InternetExplorerApp />;
       case 'mydocuments': return <MyDocumentsApp />;
