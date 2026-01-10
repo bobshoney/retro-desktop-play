@@ -37,35 +37,26 @@ const Desktop: React.FC = () => {
   const [refreshKey, setRefreshKey] = useState(0);
   const { windows, openWindow, logOff, shutDown } = useWindows();
 
-  // Icons positioned to spell "HELLO WORLD" pattern
-  // H E L L O (top row) - W O R L D (bottom row)
+  // Desktop icons arranged in classic Windows XP vertical columns
   const desktopIcons = [
-    // H - My Resume (top-left)
-    { id: 'resume', title: 'My Resume', iconSrc: resumeIcon, component: 'resume', position: { top: 20, left: 20 } },
-    // E - About Me
-    { id: 'about', title: 'About Me', iconSrc: userIcon, component: 'about', position: { top: 20, left: 100 } },
-    // L - Contact
-    { id: 'contact', title: 'Contact', iconSrc: mailIcon, component: 'contact', position: { top: 20, left: 180 } },
-    // L - Internet Explorer
-    { id: 'ie', title: 'Internet Explorer', iconSrc: ieIcon, component: 'ie', position: { top: 20, left: 260 } },
-    // O - AOL
-    { id: 'aol', title: 'AOL 9.0', iconSrc: aolIcon, component: 'aol', position: { top: 20, left: 340 } },
+    // Column 1 (left side)
+    { id: 'resume', title: 'My Resume', iconSrc: resumeIcon, component: 'resume', position: { top: 16, left: 16 } },
+    { id: 'about', title: 'About Me', iconSrc: userIcon, component: 'about', position: { top: 96, left: 16 } },
+    { id: 'contact', title: 'Contact', iconSrc: mailIcon, component: 'contact', position: { top: 176, left: 16 } },
+    { id: 'ie', title: 'Internet Explorer', iconSrc: ieIcon, component: 'ie', position: { top: 256, left: 16 } },
+    { id: 'aol', title: 'AOL 9.0', iconSrc: aolIcon, component: 'aol', position: { top: 336, left: 16 } },
     
-    // W - Napster
-    { id: 'napster', title: 'Napster', iconSrc: napsterIcon, component: 'napster', position: { top: 120, left: 20 } },
-    // O - LimeWire
-    { id: 'limewire', title: 'LimeWire', iconSrc: limewireIcon, component: 'limewire', position: { top: 120, left: 100 } },
-    // R - Kazaa
-    { id: 'kazaa', title: 'Kazaa', iconSrc: kazaaIcon, component: 'kazaa', position: { top: 120, left: 180 } },
-    // L - Winamp
-    { id: 'winamp', title: 'Winamp', iconSrc: winampIcon, component: 'winamp', position: { top: 120, left: 260 } },
-    // D - Minesweeper
-    { id: 'minesweeper', title: 'Minesweeper', iconSrc: minesweeperIcon, component: 'minesweeper', position: { top: 120, left: 340 } },
+    // Column 2
+    { id: 'napster', title: 'Napster', iconSrc: napsterIcon, component: 'napster', position: { top: 16, left: 96 } },
+    { id: 'limewire', title: 'LimeWire', iconSrc: limewireIcon, component: 'limewire', position: { top: 96, left: 96 } },
+    { id: 'kazaa', title: 'Kazaa', iconSrc: kazaaIcon, component: 'kazaa', position: { top: 176, left: 96 } },
+    { id: 'winamp', title: 'Winamp', iconSrc: winampIcon, component: 'winamp', position: { top: 256, left: 96 } },
+    { id: 'minesweeper', title: 'Minesweeper', iconSrc: minesweeperIcon, component: 'minesweeper', position: { top: 336, left: 96 } },
     
-    // Extra apps - arranged below
-    { id: 'paint', title: 'Paint', iconSrc: paintIcon, component: 'paint', position: { top: 220, left: 20 } },
-    { id: 'notepad', title: 'Notepad', iconSrc: notepadIcon, component: 'notepad', position: { top: 220, left: 100 } },
-    { id: 'mediaplayer', title: 'Media Player', iconSrc: mediaplayerIcon, component: 'mediaplayer', position: { top: 220, left: 180 } },
+    // Column 3
+    { id: 'paint', title: 'Paint', iconSrc: paintIcon, component: 'paint', position: { top: 16, left: 176 } },
+    { id: 'notepad', title: 'Notepad', iconSrc: notepadIcon, component: 'notepad', position: { top: 96, left: 176 } },
+    { id: 'mediaplayer', title: 'Media Player', iconSrc: mediaplayerIcon, component: 'mediaplayer', position: { top: 176, left: 176 } },
     
     // Recycle Bin - always bottom right
     { id: 'recyclebin', title: 'Recycle Bin', iconSrc: 'recyclebin', component: 'recyclebin', isSystemIcon: true },
