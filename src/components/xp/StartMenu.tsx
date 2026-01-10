@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, FileText, Mail, Settings, HelpCircle, LogOut, Folder, Search, Play, Bomb, Palette, StickyNote, Music, Globe, Power, Image, ChevronRight } from 'lucide-react';
+import { User, FileText, Mail, Settings, HelpCircle, LogOut, Folder, Search, Play, Bomb, Palette, StickyNote, Music, Globe, Power, Image, ChevronRight, Headphones, Download } from 'lucide-react';
 import { useWindows } from '@/pages/Index';
 
 // Import icons
@@ -14,6 +14,8 @@ import ieIcon from '@/assets/icons/ie-icon.png';
 import aolIcon from '@/assets/icons/aol-icon.png';
 import napsterIcon from '@/assets/icons/napster-icon.png';
 import limewireIcon from '@/assets/icons/limewire-icon.png';
+import kazaaIcon from '@/assets/icons/kazaa-icon.png';
+import winampIcon from '@/assets/icons/winamp-icon.png';
 
 interface StartMenuProps {
   onClose: () => void;
@@ -29,6 +31,7 @@ const StartMenu: React.FC<StartMenuProps> = ({ onClose, onLogOff, onShutDown }) 
   const pinnedItems = [
     { icon: Globe, label: 'Internet Explorer', id: 'ie', component: 'ie', iconSrc: ieIcon },
     { icon: Mail, label: 'AOL Instant Messenger', id: 'aol', component: 'aol', iconSrc: aolIcon },
+    { icon: Headphones, label: 'Winamp', id: 'winamp', component: 'winamp', iconSrc: winampIcon },
   ];
 
   // Recent / main programs
@@ -36,21 +39,25 @@ const StartMenu: React.FC<StartMenuProps> = ({ onClose, onLogOff, onShutDown }) 
     { icon: FileText, label: 'My Resume', id: 'resume', component: 'resume', iconSrc: resumeIcon },
     { icon: User, label: 'About Me', id: 'about', component: 'about', iconSrc: userIcon },
     { icon: Mail, label: 'Contact', id: 'contact', component: 'contact', iconSrc: mailIcon },
-    { icon: Music, label: 'Media Player', id: 'mediaplayer', component: 'mediaplayer', iconSrc: mediaplayerIcon },
-    { icon: StickyNote, label: 'Notepad', id: 'notepad', component: 'notepad', iconSrc: notepadIcon },
   ];
 
-  // All programs submenu
+  // All programs submenu with categories
   const allProgramsItems = [
+    { category: 'Internet' },
     { icon: Globe, label: 'Internet Explorer', id: 'ie', component: 'ie', iconSrc: ieIcon },
     { icon: Mail, label: 'AOL 9.0', id: 'aol', component: 'aol', iconSrc: aolIcon },
-    { icon: Music, label: 'Napster', id: 'napster', component: 'napster', iconSrc: napsterIcon },
-    { icon: Music, label: 'LimeWire', id: 'limewire', component: 'limewire', iconSrc: limewireIcon },
     { divider: true },
+    { category: 'P2P & Music' },
+    { icon: Download, label: 'Napster', id: 'napster', component: 'napster', iconSrc: napsterIcon },
+    { icon: Download, label: 'LimeWire', id: 'limewire', component: 'limewire', iconSrc: limewireIcon },
+    { icon: Download, label: 'Kazaa', id: 'kazaa', component: 'kazaa', iconSrc: kazaaIcon },
+    { icon: Headphones, label: 'Winamp', id: 'winamp', component: 'winamp', iconSrc: winampIcon },
+    { icon: Music, label: 'Windows Media Player', id: 'mediaplayer', component: 'mediaplayer', iconSrc: mediaplayerIcon },
+    { divider: true },
+    { category: 'Accessories' },
     { icon: Bomb, label: 'Minesweeper', id: 'minesweeper', component: 'minesweeper', iconSrc: minesweeperIcon },
     { icon: Palette, label: 'Paint', id: 'paint', component: 'paint', iconSrc: paintIcon },
     { icon: StickyNote, label: 'Notepad', id: 'notepad', component: 'notepad', iconSrc: notepadIcon },
-    { icon: Music, label: 'Windows Media Player', id: 'mediaplayer', component: 'mediaplayer', iconSrc: mediaplayerIcon },
   ];
 
   const rightItems = [
@@ -72,6 +79,8 @@ const StartMenu: React.FC<StartMenuProps> = ({ onClose, onLogOff, onShutDown }) 
       aol: [600, 480],
       napster: [550, 420],
       limewire: [580, 450],
+      kazaa: [560, 440],
+      winamp: [300, 400],
       mydocuments: [600, 400],
       mypictures: [600, 400],
       mymusic: [600, 400],
@@ -167,17 +176,21 @@ const StartMenu: React.FC<StartMenuProps> = ({ onClose, onLogOff, onShutDown }) 
             {/* All Programs Submenu */}
             {showAllPrograms && (
               <div 
-                className="absolute left-full top-0 bg-white border border-gray-300 shadow-lg rounded-sm min-w-48 py-1 z-50"
+                className="absolute left-full top-0 bg-white border border-gray-300 shadow-lg rounded-sm min-w-52 py-1 z-50 max-h-80 overflow-y-auto"
                 onMouseEnter={() => setShowAllPrograms(true)}
                 onMouseLeave={() => setShowAllPrograms(false)}
               >
                 {allProgramsItems.map((item, index) => (
                   'divider' in item ? (
                     <div key={index} className="h-px bg-gray-200 my-1 mx-2"></div>
+                  ) : 'category' in item ? (
+                    <div key={index} className="px-3 py-1 text-xs font-bold text-gray-500 uppercase tracking-wide bg-gray-50">
+                      {item.category}
+                    </div>
                   ) : (
                     <div 
                       key={index}
-                      className="flex items-center gap-2 px-3 py-1 hover:bg-blue-600 hover:text-white cursor-pointer text-sm"
+                      className="flex items-center gap-2 px-3 py-1.5 hover:bg-blue-600 hover:text-white cursor-pointer text-sm"
                       onClick={() => handleItemClick(item)}
                     >
                       {item.iconSrc ? (

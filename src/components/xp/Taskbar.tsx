@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Volume2, Volume1, VolumeX, Wifi, Minus, Square, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Volume2, Volume1, VolumeX, Wifi, Minus, Square, X, ChevronLeft, ChevronRight, Shield, Battery, BellRing } from 'lucide-react';
 import { useWindows } from '@/pages/Index';
 import { useSounds } from '@/contexts/SoundContext';
+
+// Import quick launch icons
+import ieIcon from '@/assets/icons/ie-icon.png';
+import winampIcon from '@/assets/icons/winamp-icon.png';
+import notepadIcon from '@/assets/icons/notepad-icon.png';
 import {
   ContextMenu,
   ContextMenuContent,
@@ -28,8 +33,15 @@ const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June',
 const Taskbar: React.FC<TaskbarProps> = ({ startMenuOpen, onStartClick }) => {
   const [time, setTime] = useState(new Date());
   const [calendarDate, setCalendarDate] = useState(new Date());
-  const { windows, focusWindow, minimizeWindow, toggleMaximize, closeWindow, activeWindowId } = useWindows();
+  const { windows, focusWindow, minimizeWindow, toggleMaximize, closeWindow, activeWindowId, openWindow } = useWindows();
   const { volume, isMuted, setVolume, setMuted } = useSounds();
+
+  // Quick launch items
+  const quickLaunchItems = [
+    { id: 'ie', title: 'Internet Explorer', icon: ieIcon, component: 'ie', width: 700, height: 500 },
+    { id: 'winamp', title: 'Winamp', icon: winampIcon, component: 'winamp', width: 300, height: 400 },
+    { id: 'notepad', title: 'Notepad', icon: notepadIcon, component: 'notepad', width: 500, height: 400 },
+  ];
 
   useEffect(() => {
     const timer = setInterval(() => setTime(new Date()), 1000);
@@ -129,7 +141,24 @@ const Taskbar: React.FC<TaskbarProps> = ({ startMenuOpen, onStartClick }) => {
       </button>
 
       {/* Quick Launch Separator */}
-      <div className="w-px h-5 bg-blue-400/50 mx-2"></div>
+      <div className="w-px h-5 bg-blue-400/50 mx-1"></div>
+
+      {/* Quick Launch Icons */}
+      <div className="flex items-center gap-0.5 px-1">
+        {quickLaunchItems.map((item) => (
+          <button
+            key={item.id}
+            onClick={() => openWindow(item.id, item.title, item.component, item.icon, item.width, item.height)}
+            className="w-6 h-6 flex items-center justify-center hover:bg-white/20 rounded transition-colors"
+            title={item.title}
+          >
+            <img src={item.icon} alt={item.title} className="w-4 h-4" />
+          </button>
+        ))}
+      </div>
+
+      {/* Separator after Quick Launch */}
+      <div className="w-px h-5 bg-blue-400/50 mx-1"></div>
 
       {/* Open Windows */}
       <div className="flex-1 flex items-center gap-1 overflow-hidden px-1">
@@ -195,11 +224,31 @@ const Taskbar: React.FC<TaskbarProps> = ({ startMenuOpen, onStartClick }) => {
 
       {/* System Tray */}
       <div 
-        className="flex items-center gap-2 px-2 h-full"
+        className="flex items-center gap-1.5 px-2 h-full"
         style={{
           background: 'linear-gradient(180deg, #0f4c9c 0%, #1565c0 50%, #0d47a1 100%)'
         }}
       >
+        {/* Hidden Icons Chevron */}
+        <button className="hover:bg-white/10 p-0.5 rounded">
+          <ChevronLeft className="w-3 h-3 text-white/60" />
+        </button>
+
+        {/* Security/Antivirus */}
+        <div className="hover:bg-white/10 p-0.5 rounded cursor-pointer" title="Windows Security Center">
+          <Shield className="w-4 h-4 text-green-400" />
+        </div>
+
+        {/* Updates Available */}
+        <div className="hover:bg-white/10 p-0.5 rounded cursor-pointer animate-pulse" title="Updates Available">
+          <BellRing className="w-4 h-4 text-yellow-400" />
+        </div>
+
+        {/* Battery */}
+        <div className="hover:bg-white/10 p-0.5 rounded cursor-pointer" title="On AC Power">
+          <Battery className="w-4 h-4 text-white/80" />
+        </div>
+
         {/* Volume Control Popup */}
         <Popover>
           <PopoverTrigger className="hover:bg-white/10 p-0.5 rounded cursor-pointer">
