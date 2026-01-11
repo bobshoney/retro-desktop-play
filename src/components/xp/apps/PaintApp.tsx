@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import Clippy from '../Clippy';
 
 const COLORS = [
   '#000000', '#808080', '#800000', '#808000', '#008000', '#008080', '#000080', '#800080',
@@ -11,6 +12,7 @@ const PaintApp: React.FC = () => {
   const [color, setColor] = useState('#000000');
   const [brushSize, setBrushSize] = useState(3);
   const [lastPos, setLastPos] = useState({ x: 0, y: 0 });
+  const [showClippy, setShowClippy] = useState(true);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -19,6 +21,28 @@ const PaintApp: React.FC = () => {
       if (ctx) {
         ctx.fillStyle = '#ffffff';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Draw some fun starter content
+        ctx.fillStyle = '#333';
+        ctx.font = '12px Arial';
+        ctx.fillText('🎨 Welcome to MS Paint! Draw something cool!', 10, 20);
+        ctx.fillText('💡 Easter Egg: The spray can tool is iconic!', 10, 40);
+        ctx.fillText('🖼️ Pro tip: Save as BMP for maximum file size!', 10, 60);
+        
+        // Draw a little doodle
+        ctx.strokeStyle = '#0000ff';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(450, 40, 20, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.fillStyle = '#0000ff';
+        ctx.beginPath();
+        ctx.arc(443, 35, 3, 0, Math.PI * 2);
+        ctx.arc(457, 35, 3, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(450, 45, 10, 0.2, Math.PI - 0.2);
+        ctx.stroke();
       }
     }
   }, []);
@@ -73,7 +97,7 @@ const PaintApp: React.FC = () => {
   };
 
   return (
-    <div className="h-full flex flex-col bg-[#c0c0c0]">
+    <div className="h-full flex flex-col bg-[#c0c0c0] relative">
       {/* Menu Bar */}
       <div className="flex gap-4 px-2 py-1 bg-[#c0c0c0] text-xs border-b border-gray-400">
         <span className="hover:bg-blue-600 hover:text-white px-1 cursor-pointer">File</span>
@@ -133,6 +157,13 @@ const PaintApp: React.FC = () => {
           ))}
         </div>
       </div>
+
+      {/* Clippy */}
+      {showClippy && (
+        <div className="absolute bottom-12 right-2">
+          <Clippy context="paint" onDismiss={() => setShowClippy(false)} />
+        </div>
+      )}
     </div>
   );
 };
