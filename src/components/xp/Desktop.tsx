@@ -4,6 +4,7 @@ import DesktopIcon from './DesktopIcon';
 import Taskbar from './Taskbar';
 import StartMenu from './StartMenu';
 import Window from './Window';
+import Clippy from './Clippy';
 import { useWindows } from '@/pages/Index';
 import {
   ContextMenu,
@@ -166,6 +167,9 @@ const Desktop: React.FC = () => {
               setStartMenuOpen(!startMenuOpen);
             }}
           />
+
+          {/* Clippy Assistant */}
+          <Clippy context="desktop" />
         </div>
       </ContextMenuTrigger>
       
