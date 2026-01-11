@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { ArrowLeft, ArrowRight, RotateCcw, Home, Star, Search, Globe, Mail, Printer, History, X, AlertTriangle, Gift, Download, Trophy, Skull } from 'lucide-react';
+import Clippy from '../Clippy';
 
 type PageType = 'home' | 'google' | 'askjeeves' | 'myspace' | 'newgrounds' | 'ebaumsworld' | 'geocities' | 'aim';
 
@@ -29,6 +30,7 @@ const InternetExplorerApp: React.FC = () => {
   const [historyIndex, setHistoryIndex] = useState(0);
   const [popups, setPopups] = useState<PopupAd[]>([]);
   const [popupIdCounter, setPopupIdCounter] = useState(0);
+  const [showClippy, setShowClippy] = useState(true);
 
   const urls: Record<PageType, string> = {
     home: 'http://www.msn.com',
@@ -806,6 +808,13 @@ const InternetExplorerApp: React.FC = () => {
           <span className="text-gray-500">100%</span>
         </div>
       </div>
+
+      {/* Clippy */}
+      {showClippy && (
+        <div className="absolute bottom-8 right-2 z-[200]">
+          <Clippy context="browser" onDismiss={() => setShowClippy(false)} />
+        </div>
+      )}
     </div>
   );
 };
