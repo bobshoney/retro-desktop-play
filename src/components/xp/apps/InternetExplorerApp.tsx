@@ -1,13 +1,34 @@
-import React, { useState } from 'react';
-import { ArrowLeft, ArrowRight, RotateCcw, Home, Star, Search, Globe, Mail, Printer, History } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { ArrowLeft, ArrowRight, RotateCcw, Home, Star, Search, Globe, Mail, Printer, History, X, AlertTriangle, Gift, Download, Trophy, Skull } from 'lucide-react';
 
 type PageType = 'home' | 'google' | 'askjeeves' | 'myspace' | 'newgrounds' | 'ebaumsworld' | 'geocities' | 'aim';
+
+interface PopupAd {
+  id: number;
+  type: 'winner' | 'download' | 'warning' | 'casino' | 'dating' | 'virus';
+  title: string;
+  position: { x: number; y: number };
+}
+
+const popupTemplates = [
+  { type: 'winner' as const, title: 'Congratulations!!!' },
+  { type: 'winner' as const, title: 'YOU WON!!!' },
+  { type: 'download' as const, title: 'Free Download!' },
+  { type: 'download' as const, title: 'Download Now!' },
+  { type: 'warning' as const, title: 'Warning!' },
+  { type: 'warning' as const, title: 'URGENT Message' },
+  { type: 'casino' as const, title: 'Online Casino' },
+  { type: 'dating' as const, title: 'Hot Singles Near You!' },
+  { type: 'virus' as const, title: 'VIRUS DETECTED!' },
+];
 
 const InternetExplorerApp: React.FC = () => {
   const [url, setUrl] = useState('http://www.msn.com');
   const [currentPage, setCurrentPage] = useState<PageType>('home');
   const [history, setHistory] = useState<PageType[]>(['home']);
   const [historyIndex, setHistoryIndex] = useState(0);
+  const [popups, setPopups] = useState<PopupAd[]>([]);
+  const [popupIdCounter, setPopupIdCounter] = useState(0);
 
   const urls: Record<PageType, string> = {
     home: 'http://www.msn.com',
@@ -46,6 +67,206 @@ const InternetExplorerApp: React.FC = () => {
     }
   };
 
+  const spawnPopup = useCallback(() => {
+    const template = popupTemplates[Math.floor(Math.random() * popupTemplates.length)];
+    const newPopup: PopupAd = {
+      id: popupIdCounter,
+      type: template.type,
+      title: template.title,
+      position: {
+        x: 50 + Math.random() * 200,
+        y: 50 + Math.random() * 150,
+      },
+    };
+    setPopupIdCounter(prev => prev + 1);
+    setPopups(prev => [...prev, newPopup]);
+  }, [popupIdCounter]);
+
+  const closePopup = (id: number, spawnMore: boolean = false) => {
+    setPopups(prev => prev.filter(p => p.id !== id));
+    // Sometimes closing spawns more popups!
+    if (spawnMore && Math.random() > 0.5) {
+      setTimeout(() => {
+        spawnPopup();
+        if (Math.random() > 0.7) {
+          setTimeout(spawnPopup, 200);
+        }
+      }, 100);
+    }
+  };
+
+  // Spawn popups randomly while browsing
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (Math.random() > 0.7 && popups.length < 5) {
+        spawnPopup();
+      }
+    }, 8000);
+
+    // Initial popup after a delay
+    const initialTimeout = setTimeout(() => {
+      if (popups.length === 0) {
+        spawnPopup();
+      }
+    }, 5000);
+
+    return () => {
+      clearInterval(interval);
+      clearTimeout(initialTimeout);
+    };
+  }, [spawnPopup, popups.length]);
+
+  // Spawn popup on navigation
+  useEffect(() => {
+    if (Math.random() > 0.5) {
+      setTimeout(spawnPopup, 1000);
+    }
+  }, [currentPage]);
+
+  const renderPopupContent = (popup: PopupAd) => {
+    switch (popup.type) {
+      case 'winner':
+        return (
+          <div className="text-center">
+            <div className="text-4xl mb-2 animate-bounce">🎉🎊🎁</div>
+            <div className="text-xl font-bold text-red-600 animate-pulse">
+              CONGRATULATIONS!!!
+            </div>
+            <div className="text-sm my-2">
+              You are the <span className="font-bold text-green-600">1,000,000th</span> visitor!
+            </div>
+            <div className="bg-yellow-300 p-2 my-2 border-2 border-yellow-600">
+              <Trophy className="w-8 h-8 text-yellow-600 mx-auto" />
+              <div className="font-bold">You've WON a FREE iPod!</div>
+            </div>
+            <button 
+              className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded animate-pulse"
+              onClick={() => closePopup(popup.id, true)}
+            >
+              CLAIM YOUR PRIZE NOW!!!
+            </button>
+            <div className="text-xs text-gray-500 mt-2">*No purchase necessary</div>
+          </div>
+        );
+      
+      case 'download':
+        return (
+          <div className="text-center">
+            <Download className="w-12 h-12 text-blue-600 mx-auto mb-2" />
+            <div className="font-bold text-lg mb-2">FREE DOWNLOAD!</div>
+            <div className="text-sm mb-3">
+              Speed up your PC by <span className="text-green-600 font-bold">300%</span>!
+            </div>
+            <div className="bg-gradient-to-r from-blue-500 to-purple-500 text-white p-3 rounded mb-2">
+              <div className="font-bold">SuperTurboBoost Pro 2004</div>
+              <div className="text-xs">⭐⭐⭐⭐⭐ Trusted by millions!</div>
+            </div>
+            <div className="flex gap-2 justify-center">
+              <button 
+                className="bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-4 rounded text-sm"
+                onClick={() => closePopup(popup.id, true)}
+              >
+                Download FREE
+              </button>
+              <button 
+                className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-4 rounded text-sm"
+                onClick={() => closePopup(popup.id, true)}
+              >
+                Download NOW
+              </button>
+            </div>
+          </div>
+        );
+      
+      case 'warning':
+        return (
+          <div className="text-center">
+            <AlertTriangle className="w-12 h-12 text-yellow-500 mx-auto mb-2 animate-pulse" />
+            <div className="font-bold text-lg text-red-600 mb-2">⚠️ URGENT WARNING ⚠️</div>
+            <div className="text-sm mb-3 bg-yellow-100 p-2 border border-yellow-400">
+              Your computer may be <span className="font-bold text-red-600">AT RISK!</span>
+              <br />
+              You have (47) viruses detected!
+            </div>
+            <button 
+              className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded animate-pulse"
+              onClick={() => closePopup(popup.id, true)}
+            >
+              SCAN NOW - IT'S FREE!
+            </button>
+          </div>
+        );
+      
+      case 'casino':
+        return (
+          <div className="text-center bg-gradient-to-b from-purple-900 to-black text-white p-2 -m-3 rounded">
+            <div className="text-3xl mb-2">🎰 💰 🎲</div>
+            <div className="font-bold text-yellow-400 text-lg">MEGA CASINO ROYALE</div>
+            <div className="text-sm my-2">
+              Get <span className="text-green-400 font-bold">$500 FREE</span> bonus!
+            </div>
+            <div className="flex justify-center gap-1 my-2">
+              {['7️⃣', '7️⃣', '7️⃣'].map((emoji, i) => (
+                <span key={i} className="text-2xl bg-white text-black px-2 rounded">{emoji}</span>
+              ))}
+            </div>
+            <button 
+              className="bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-2 px-6 rounded"
+              onClick={() => closePopup(popup.id, true)}
+            >
+              PLAY NOW & WIN BIG!
+            </button>
+          </div>
+        );
+      
+      case 'dating':
+        return (
+          <div className="text-center">
+            <div className="text-3xl mb-2">💕 💋 ❤️</div>
+            <div className="font-bold text-pink-600 text-lg">Hot Singles in Your Area!</div>
+            <div className="bg-pink-100 p-2 my-2 rounded">
+              <div className="text-sm">
+                <span className="font-bold">23</span> people want to meet you!
+              </div>
+              <div className="text-xs text-gray-600">Only 0.3 miles away...</div>
+            </div>
+            <div className="flex gap-2 justify-center">
+              <button 
+                className="bg-pink-500 hover:bg-pink-600 text-white font-bold py-1 px-4 rounded"
+                onClick={() => closePopup(popup.id, true)}
+              >
+                View Profiles 💝
+              </button>
+            </div>
+          </div>
+        );
+      
+      case 'virus':
+        return (
+          <div className="text-center">
+            <Skull className="w-12 h-12 text-red-600 mx-auto mb-2 animate-pulse" />
+            <div className="font-bold text-lg text-red-600 bg-black p-2 mb-2">
+              🚨 VIRUS DETECTED! 🚨
+            </div>
+            <div className="text-sm mb-2 text-red-700">
+              Your PC is infected with TROJAN.HORSE.2004!
+              <br />
+              <span className="font-bold">All your files will be DELETED!</span>
+            </div>
+            <div className="bg-red-100 border-2 border-red-500 p-2 mb-2">
+              <div className="text-xs">Time remaining: <span className="font-mono text-red-600">04:59</span></div>
+            </div>
+            <button 
+              className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded animate-pulse"
+              onClick={() => closePopup(popup.id, true)}
+            >
+              REMOVE VIRUS NOW!
+            </button>
+            <div className="text-xs text-gray-500 mt-1">Powered by TotallyLegitAntivirus™</div>
+          </div>
+        );
+    }
+  };
   return (
     <div className="h-full flex flex-col bg-[#ece9d8] text-xs">
       {/* Menu Bar */}
@@ -544,6 +765,36 @@ const InternetExplorerApp: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Popup Ads */}
+      {popups.map((popup) => (
+        <div
+          key={popup.id}
+          className="absolute bg-white border-2 border-gray-400 shadow-xl rounded overflow-hidden animate-scale-in"
+          style={{
+            left: popup.position.x,
+            top: popup.position.y,
+            minWidth: '280px',
+            maxWidth: '320px',
+            zIndex: 100 + popup.id,
+          }}
+        >
+          {/* Popup Title Bar */}
+          <div className="bg-gradient-to-r from-[#0054e3] to-[#388cef] px-2 py-1 flex items-center justify-between">
+            <span className="text-white text-xs font-bold truncate">{popup.title}</span>
+            <button 
+              onClick={() => closePopup(popup.id, true)}
+              className="w-5 h-5 bg-red-500 hover:bg-red-600 rounded-sm flex items-center justify-center"
+            >
+              <X className="w-3 h-3 text-white" />
+            </button>
+          </div>
+          {/* Popup Content */}
+          <div className="p-3 text-xs">
+            {renderPopupContent(popup)}
+          </div>
+        </div>
+      ))}
 
       {/* Status Bar */}
       <div className="bg-[#ece9d8] border-t border-gray-400 px-2 py-0.5 flex justify-between text-xs">
