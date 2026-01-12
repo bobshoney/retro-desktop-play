@@ -167,11 +167,11 @@ const Desktop: React.FC = () => {
               setStartMenuOpen(!startMenuOpen);
             }}
           />
-
-          {/* Clippy Assistant */}
-          <Clippy context="desktop" />
         </div>
       </ContextMenuTrigger>
+      
+      {/* Clippy Assistant - Outside of ContextMenuTrigger to avoid ref issues */}
+      <Clippy context="desktop" />
       
       <ContextMenuContent className="w-52 bg-[#ece9d8] border-[#0054e3] shadow-md">
         {/* View Submenu */}
