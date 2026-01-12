@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, forwardRef } from 'react';
 import { X } from 'lucide-react';
 
 interface ClippyProps {
   context?: 'desktop' | 'notepad' | 'browser' | 'paint' | 'general';
   onDismiss?: () => void;
+  className?: string;
 }
 
 const clippyTips: Record<string, string[]> = {
@@ -84,7 +85,7 @@ const clippyTips: Record<string, string[]> = {
   ],
 };
 
-const Clippy: React.FC<ClippyProps> = ({ context = 'general', onDismiss }) => {
+const Clippy = forwardRef<HTMLDivElement, ClippyProps>(({ context = 'general', onDismiss, className }, ref) => {
   const [isVisible, setIsVisible] = useState(false);
   const [currentTip, setCurrentTip] = useState('');
   const [expression, setExpression] = useState<'idle' | 'thinking' | 'excited' | 'waving'>('idle');
@@ -139,12 +140,13 @@ const Clippy: React.FC<ClippyProps> = ({ context = 'general', onDismiss }) => {
     setTimeout(() => setExpression('idle'), 1500);
   };
 
-  if (!isVisible) return null;
+  if (!isVisible) return <div ref={ref} className={className} style={{ display: 'none' }} />;
 
   if (isMinimized) {
     return (
       <div 
-        className="fixed bottom-16 right-4 z-[9999] cursor-pointer animate-bounce"
+        ref={ref}
+        className={`fixed bottom-16 right-4 z-[9999] cursor-pointer animate-bounce ${className || ''}`}
         onClick={handleRestore}
         title="Click to see Clippy!"
       >
@@ -156,7 +158,7 @@ const Clippy: React.FC<ClippyProps> = ({ context = 'general', onDismiss }) => {
   }
 
   return (
-    <div className="fixed bottom-16 right-4 z-[9999] flex flex-col items-end gap-2 animate-fade-in">
+    <div ref={ref} className={`fixed bottom-16 right-4 z-[9999] flex flex-col items-end gap-2 animate-fade-in ${className || ''}`}>
       {/* Speech Bubble */}
       <div className="relative bg-[#ffffd5] border-2 border-black rounded-lg p-3 max-w-[250px] shadow-lg">
         {/* Close and minimize buttons */}
@@ -327,6 +329,8 @@ const Clippy: React.FC<ClippyProps> = ({ context = 'general', onDismiss }) => {
       </div>
     </div>
   );
-};
+});
+
+Clippy.displayName = 'Clippy';
 
 export default Clippy;
