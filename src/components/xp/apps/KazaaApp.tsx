@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Download, Search, AlertTriangle, Skull, Music, Film, Image, File, Shield, Zap } from 'lucide-react';
 import { useDownloads } from '@/contexts/DownloadsContext';
+import BonziBuddy from '../BonziBuddy';
 
 interface KazaaFile {
   id: number;
@@ -24,6 +25,7 @@ const KazaaApp: React.FC = () => {
   const [sketchWarning, setSketchWarning] = useState<{ name: string; reason: string } | null>(null);
   const [adPopup, setAdPopup] = useState(false);
   const [spywareAlert, setSpywareAlert] = useState(false);
+  const [showBonzi, setShowBonzi] = useState(true);
 
   const [files, setFiles] = useState<KazaaFile[]>([
     { id: 1, name: 'xp_hardware_insert.mp3', displayName: 'XP Hardware Sound', artist: 'Microsoft', type: 'audio', size: '89 KB', speed: 'Cable', status: 'available', progress: 0, isSketch: false, audioUrl: '/sounds/xp-hardware-insert.mp3', duration: '0:02' },
@@ -287,6 +289,13 @@ const KazaaApp: React.FC = () => {
           <span>⚠️ Parental Advisory: May contain spyware</span>
         </div>
       </div>
+
+      {/* BonziBuddy - The infamous purple gorilla appears in sketchy apps */}
+      {showBonzi && (
+        <div className="absolute bottom-12 right-2">
+          <BonziBuddy onDismiss={() => setShowBonzi(false)} />
+        </div>
+      )}
     </div>
   );
 };

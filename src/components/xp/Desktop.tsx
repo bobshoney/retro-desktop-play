@@ -4,8 +4,6 @@ import DesktopIcon from './DesktopIcon';
 import Taskbar from './Taskbar';
 import StartMenu from './StartMenu';
 import Window from './Window';
-import Clippy from './Clippy';
-import BonziBuddy from './BonziBuddy';
 import Screensaver from './Screensaver';
 import { useWindows } from '@/pages/Index';
 import {
@@ -171,12 +169,6 @@ const Desktop: React.FC = () => {
           />
         </div>
       </ContextMenuTrigger>
-      
-      {/* Clippy Assistant - Outside of ContextMenuTrigger to avoid ref issues */}
-      <Clippy context="desktop" />
-      
-      {/* Bonzi Buddy - The infamous purple gorilla */}
-      <BonziBuddy />
       
       {/* XP Screensaver - Activates after 1 minute of idle */}
       <Screensaver idleTimeout={60000} />
