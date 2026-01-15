@@ -357,4 +357,45 @@
     25% { transform: rotate(-15deg); }
     75% { transform: rotate(15deg); }
   }
+
+  /* Bonzi Buddy animations */
+  @keyframes bonzi-dance {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    10% { transform: translateY(-5px) rotate(-5deg); }
+    20% { transform: translateY(0) rotate(5deg); }
+    30% { transform: translateY(-8px) rotate(-3deg); }
+    40% { transform: translateY(0) rotate(3deg); }
+    50% { transform: translateY(-5px) rotate(-5deg) scale(1.05); }
+    60% { transform: translateY(0) rotate(5deg); }
+    70% { transform: translateY(-8px) rotate(-3deg); }
+    80% { transform: translateY(0) rotate(3deg) scale(1.05); }
+    90% { transform: translateY(-5px) rotate(-5deg); }
+  }
+
+  .animate-bonzi-dance {
+    animation: bonzi-dance 0.8s ease-in-out infinite;
+  }
+
+  @keyframes wave-left {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-30deg); }
+    50% { transform: rotate(-10deg); }
+    75% { transform: rotate(-25deg); }
+  }
+
+  @keyframes wave-right {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(30deg); }
+    50% { transform: rotate(10deg); }
+    75% { transform: rotate(25deg); }
+  }
+
+  .animate-wave-left {
+    animation: wave-left 0.5s ease-in-out infinite;
+  }
+
+  .animate-wave-right {
+    animation: wave-right 0.5s ease-in-out infinite;
+    animation-delay: 0.25s;
+  }
 }
