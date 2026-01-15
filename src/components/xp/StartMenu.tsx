@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, forwardRef } from 'react';
 import { User, FileText, Mail, Settings, HelpCircle, LogOut, Folder, Search, Play, Bomb, Palette, StickyNote, Music, Globe, Power, Image, ChevronRight, Headphones, Download } from 'lucide-react';
 import { useWindows } from '@/pages/Index';
 
@@ -23,7 +23,7 @@ interface StartMenuProps {
   onShutDown?: () => void;
 }
 
-const StartMenu: React.FC<StartMenuProps> = ({ onClose, onLogOff, onShutDown }) => {
+const StartMenu = forwardRef<HTMLDivElement, StartMenuProps>(({ onClose, onLogOff, onShutDown }, ref) => {
   const { openWindow } = useWindows();
   const [showAllPrograms, setShowAllPrograms] = useState(false);
 
@@ -110,7 +110,7 @@ const StartMenu: React.FC<StartMenuProps> = ({ onClose, onLogOff, onShutDown }) 
   };
 
   return (
-    <div className="xp-start-menu" onClick={(e) => e.stopPropagation()}>
+    <div ref={ref} className="xp-start-menu" onClick={(e) => e.stopPropagation()}>
       {/* Header */}
       <div className="xp-menu-header">
         <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center shadow-lg">
@@ -245,6 +245,8 @@ const StartMenu: React.FC<StartMenuProps> = ({ onClose, onLogOff, onShutDown }) 
       </div>
     </div>
   );
-};
+});
+
+StartMenu.displayName = 'StartMenu';
 
 export default StartMenu;
