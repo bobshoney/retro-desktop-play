@@ -108,7 +108,7 @@ const BonziBuddy = forwardRef<HTMLDivElement, BonziBuddyProps>(({ onDismiss, cla
     setTimeout(() => setIsDancing(false), 3000);
   };
 
-  if (!isVisible) return <div ref={ref} className={className} style={{ display: 'none' }} />;
+  if (!isVisible) return null;
 
   if (isMinimized) {
     return (
