@@ -5,6 +5,7 @@ import Taskbar from './Taskbar';
 import StartMenu from './StartMenu';
 import Window from './Window';
 import Clippy from './Clippy';
+import BonziBuddy from './BonziBuddy';
 import { useWindows } from '@/pages/Index';
 import {
   ContextMenu,
@@ -172,6 +173,9 @@ const Desktop: React.FC = () => {
       
       {/* Clippy Assistant - Outside of ContextMenuTrigger to avoid ref issues */}
       <Clippy context="desktop" />
+      
+      {/* Bonzi Buddy - The infamous purple gorilla */}
+      <BonziBuddy />
       
       <ContextMenuContent className="w-52 bg-[#ece9d8] border-[#0054e3] shadow-md">
         {/* View Submenu */}
