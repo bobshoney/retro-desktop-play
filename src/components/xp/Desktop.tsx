@@ -6,6 +6,7 @@ import StartMenu from './StartMenu';
 import Window from './Window';
 import Clippy from './Clippy';
 import BonziBuddy from './BonziBuddy';
+import Screensaver from './Screensaver';
 import { useWindows } from '@/pages/Index';
 import {
   ContextMenu,
@@ -176,6 +177,9 @@ const Desktop: React.FC = () => {
       
       {/* Bonzi Buddy - The infamous purple gorilla */}
       <BonziBuddy />
+      
+      {/* XP Screensaver - Activates after 1 minute of idle */}
+      <Screensaver idleTimeout={60000} />
       
       <ContextMenuContent className="w-52 bg-[#ece9d8] border-[#0054e3] shadow-md">
         {/* View Submenu */}
