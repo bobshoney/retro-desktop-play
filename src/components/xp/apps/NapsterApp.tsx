@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Download, Music, Search, User } from 'lucide-react';
 import { useDownloads } from '@/contexts/DownloadsContext';
+import BonziBuddy from '../BonziBuddy';
 
 interface Track {
   id: number;
@@ -17,6 +18,7 @@ interface Track {
 const NapsterApp: React.FC = () => {
   const { addDownload, downloads } = useDownloads();
   const [searchQuery, setSearchQuery] = useState('');
+  const [showBonzi, setShowBonzi] = useState(true);
   const [tracks, setTracks] = useState<Track[]>([
     { id: 1, title: 'Windows XP Startup', artist: 'Microsoft', size: '142 KB', bitrate: '128 kbps', status: 'available', progress: 0, audioUrl: '/sounds/xp-startup.mp3', duration: '0:04' },
     { id: 2, title: 'XP Logon Sound', artist: 'Microsoft', size: '189 KB', bitrate: '128 kbps', status: 'available', progress: 0, audioUrl: '/sounds/xp-logon.mp3', duration: '0:05' },
@@ -162,6 +164,13 @@ const NapsterApp: React.FC = () => {
         <span>⚠️ Remember: Sharing copyrighted music is illegal... but this is just a simulation! 🎵</span>
         <span className="text-green-400">Open Winamp to play downloads →</span>
       </div>
+
+      {/* BonziBuddy - The infamous purple gorilla */}
+      {showBonzi && (
+        <div className="absolute bottom-12 right-2">
+          <BonziBuddy onDismiss={() => setShowBonzi(false)} />
+        </div>
+      )}
     </div>
   );
 };
