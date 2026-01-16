@@ -58,6 +58,7 @@ const Desktop: React.FC = () => {
     { id: 'paint', title: 'Paint', iconSrc: paintIcon, component: 'paint', position: { top: 16, left: 176 } },
     { id: 'notepad', title: 'Notepad', iconSrc: notepadIcon, component: 'notepad', position: { top: 96, left: 176 } },
     { id: 'mediaplayer', title: 'Media Player', iconSrc: mediaplayerIcon, component: 'mediaplayer', position: { top: 176, left: 176 } },
+    { id: 'cmd', title: 'Command Prompt', iconSrc: 'cmd', component: 'cmd', position: { top: 256, left: 176 } },
     
     // Recycle Bin - always bottom right
     { id: 'recyclebin', title: 'Recycle Bin', iconSrc: 'recyclebin', component: 'recyclebin', isSystemIcon: true },
@@ -74,6 +75,7 @@ const Desktop: React.FC = () => {
       kazaa: [560, 440],
       winamp: [300, 400],
       recyclebin: [550, 380],
+      cmd: [650, 420],
     };
     return sizes[id] || [500, 400];
   };

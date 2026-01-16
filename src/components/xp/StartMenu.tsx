@@ -1,5 +1,5 @@
 import React, { useState, forwardRef } from 'react';
-import { User, FileText, Mail, Settings, HelpCircle, LogOut, Folder, Search, Play, Bomb, Palette, StickyNote, Music, Globe, Power, Image, ChevronRight, Headphones, Download } from 'lucide-react';
+import { User, FileText, Mail, Settings, HelpCircle, LogOut, Folder, Search, Play, Bomb, Palette, StickyNote, Music, Globe, Power, Image, ChevronRight, Headphones, Download, Terminal } from 'lucide-react';
 import { useWindows } from '@/pages/Index';
 
 // Import icons
@@ -58,6 +58,7 @@ const StartMenu = forwardRef<HTMLDivElement, StartMenuProps>(({ onClose, onLogOf
     { icon: Bomb, label: 'Minesweeper', id: 'minesweeper', component: 'minesweeper', iconSrc: minesweeperIcon },
     { icon: Palette, label: 'Paint', id: 'paint', component: 'paint', iconSrc: paintIcon },
     { icon: StickyNote, label: 'Notepad', id: 'notepad', component: 'notepad', iconSrc: notepadIcon },
+    { icon: Terminal, label: 'Command Prompt', id: 'cmd', component: 'cmd' },
   ];
 
   const rightItems = [
@@ -88,6 +89,7 @@ const StartMenu = forwardRef<HTMLDivElement, StartMenuProps>(({ onClose, onLogOf
       help: [650, 500],
       search: [550, 400],
       run: [400, 200],
+      cmd: [650, 420],
     };
     return sizes[id] || [500, 400];
   };
