@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Download, Search, AlertTriangle, Zap, File, Music, Film, Image } from 'lucide-react';
 import { useDownloads } from '@/contexts/DownloadsContext';
+import BonziBuddy from '../BonziBuddy';
 
 interface TorrentFile {
   id: number;
@@ -20,6 +21,7 @@ interface TorrentFile {
 const LimeWireApp: React.FC = () => {
   const { addDownload, downloads } = useDownloads();
   const [searchQuery, setSearchQuery] = useState('');
+  const [showBonzi, setShowBonzi] = useState(true);
   const [files, setFiles] = useState<TorrentFile[]>([
     { id: 1, name: 'xp_startup_sound.mp3', displayName: 'Windows XP Startup', artist: 'Microsoft', type: 'music', size: '142 KB', seeds: 234, status: 'available', progress: 0, isVirus: false, audioUrl: '/sounds/xp-startup.mp3', duration: '0:04' },
     { id: 2, name: 'totally_legit_photoshop_cs2.exe', displayName: 'Photoshop CS2', artist: 'Adobe', type: 'software', size: '12.3 MB', seeds: 45, status: 'available', progress: 0, isVirus: true },
@@ -224,6 +226,13 @@ const LimeWireApp: React.FC = () => {
         <span>Downloads: {downloads.filter(d => d.source === 'limewire').length} | Uploads: 0</span>
         <span>⚡ 56.6 kbps (simulated dial-up experience) | Open Winamp to play →</span>
       </div>
+
+      {/* BonziBuddy - The infamous purple gorilla */}
+      {showBonzi && (
+        <div className="absolute bottom-12 right-2">
+          <BonziBuddy onDismiss={() => setShowBonzi(false)} />
+        </div>
+      )}
     </div>
   );
 };
