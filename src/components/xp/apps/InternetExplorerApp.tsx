@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { ArrowLeft, ArrowRight, RotateCcw, Home, Star, Search, Globe, Mail, Printer, History, X, AlertTriangle, Gift, Download, Trophy, Skull } from 'lucide-react';
 import Clippy from '../Clippy';
+import DialUpConnection from '../DialUpConnection';
 
 type PageType = 'home' | 'google' | 'askjeeves' | 'myspace' | 'newgrounds' | 'ebaumsworld' | 'geocities' | 'aim';
 
@@ -24,6 +25,8 @@ const popupTemplates = [
 ];
 
 const InternetExplorerApp: React.FC = () => {
+  const [isConnecting, setIsConnecting] = useState(true);
+  const [isConnected, setIsConnected] = useState(false);
   const [url, setUrl] = useState('http://www.msn.com');
   const [currentPage, setCurrentPage] = useState<PageType>('home');
   const [history, setHistory] = useState<PageType[]>(['home']);
@@ -31,6 +34,16 @@ const InternetExplorerApp: React.FC = () => {
   const [popups, setPopups] = useState<PopupAd[]>([]);
   const [popupIdCounter, setPopupIdCounter] = useState(0);
   const [showClippy, setShowClippy] = useState(true);
+
+  const handleConnected = () => {
+    setIsConnecting(false);
+    setIsConnected(true);
+  };
+
+  const handleCancelConnection = () => {
+    setIsConnecting(false);
+    setIsConnected(false);
+  };
 
   const urls: Record<PageType, string> = {
     home: 'http://www.msn.com',
@@ -269,6 +282,35 @@ const InternetExplorerApp: React.FC = () => {
         );
     }
   };
+
+  // Show dial-up connection screen
+  if (isConnecting) {
+    return (
+      <div className="h-full flex flex-col bg-[#ece9d8] text-xs items-center justify-center">
+        <DialUpConnection onConnected={handleConnected} onCancel={handleCancelConnection} />
+      </div>
+    );
+  }
+
+  // Show disconnected state if user cancelled
+  if (!isConnected) {
+    return (
+      <div className="h-full flex flex-col bg-[#ece9d8] text-xs items-center justify-center">
+        <div className="text-center p-8 bg-white border-2 border-gray-400 shadow-lg">
+          <Globe className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+          <div className="text-lg font-bold mb-2">Not Connected</div>
+          <div className="text-sm text-gray-600 mb-4">You are not connected to the Internet.</div>
+          <button 
+            onClick={() => setIsConnecting(true)}
+            className="xp-button px-4 py-2"
+          >
+            Connect
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="h-full flex flex-col bg-[#ece9d8] text-xs">
       {/* Menu Bar */}
