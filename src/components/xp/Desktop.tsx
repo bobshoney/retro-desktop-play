@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import blissWallpaper from '@/assets/bliss-wallpaper.jpg';
 import DesktopIcon from './DesktopIcon';
 import Taskbar from './Taskbar';
 import StartMenu from './StartMenu';
 import Window from './Window';
 import Screensaver from './Screensaver';
+import BlueScreen from './BlueScreen';
+import BalloonNotification from './BalloonNotification';
 import { useWindows } from '@/pages/Index';
 import {
   ContextMenu,
@@ -36,7 +38,19 @@ import mediaplayerIcon from '@/assets/icons/mediaplayer-icon.png';
 const Desktop: React.FC = () => {
   const [startMenuOpen, setStartMenuOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [showBSOD, setShowBSOD] = useState(false);
   const { windows, openWindow, logOff, shutDown } = useWindows();
+
+  // Random BSOD trigger (very rare - 0.5% chance every 60 seconds)
+  useEffect(() => {
+    const bsodInterval = setInterval(() => {
+      if (Math.random() < 0.005) {
+        setShowBSOD(true);
+      }
+    }, 60000);
+
+    return () => clearInterval(bsodInterval);
+  }, []);
 
   // Desktop icons arranged in classic Windows XP vertical columns
   const desktopIcons = [
@@ -59,6 +73,8 @@ const Desktop: React.FC = () => {
     { id: 'notepad', title: 'Notepad', iconSrc: notepadIcon, component: 'notepad', position: { top: 96, left: 176 } },
     { id: 'mediaplayer', title: 'Media Player', iconSrc: mediaplayerIcon, component: 'mediaplayer', position: { top: 176, left: 176 } },
     { id: 'cmd', title: 'Command Prompt', iconSrc: 'cmd', component: 'cmd', position: { top: 256, left: 176 } },
+    { id: 'msn', title: 'MSN Messenger', iconSrc: 'msn', component: 'msn', position: { top: 336, left: 176 } },
+    { id: 'pinball', title: '3D Pinball', iconSrc: 'pinball', component: 'pinball', position: { top: 16, left: 256 } },
     
     // Recycle Bin - always bottom right
     { id: 'recyclebin', title: 'Recycle Bin', iconSrc: 'recyclebin', component: 'recyclebin', isSystemIcon: true },
@@ -76,6 +92,8 @@ const Desktop: React.FC = () => {
       winamp: [300, 400],
       recyclebin: [550, 380],
       cmd: [650, 420],
+      msn: [350, 500],
+      pinball: [520, 680],
     };
     return sizes[id] || [500, 400];
   };
@@ -174,6 +192,12 @@ const Desktop: React.FC = () => {
       
       {/* XP Screensaver - Activates after 1 minute of idle */}
       <Screensaver idleTimeout={60000} />
+      
+      {/* Balloon Notifications */}
+      <BalloonNotification />
+      
+      {/* Blue Screen of Death */}
+      {showBSOD && <BlueScreen onDismiss={() => setShowBSOD(false)} />}
       
       <ContextMenuContent className="w-52 bg-[#ece9d8] border-[#0054e3] shadow-md">
         {/* View Submenu */}
