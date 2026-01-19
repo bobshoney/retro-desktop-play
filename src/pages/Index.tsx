@@ -1,4 +1,4 @@
-import React, { useState, useEffect, createContext, useContext, useCallback } from 'react';
+import { useState, useEffect, createContext, useContext, useCallback } from 'react';
 import BootScreen from '@/components/xp/BootScreen';
 import LoginScreen from '@/components/xp/LoginScreen';
 import ShutdownScreen from '@/components/xp/ShutdownScreen';

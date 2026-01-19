@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, forwardRef } from 'react';
+import { useState, useEffect, useCallback, forwardRef } from 'react';
 import { X, Volume2 } from 'lucide-react';
 
 interface BonziBuddyProps {
