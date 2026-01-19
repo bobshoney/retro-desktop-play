@@ -1,4 +1,4 @@
-import React, { useState, forwardRef } from 'react';
+import { useState, forwardRef } from 'react';
 import { User, FileText, Mail, Settings, HelpCircle, LogOut, Folder, Search, Play, Bomb, Palette, StickyNote, Music, Globe, Power, Image, ChevronRight, Headphones, Download, Terminal } from 'lucide-react';
 import { useWindows } from '@/pages/Index';
 

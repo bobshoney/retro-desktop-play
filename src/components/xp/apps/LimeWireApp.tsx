@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Download, Search, AlertTriangle, Zap, File, Music, Film, Image } from 'lucide-react';
+import { useState } from 'react';
+import { Download, Search, AlertTriangle, Zap, File, Music, Film } from 'lucide-react';
 import { useDownloads } from '@/contexts/DownloadsContext';
 import BonziBuddy from '../BonziBuddy';
 
