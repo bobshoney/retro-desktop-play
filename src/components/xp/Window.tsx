@@ -21,6 +21,9 @@ import SearchApp from './apps/SearchApp';
 import RunApp from './apps/RunApp';
 import RecycleBinApp from './apps/RecycleBinApp';
 import CommandPromptApp from './apps/CommandPromptApp';
+import MSNMessengerApp from './apps/MSNMessengerApp';
+import PinballApp from './apps/PinballApp';
+
 interface WindowProps {
   window: {
     id: string;
@@ -163,6 +166,8 @@ const Window: React.FC<WindowProps> = ({ window: win }) => {
       case 'run': return <RunApp />;
       case 'recyclebin': return <RecycleBinApp />;
       case 'cmd': return <CommandPromptApp />;
+      case 'msn': return <MSNMessengerApp />;
+      case 'pinball': return <PinballApp />;
       default: return <div className="p-4">Unknown application</div>;
     }
   };

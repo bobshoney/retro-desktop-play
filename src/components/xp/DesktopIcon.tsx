@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Terminal } from 'lucide-react';
+import { Terminal, MessageCircle, Gamepad2 } from 'lucide-react';
 
 interface DesktopIconProps {
   title: string;
@@ -15,6 +15,20 @@ const DesktopIcon: React.FC<DesktopIconProps> = ({ title, iconSrc, onDoubleClick
       return (
         <div className="w-10 h-10 bg-black rounded flex items-center justify-center border border-gray-600">
           <Terminal className="w-6 h-6 text-gray-300" />
+        </div>
+      );
+    }
+    if (iconSrc === 'msn') {
+      return (
+        <div className="w-10 h-10 bg-gradient-to-br from-[#4b9cd3] to-[#1a5276] rounded flex items-center justify-center">
+          <MessageCircle className="w-6 h-6 text-white" />
+        </div>
+      );
+    }
+    if (iconSrc === 'pinball') {
+      return (
+        <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-blue-800 rounded flex items-center justify-center">
+          <Gamepad2 className="w-6 h-6 text-white" />
         </div>
       );
     }
