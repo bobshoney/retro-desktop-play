@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useSounds } from '@/contexts/SoundContext';
 
 interface BlueScreenProps {
   onDismiss?: () => void;
@@ -7,6 +8,12 @@ interface BlueScreenProps {
 const BlueScreen: React.FC<BlueScreenProps> = ({ onDismiss }) => {
   const [showCursor, setShowCursor] = useState(true);
   const [progress, setProgress] = useState(0);
+  const { playCritical } = useSounds();
+  
+  // Play critical error sound on mount
+  useEffect(() => {
+    playCritical();
+  }, [playCritical]);
   
   // Random error codes
   const errorCodes = [
