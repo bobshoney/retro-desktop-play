@@ -13,18 +13,46 @@ const RunApp: React.FC = () => {
     
     // Map commands to apps
     const commandMap: Record<string, { id: string; title: string; component: string }> = {
+      // Notepad
       'notepad': { id: 'notepad', title: 'Notepad', component: 'notepad' },
       'notepad.exe': { id: 'notepad', title: 'Notepad', component: 'notepad' },
+      // Paint
       'mspaint': { id: 'paint', title: 'Paint', component: 'paint' },
       'mspaint.exe': { id: 'paint', title: 'Paint', component: 'paint' },
       'paint': { id: 'paint', title: 'Paint', component: 'paint' },
+      // Games
       'winmine': { id: 'minesweeper', title: 'Minesweeper', component: 'minesweeper' },
       'minesweeper': { id: 'minesweeper', title: 'Minesweeper', component: 'minesweeper' },
-      'wmplayer': { id: 'mediaplayer', title: 'Media Player', component: 'mediaplayer' },
+      'pinball': { id: 'pinball', title: '3D Pinball', component: 'pinball' },
+      // Media
+      'wmplayer': { id: 'mediaplayer', title: 'Windows Media Player', component: 'mediaplayer' },
+      'wmplayer.exe': { id: 'mediaplayer', title: 'Windows Media Player', component: 'mediaplayer' },
+      'winamp': { id: 'winamp', title: 'Winamp', component: 'winamp' },
+      'winamp.exe': { id: 'winamp', title: 'Winamp', component: 'winamp' },
+      // Internet
       'iexplore': { id: 'ie', title: 'Internet Explorer', component: 'ie' },
       'iexplore.exe': { id: 'ie', title: 'Internet Explorer', component: 'ie' },
+      'aol': { id: 'aol', title: 'AOL Instant Messenger', component: 'aol' },
+      'aim': { id: 'aol', title: 'AOL Instant Messenger', component: 'aol' },
+      'msn': { id: 'msn', title: 'MSN Messenger', component: 'msn' },
+      'msnmsgr': { id: 'msn', title: 'MSN Messenger', component: 'msn' },
+      // P2P
+      'napster': { id: 'napster', title: 'Napster', component: 'napster' },
+      'limewire': { id: 'limewire', title: 'LimeWire', component: 'limewire' },
+      'kazaa': { id: 'kazaa', title: 'Kazaa', component: 'kazaa' },
+      // System
+      'cmd': { id: 'cmd', title: 'Command Prompt', component: 'cmd' },
+      'cmd.exe': { id: 'cmd', title: 'Command Prompt', component: 'cmd' },
       'control': { id: 'controlpanel', title: 'Control Panel', component: 'controlpanel' },
       'help': { id: 'help', title: 'Help and Support', component: 'help' },
+      'search': { id: 'search', title: 'Search', component: 'search' },
+      // Folders
+      'explorer': { id: 'mydocuments', title: 'My Documents', component: 'mydocuments' },
+      'mydocuments': { id: 'mydocuments', title: 'My Documents', component: 'mydocuments' },
+      // Portfolio
+      'resume': { id: 'resume', title: 'My Resume', component: 'resume' },
+      'about': { id: 'about', title: 'About Me', component: 'about' },
+      'contact': { id: 'contact', title: 'Contact', component: 'contact' },
     };
 
     if (commandMap[cmd]) {
@@ -91,7 +119,8 @@ const RunApp: React.FC = () => {
 
       <div className="mt-4 text-xs text-gray-500">
         <p className="font-semibold mb-1">Try these commands:</p>
-        <p>notepad, paint, minesweeper, wmplayer, iexplore, control, help</p>
+        <p>notepad, paint, minesweeper, pinball, winamp, cmd</p>
+        <p>napster, limewire, kazaa, aol, msn, iexplore</p>
       </div>
     </div>
   );
