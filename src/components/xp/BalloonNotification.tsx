@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { X, Shield, AlertTriangle, Download, Info, Wifi, Bug } from 'lucide-react';
+import { useSounds } from '@/contexts/SoundContext';
 
 interface Notification {
   id: string;
@@ -90,6 +91,7 @@ const BalloonNotification: React.FC<BalloonNotificationProps> = ({ onDismiss }) 
   const [notification, setNotification] = useState<Notification | null>(null);
   const [isVisible, setIsVisible] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
+  const { playNotify, playError } = useSounds();
 
   useEffect(() => {
     // Initial delay before first notification
@@ -124,6 +126,13 @@ const BalloonNotification: React.FC<BalloonNotificationProps> = ({ onDismiss }) 
     setNotification(randomNotif);
     setIsVisible(true);
     setIsExiting(false);
+    
+    // Play appropriate sound based on notification type
+    if (randomNotif.type === 'error') {
+      playError();
+    } else {
+      playNotify();
+    }
   };
 
   const dismiss = () => {
