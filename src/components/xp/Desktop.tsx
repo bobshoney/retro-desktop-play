@@ -7,6 +7,7 @@ import Window from './Window';
 import Screensaver from './Screensaver';
 import BlueScreen from './BlueScreen';
 import BalloonNotification from './BalloonNotification';
+import TourWizard from './TourWizard';
 import { useWindows } from '@/pages/Index';
 import {
   ContextMenu,
@@ -39,7 +40,30 @@ const Desktop: React.FC = () => {
   const [startMenuOpen, setStartMenuOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
   const [showBSOD, setShowBSOD] = useState(false);
+  const [showTour, setShowTour] = useState(false);
   const { windows, openWindow, logOff, shutDown } = useWindows();
+
+  // Check if this is first boot and show tour
+  useEffect(() => {
+    const hasSeenTour = localStorage.getItem('xp-tour-completed');
+    if (!hasSeenTour) {
+      // Small delay to let desktop load first
+      const timer = setTimeout(() => {
+        setShowTour(true);
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
+  const handleTourComplete = () => {
+    localStorage.setItem('xp-tour-completed', 'true');
+    setShowTour(false);
+  };
+
+  const handleTourSkip = () => {
+    localStorage.setItem('xp-tour-completed', 'true');
+    setShowTour(false);
+  };
 
   // Random BSOD trigger (very rare - 0.5% chance every 60 seconds)
   useEffect(() => {
@@ -198,6 +222,9 @@ const Desktop: React.FC = () => {
       
       {/* Blue Screen of Death */}
       {showBSOD && <BlueScreen onDismiss={() => setShowBSOD(false)} />}
+      
+      {/* XP Tour Wizard */}
+      {showTour && <TourWizard onComplete={handleTourComplete} onSkip={handleTourSkip} />}
       
       <ContextMenuContent className="w-52 bg-[#ece9d8] border-[#0054e3] shadow-md">
         {/* View Submenu */}
