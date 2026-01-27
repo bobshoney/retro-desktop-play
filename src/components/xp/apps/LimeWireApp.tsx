@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Download, Search, AlertTriangle, Zap, File, Music, Film } from 'lucide-react';
 import { useDownloads } from '@/contexts/DownloadsContext';
 import BonziBuddy from '../BonziBuddy';
+import PopupAd from '../PopupAd';
 
 interface TorrentFile {
   id: number;
@@ -22,6 +23,7 @@ const LimeWireApp: React.FC = () => {
   const { addDownload, downloads } = useDownloads();
   const [searchQuery, setSearchQuery] = useState('');
   const [showBonzi, setShowBonzi] = useState(true);
+  const [popupAds, setPopupAds] = useState<number[]>([]);
   const [files, setFiles] = useState<TorrentFile[]>([
     { id: 1, name: 'xp_startup_sound.mp3', displayName: 'Windows XP Startup', artist: 'Microsoft', type: 'music', size: '142 KB', seeds: 234, status: 'available', progress: 0, isVirus: false, audioUrl: '/sounds/xp-startup.mp3', duration: '0:04' },
     { id: 2, name: 'totally_legit_photoshop_cs2.exe', displayName: 'Photoshop CS2', artist: 'Adobe', type: 'software', size: '12.3 MB', seeds: 45, status: 'available', progress: 0, isVirus: true },
@@ -36,6 +38,32 @@ const LimeWireApp: React.FC = () => {
   ]);
 
   const [virusAlert, setVirusAlert] = useState<string | null>(null);
+
+  // Random popup ads
+  useEffect(() => {
+    const spawnAd = () => {
+      if (Math.random() < 0.4 && popupAds.length < 3) {
+        setPopupAds(prev => [...prev, Date.now()]);
+      }
+    };
+    
+    const timer = setTimeout(spawnAd, 3000 + Math.random() * 5000);
+    const interval = setInterval(spawnAd, 12000 + Math.random() * 18000);
+    
+    return () => {
+      clearTimeout(timer);
+      clearInterval(interval);
+    };
+  }, [popupAds.length]);
+
+  const closePopupAd = (id: number) => {
+    // 40% chance to spawn another ad when closing (LimeWire was notorious for this!)
+    if (Math.random() < 0.4 && popupAds.length < 4) {
+      setPopupAds(prev => [...prev.filter(p => p !== id), Date.now()]);
+    } else {
+      setPopupAds(prev => prev.filter(p => p !== id));
+    }
+  };
 
   const isDownloaded = (fileId: number) => {
     return downloads.some(d => d.id === `limewire-${fileId}`);
@@ -233,6 +261,11 @@ const LimeWireApp: React.FC = () => {
           <BonziBuddy onDismiss={() => setShowBonzi(false)} />
         </div>
       )}
+
+      {/* Popup Ads */}
+      {popupAds.map(id => (
+        <PopupAd key={id} onClose={() => closePopupAd(id)} />
+      ))}
     </div>
   );
 };

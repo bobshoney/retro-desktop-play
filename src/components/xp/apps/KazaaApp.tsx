@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Download, Search, AlertTriangle, Skull, Music, Film, Image, File, Shield, Zap } from 'lucide-react';
 import { useDownloads } from '@/contexts/DownloadsContext';
 import BonziBuddy from '../BonziBuddy';
+import PopupAd from '../PopupAd';
 
 interface KazaaFile {
   id: number;
@@ -23,9 +24,9 @@ const KazaaApp: React.FC = () => {
   const { addDownload, downloads } = useDownloads();
   const [searchQuery, setSearchQuery] = useState('');
   const [sketchWarning, setSketchWarning] = useState<{ name: string; reason: string } | null>(null);
-  const [adPopup, setAdPopup] = useState(false);
   const [spywareAlert, setSpywareAlert] = useState(false);
   const [showBonzi, setShowBonzi] = useState(true);
+  const [popupAds, setPopupAds] = useState<number[]>([]);
 
   const [files, setFiles] = useState<KazaaFile[]>([
     { id: 1, name: 'xp_hardware_insert.mp3', displayName: 'XP Hardware Sound', artist: 'Microsoft', type: 'audio', size: '89 KB', speed: 'Cable', status: 'available', progress: 0, isSketch: false, audioUrl: '/sounds/xp-hardware-insert.mp3', duration: '0:02' },
@@ -40,13 +41,32 @@ const KazaaApp: React.FC = () => {
     { id: 10, name: 'BONZI_BUDDY_INSTALLER.exe', displayName: 'BonziBuddy', artist: 'Bonzi Software', type: 'software', size: '6.2 MB', speed: '56k', status: 'available', progress: 0, isSketch: true, sketchReason: '🦍 Your new purple gorilla friend! (+ adware, spyware, trackware)' },
   ]);
 
-  // Random ad popup
+  // Random popup ads - Kazaa was the WORST for these
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setAdPopup(true);
-    }, 5000);
-    return () => clearTimeout(timer);
-  }, []);
+    const spawnAd = () => {
+      if (Math.random() < 0.5 && popupAds.length < 4) {
+        setPopupAds(prev => [...prev, Date.now()]);
+      }
+    };
+    
+    // Spawn first ad quickly
+    const timer = setTimeout(spawnAd, 2000 + Math.random() * 3000);
+    const interval = setInterval(spawnAd, 10000 + Math.random() * 15000);
+    
+    return () => {
+      clearTimeout(timer);
+      clearInterval(interval);
+    };
+  }, [popupAds.length]);
+
+  const closePopupAd = (id: number) => {
+    // 50% chance to spawn another ad when closing (Kazaa was notorious!)
+    if (Math.random() < 0.5 && popupAds.length < 5) {
+      setPopupAds(prev => [...prev.filter(p => p !== id), Date.now()]);
+    } else {
+      setPopupAds(prev => prev.filter(p => p !== id));
+    }
+  };
 
   const isDownloaded = (fileId: number) => {
     return downloads.some(d => d.id === `kazaa-${fileId}`);
@@ -150,22 +170,6 @@ const KazaaApp: React.FC = () => {
           <div className="flex items-center gap-2 text-xs">
             <Shield className="w-4 h-4" />
             <span>Ad-Aware detected 23 new tracking cookies!</span>
-          </div>
-        </div>
-      )}
-
-      {/* Fake Ad Popup */}
-      {adPopup && (
-        <div className="absolute top-8 left-8 bg-white text-black border-2 border-gray-400 shadow-xl z-40 w-48">
-          <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white text-xs px-2 py-1 flex justify-between items-center">
-            <span>Special Offer!</span>
-            <button onClick={() => setAdPopup(false)} className="hover:bg-red-500 px-1">✕</button>
-          </div>
-          <div className="p-2 text-center text-xs">
-            <div className="text-red-600 font-bold animate-pulse mb-1">🎉 CONGRATULATIONS! 🎉</div>
-            <div>You are the 1,000,000th visitor!</div>
-            <div className="text-green-600 font-bold mt-1">Click here to claim your FREE iPod!</div>
-            <div className="text-[8px] text-gray-400 mt-2">(Just like 2003! 📱)</div>
           </div>
         </div>
       )}
@@ -296,6 +300,11 @@ const KazaaApp: React.FC = () => {
           <BonziBuddy onDismiss={() => setShowBonzi(false)} />
         </div>
       )}
+
+      {/* Popup Ads */}
+      {popupAds.map(id => (
+        <PopupAd key={id} onClose={() => closePopupAd(id)} />
+      ))}
     </div>
   );
 };
