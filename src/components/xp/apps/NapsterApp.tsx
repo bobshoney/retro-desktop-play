@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Download, Music, Search, User } from 'lucide-react';
 import { useDownloads } from '@/contexts/DownloadsContext';
 import BonziBuddy from '../BonziBuddy';
+import PopupAd from '../PopupAd';
 
 interface Track {
   id: number;
@@ -19,6 +20,7 @@ const NapsterApp: React.FC = () => {
   const { addDownload, downloads } = useDownloads();
   const [searchQuery, setSearchQuery] = useState('');
   const [showBonzi, setShowBonzi] = useState(true);
+  const [popupAds, setPopupAds] = useState<number[]>([]);
   const [tracks, setTracks] = useState<Track[]>([
     { id: 1, title: 'Windows XP Startup', artist: 'Microsoft', size: '142 KB', bitrate: '128 kbps', status: 'available', progress: 0, audioUrl: '/sounds/xp-startup.mp3', duration: '0:04' },
     { id: 2, title: 'XP Logon Sound', artist: 'Microsoft', size: '189 KB', bitrate: '128 kbps', status: 'available', progress: 0, audioUrl: '/sounds/xp-logon.mp3', duration: '0:05' },
@@ -29,6 +31,32 @@ const NapsterApp: React.FC = () => {
     { id: 7, title: 'You Got Mail', artist: 'America Online', size: '54 KB', bitrate: '128 kbps', status: 'available', progress: 0, audioUrl: '/sounds/aol-youvegotmail.ogg', duration: '0:01' },
     { id: 8, title: 'Buddy Sign On', artist: 'America Online', size: '32 KB', bitrate: '128 kbps', status: 'available', progress: 0, audioUrl: '/sounds/aol-buddyin.ogg', duration: '0:01' },
   ]);
+
+  // Random popup ads
+  useEffect(() => {
+    const spawnAd = () => {
+      if (Math.random() < 0.3 && popupAds.length < 3) {
+        setPopupAds(prev => [...prev, Date.now()]);
+      }
+    };
+    
+    const timer = setTimeout(spawnAd, 4000 + Math.random() * 6000);
+    const interval = setInterval(spawnAd, 15000 + Math.random() * 20000);
+    
+    return () => {
+      clearTimeout(timer);
+      clearInterval(interval);
+    };
+  }, [popupAds.length]);
+
+  const closePopupAd = (id: number) => {
+    // 30% chance to spawn another ad when closing
+    if (Math.random() < 0.3 && popupAds.length < 4) {
+      setPopupAds(prev => [...prev.filter(p => p !== id), Date.now()]);
+    } else {
+      setPopupAds(prev => prev.filter(p => p !== id));
+    }
+  };
 
   const isDownloaded = (trackId: number) => {
     return downloads.some(d => d.id === `napster-${trackId}`);
@@ -171,6 +199,11 @@ const NapsterApp: React.FC = () => {
           <BonziBuddy onDismiss={() => setShowBonzi(false)} />
         </div>
       )}
+
+      {/* Popup Ads */}
+      {popupAds.map(id => (
+        <PopupAd key={id} onClose={() => closePopupAd(id)} />
+      ))}
     </div>
   );
 };
