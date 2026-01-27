@@ -55,6 +55,20 @@ const Desktop: React.FC = () => {
     }
   }, []);
 
+  // Global keyboard shortcut: Win+R opens Run dialog
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Win+R or Meta+R (for Mac compatibility)
+      if ((e.metaKey || e.key === 'Meta') && e.key.toLowerCase() === 'r') {
+        e.preventDefault();
+        openWindow('run', 'Run', 'run', undefined, 400, 180);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [openWindow]);
+
   const handleTourComplete = () => {
     localStorage.setItem('xp-tour-completed', 'true');
     setShowTour(false);
