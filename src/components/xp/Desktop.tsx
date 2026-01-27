@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import blissWallpaper from '@/assets/bliss-wallpaper.jpg';
 import DesktopIcon from './DesktopIcon';
 import Taskbar from './Taskbar';
@@ -8,6 +8,7 @@ import Screensaver from './Screensaver';
 import BlueScreen from './BlueScreen';
 import BalloonNotification from './BalloonNotification';
 import TourWizard from './TourWizard';
+import WindowSwitcher from './WindowSwitcher';
 import { useWindows } from '@/pages/Index';
 import {
   ContextMenu,
@@ -41,7 +42,9 @@ const Desktop: React.FC = () => {
   const [refreshKey, setRefreshKey] = useState(0);
   const [showBSOD, setShowBSOD] = useState(false);
   const [showTour, setShowTour] = useState(false);
-  const { windows, openWindow, minimizeWindow, logOff, shutDown } = useWindows();
+  const [showSwitcher, setShowSwitcher] = useState(false);
+  const [switcherIndex, setSwitcherIndex] = useState(0);
+  const { windows, openWindow, minimizeWindow, focusWindow, logOff, shutDown } = useWindows();
 
   // Check if this is first boot and show tour
   useEffect(() => {
@@ -55,9 +58,31 @@ const Desktop: React.FC = () => {
     }
   }, []);
 
+  // Get non-minimized windows for Alt+Tab
+  const switchableWindows = windows.filter(w => !w.isMinimized);
+
   // Global keyboard shortcuts
   useEffect(() => {
+    let altTabActive = false;
+
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Alt+Tab - Window Switcher
+      if (e.altKey && e.key === 'Tab') {
+        e.preventDefault();
+        
+        if (switchableWindows.length > 0) {
+          if (!altTabActive) {
+            altTabActive = true;
+            setShowSwitcher(true);
+            setSwitcherIndex(0);
+          } else {
+            // Cycle to next window
+            setSwitcherIndex(prev => (prev + 1) % switchableWindows.length);
+          }
+        }
+        return;
+      }
+
       // Win+R - Open Run dialog
       if (e.metaKey && e.key.toLowerCase() === 'r') {
         e.preventDefault();
@@ -99,9 +124,25 @@ const Desktop: React.FC = () => {
       }
     };
 
+    const handleKeyUp = (e: KeyboardEvent) => {
+      // When Alt is released, switch to selected window
+      if (e.key === 'Alt' && showSwitcher) {
+        setShowSwitcher(false);
+        altTabActive = false;
+        
+        if (switchableWindows.length > 0 && switchableWindows[switcherIndex]) {
+          focusWindow(switchableWindows[switcherIndex].id);
+        }
+      }
+    };
+
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [openWindow, windows, minimizeWindow, startMenuOpen]);
+    window.addEventListener('keyup', handleKeyUp);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
+  }, [openWindow, windows, minimizeWindow, startMenuOpen, showSwitcher, switcherIndex, switchableWindows, focusWindow]);
 
   const handleTourComplete = () => {
     localStorage.setItem('xp-tour-completed', 'true');
@@ -273,6 +314,11 @@ const Desktop: React.FC = () => {
       
       {/* XP Tour Wizard */}
       {showTour && <TourWizard onComplete={handleTourComplete} onSkip={handleTourSkip} />}
+      
+      {/* Alt+Tab Window Switcher */}
+      {showSwitcher && switchableWindows.length > 0 && (
+        <WindowSwitcher windows={switchableWindows} selectedIndex={switcherIndex} />
+      )}
       
       <ContextMenuContent className="w-52 bg-[#ece9d8] border-[#0054e3] shadow-md">
         {/* View Submenu */}
