@@ -41,7 +41,7 @@ const Desktop: React.FC = () => {
   const [refreshKey, setRefreshKey] = useState(0);
   const [showBSOD, setShowBSOD] = useState(false);
   const [showTour, setShowTour] = useState(false);
-  const { windows, openWindow, logOff, shutDown } = useWindows();
+  const { windows, openWindow, minimizeWindow, logOff, shutDown } = useWindows();
 
   // Check if this is first boot and show tour
   useEffect(() => {
@@ -55,19 +55,53 @@ const Desktop: React.FC = () => {
     }
   }, []);
 
-  // Global keyboard shortcut: Win+R opens Run dialog
+  // Global keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Win+R or Meta+R (for Mac compatibility)
-      if ((e.metaKey || e.key === 'Meta') && e.key.toLowerCase() === 'r') {
+      // Win+R - Open Run dialog
+      if (e.metaKey && e.key.toLowerCase() === 'r') {
         e.preventDefault();
         openWindow('run', 'Run', 'run', undefined, 400, 180);
+        return;
+      }
+      
+      // Win+E - Open My Documents (Explorer)
+      if (e.metaKey && e.key.toLowerCase() === 'e') {
+        e.preventDefault();
+        openWindow('mydocuments', 'My Documents', 'mydocuments', undefined, 600, 450);
+        return;
+      }
+      
+      // Win+D - Show Desktop (minimize all windows)
+      if (e.metaKey && e.key.toLowerCase() === 'd') {
+        e.preventDefault();
+        windows.forEach(w => {
+          if (!w.isMinimized) {
+            minimizeWindow(w.id);
+          }
+        });
+        setStartMenuOpen(false);
+        return;
+      }
+      
+      // Ctrl+Esc - Open Start Menu
+      if (e.ctrlKey && e.key === 'Escape') {
+        e.preventDefault();
+        setStartMenuOpen(prev => !prev);
+        return;
+      }
+      
+      // Escape - Close Start Menu if open
+      if (e.key === 'Escape' && startMenuOpen) {
+        e.preventDefault();
+        setStartMenuOpen(false);
+        return;
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [openWindow]);
+  }, [openWindow, windows, minimizeWindow, startMenuOpen]);
 
   const handleTourComplete = () => {
     localStorage.setItem('xp-tour-completed', 'true');
