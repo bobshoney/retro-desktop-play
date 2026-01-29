@@ -10,6 +10,7 @@ import BalloonNotification from './BalloonNotification';
 import TourWizard from './TourWizard';
 import WindowSwitcher from './WindowSwitcher';
 import { useWindows } from '@/pages/Index';
+import { useBloatMode } from '@/contexts/BloatModeContext';
 import {
   ContextMenu,
   ContextMenuContent,
@@ -45,6 +46,7 @@ const Desktop: React.FC = () => {
   const [showSwitcher, setShowSwitcher] = useState(false);
   const [switcherIndex, setSwitcherIndex] = useState(0);
   const { windows, openWindow, minimizeWindow, focusWindow, logOff, shutDown } = useWindows();
+  const { bloatEnabled } = useBloatMode();
 
   // Check if this is first boot and show tour
   useEffect(() => {
@@ -306,8 +308,8 @@ const Desktop: React.FC = () => {
       {/* XP Screensaver - Activates after 1 minute of idle */}
       <Screensaver idleTimeout={60000} />
       
-      {/* Balloon Notifications */}
-      <BalloonNotification />
+      {/* Balloon Notifications - Only show when bloat enabled */}
+      {bloatEnabled && <BalloonNotification />}
       
       {/* Blue Screen of Death */}
       {showBSOD && <BlueScreen onDismiss={() => setShowBSOD(false)} />}
