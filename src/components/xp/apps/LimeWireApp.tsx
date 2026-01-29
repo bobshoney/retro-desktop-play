@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Download, Search, AlertTriangle, Zap, File, Music, Film } from 'lucide-react';
 import { useDownloads } from '@/contexts/DownloadsContext';
+import { useBloatMode } from '@/contexts/BloatModeContext';
 import BonziBuddy from '../BonziBuddy';
 import PopupAd from '../PopupAd';
 
@@ -21,6 +22,7 @@ interface TorrentFile {
 
 const LimeWireApp: React.FC = () => {
   const { addDownload, downloads } = useDownloads();
+  const { bloatEnabled, setHasActiveAds } = useBloatMode();
   const [searchQuery, setSearchQuery] = useState('');
   const [showBonzi, setShowBonzi] = useState(true);
   const [popupAds, setPopupAds] = useState<number[]>([]);
@@ -39,8 +41,15 @@ const LimeWireApp: React.FC = () => {
 
   const [virusAlert, setVirusAlert] = useState<string | null>(null);
 
-  // Random popup ads
+  // Update hasActiveAds when popupAds change
   useEffect(() => {
+    setHasActiveAds(popupAds.length > 0);
+  }, [popupAds.length, setHasActiveAds]);
+
+  // Random popup ads - only spawn if bloat enabled
+  useEffect(() => {
+    if (!bloatEnabled) return;
+    
     const spawnAd = () => {
       if (Math.random() < 0.4 && popupAds.length < 3) {
         setPopupAds(prev => [...prev, Date.now()]);
@@ -54,7 +63,7 @@ const LimeWireApp: React.FC = () => {
       clearTimeout(timer);
       clearInterval(interval);
     };
-  }, [popupAds.length]);
+  }, [popupAds.length, bloatEnabled]);
 
   const closePopupAd = (id: number) => {
     // 40% chance to spawn another ad when closing (LimeWire was notorious for this!)
@@ -256,14 +265,14 @@ const LimeWireApp: React.FC = () => {
       </div>
 
       {/* BonziBuddy - The infamous purple gorilla */}
-      {showBonzi && (
+      {bloatEnabled && showBonzi && (
         <div className="absolute bottom-12 right-2">
           <BonziBuddy onDismiss={() => setShowBonzi(false)} />
         </div>
       )}
 
       {/* Popup Ads */}
-      {popupAds.map(id => (
+      {bloatEnabled && popupAds.map(id => (
         <PopupAd key={id} onClose={() => closePopupAd(id)} />
       ))}
     </div>

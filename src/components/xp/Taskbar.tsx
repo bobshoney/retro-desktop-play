@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Volume2, Volume1, VolumeX, Wifi, Minus, Square, X, ChevronLeft, ChevronRight, Shield, Battery, BellRing } from 'lucide-react';
+import { Volume2, Volume1, VolumeX, Wifi, Minus, Square, X, ChevronLeft, ChevronRight, Shield, ShieldCheck, ShieldAlert, Battery, BellRing } from 'lucide-react';
 import { useWindows } from '@/pages/Index';
 import { useSounds } from '@/contexts/SoundContext';
+import { useBloatMode } from '@/contexts/BloatModeContext';
 
 // Import quick launch icons
 import ieIcon from '@/assets/icons/ie-icon.png';
@@ -20,6 +21,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { Slider } from '@/components/ui/slider';
+import { Switch } from '@/components/ui/switch';
 
 interface TaskbarProps {
   startMenuOpen: boolean;
@@ -35,6 +37,7 @@ const Taskbar: React.FC<TaskbarProps> = ({ startMenuOpen, onStartClick }) => {
   const [calendarDate, setCalendarDate] = useState(new Date());
   const { windows, focusWindow, minimizeWindow, toggleMaximize, closeWindow, activeWindowId, openWindow } = useWindows();
   const { volume, isMuted, setVolume, setMuted } = useSounds();
+  const { bloatEnabled, setBloatEnabled, hasActiveAds } = useBloatMode();
 
   // Quick launch items
   const quickLaunchItems = [
@@ -234,10 +237,76 @@ const Taskbar: React.FC<TaskbarProps> = ({ startMenuOpen, onStartClick }) => {
           <ChevronLeft className="w-3 h-3 text-white/60" />
         </button>
 
-        {/* Security/Antivirus */}
-        <div className="hover:bg-white/10 p-0.5 rounded cursor-pointer" title="Windows Security Center">
-          <Shield className="w-4 h-4 text-green-400" />
-        </div>
+        {/* Bloat Protection Toggle */}
+        <Popover>
+          <PopoverTrigger 
+            className={`hover:bg-white/10 p-0.5 rounded cursor-pointer relative ${
+              hasActiveAds && bloatEnabled ? 'animate-pulse' : ''
+            }`}
+            title={bloatEnabled ? "Bloat Protection: OFF (Authentic 2003 Mode)" : "Bloat Protection: ON"}
+          >
+            {bloatEnabled ? (
+              <ShieldAlert className={`w-4 h-4 ${hasActiveAds ? 'text-orange-400' : 'text-yellow-400'}`} />
+            ) : (
+              <ShieldCheck className="w-4 h-4 text-green-400" />
+            )}
+          </PopoverTrigger>
+          <PopoverContent 
+            className="w-64 p-0 bg-[#ece9d8] border-2 border-[#0054e3] shadow-lg"
+            align="center"
+            sideOffset={8}
+          >
+            {/* Header */}
+            <div className="bg-gradient-to-b from-[#0054e3] to-[#003399] text-white p-2 flex items-center gap-2">
+              {bloatEnabled ? (
+                <ShieldAlert className="w-5 h-5 text-yellow-300" />
+              ) : (
+                <ShieldCheck className="w-5 h-5 text-green-300" />
+              )}
+              <span className="font-bold text-sm">Bloat Protection</span>
+            </div>
+            
+            {/* Toggle Content */}
+            <div className="p-3 space-y-3">
+              {/* Toggle Switch */}
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-[#003399]">
+                  {bloatEnabled ? 'Authentic 2003 Mode' : 'Protected Mode'}
+                </span>
+                <Switch
+                  checked={!bloatEnabled}
+                  onCheckedChange={(checked) => setBloatEnabled(!checked)}
+                  className="data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-yellow-500"
+                />
+              </div>
+              
+              {/* Description */}
+              <div className="bg-white border border-gray-300 rounded p-2 text-xs space-y-2">
+                <div className={`flex items-center gap-2 ${bloatEnabled ? 'text-gray-800' : 'text-gray-400'}`}>
+                  <span>{bloatEnabled ? '✓' : '✗'}</span>
+                  <span>Popup ads</span>
+                </div>
+                <div className={`flex items-center gap-2 ${bloatEnabled ? 'text-gray-800' : 'text-gray-400'}`}>
+                  <span>{bloatEnabled ? '✓' : '✗'}</span>
+                  <span>BonziBuddy 🦍</span>
+                </div>
+                <div className={`flex items-center gap-2 ${bloatEnabled ? 'text-gray-800' : 'text-gray-400'}`}>
+                  <span>{bloatEnabled ? '✓' : '✗'}</span>
+                  <span>Balloon notifications</span>
+                </div>
+              </div>
+              
+              {/* Fun Message */}
+              <div className="text-xs text-center italic text-gray-600">
+                {bloatEnabled ? (
+                  <span>"For the full nostalgic experience!" 🦍</span>
+                ) : (
+                  <span>"Enjoy your modern, ad-free browsing!" 🛡️</span>
+                )}
+              </div>
+            </div>
+          </PopoverContent>
+        </Popover>
 
         {/* Updates Available */}
         <div className="hover:bg-white/10 p-0.5 rounded cursor-pointer animate-pulse" title="Updates Available">

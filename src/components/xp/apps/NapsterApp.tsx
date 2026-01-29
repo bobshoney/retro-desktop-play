@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Download, Music, Search, User } from 'lucide-react';
 import { useDownloads } from '@/contexts/DownloadsContext';
+import { useBloatMode } from '@/contexts/BloatModeContext';
 import BonziBuddy from '../BonziBuddy';
 import PopupAd from '../PopupAd';
 
@@ -18,6 +19,7 @@ interface Track {
 
 const NapsterApp: React.FC = () => {
   const { addDownload, downloads } = useDownloads();
+  const { bloatEnabled, setHasActiveAds } = useBloatMode();
   const [searchQuery, setSearchQuery] = useState('');
   const [showBonzi, setShowBonzi] = useState(true);
   const [popupAds, setPopupAds] = useState<number[]>([]);
@@ -32,8 +34,15 @@ const NapsterApp: React.FC = () => {
     { id: 8, title: 'Buddy Sign On', artist: 'America Online', size: '32 KB', bitrate: '128 kbps', status: 'available', progress: 0, audioUrl: '/sounds/aol-buddyin.ogg', duration: '0:01' },
   ]);
 
-  // Random popup ads
+  // Update hasActiveAds when popupAds change
   useEffect(() => {
+    setHasActiveAds(popupAds.length > 0);
+  }, [popupAds.length, setHasActiveAds]);
+
+  // Random popup ads - only spawn if bloat enabled
+  useEffect(() => {
+    if (!bloatEnabled) return;
+    
     const spawnAd = () => {
       if (Math.random() < 0.3 && popupAds.length < 3) {
         setPopupAds(prev => [...prev, Date.now()]);
@@ -47,7 +56,7 @@ const NapsterApp: React.FC = () => {
       clearTimeout(timer);
       clearInterval(interval);
     };
-  }, [popupAds.length]);
+  }, [popupAds.length, bloatEnabled]);
 
   const closePopupAd = (id: number) => {
     // 30% chance to spawn another ad when closing
@@ -194,14 +203,14 @@ const NapsterApp: React.FC = () => {
       </div>
 
       {/* BonziBuddy - The infamous purple gorilla */}
-      {showBonzi && (
+      {bloatEnabled && showBonzi && (
         <div className="absolute bottom-12 right-2">
           <BonziBuddy onDismiss={() => setShowBonzi(false)} />
         </div>
       )}
 
       {/* Popup Ads */}
-      {popupAds.map(id => (
+      {bloatEnabled && popupAds.map(id => (
         <PopupAd key={id} onClose={() => closePopupAd(id)} />
       ))}
     </div>

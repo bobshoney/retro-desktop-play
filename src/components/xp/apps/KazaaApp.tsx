@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Download, Search, AlertTriangle, Skull, Music, Film, Image, File, Shield, Zap } from 'lucide-react';
 import { useDownloads } from '@/contexts/DownloadsContext';
+import { useBloatMode } from '@/contexts/BloatModeContext';
 import BonziBuddy from '../BonziBuddy';
 import PopupAd from '../PopupAd';
 
@@ -22,6 +23,7 @@ interface KazaaFile {
 
 const KazaaApp: React.FC = () => {
   const { addDownload, downloads } = useDownloads();
+  const { bloatEnabled, setHasActiveAds } = useBloatMode();
   const [searchQuery, setSearchQuery] = useState('');
   const [sketchWarning, setSketchWarning] = useState<{ name: string; reason: string } | null>(null);
   const [spywareAlert, setSpywareAlert] = useState(false);
@@ -41,8 +43,15 @@ const KazaaApp: React.FC = () => {
     { id: 10, name: 'BONZI_BUDDY_INSTALLER.exe', displayName: 'BonziBuddy', artist: 'Bonzi Software', type: 'software', size: '6.2 MB', speed: '56k', status: 'available', progress: 0, isSketch: true, sketchReason: '🦍 Your new purple gorilla friend! (+ adware, spyware, trackware)' },
   ]);
 
-  // Random popup ads - Kazaa was the WORST for these
+  // Update hasActiveAds when popupAds change
   useEffect(() => {
+    setHasActiveAds(popupAds.length > 0);
+  }, [popupAds.length, setHasActiveAds]);
+
+  // Random popup ads - Kazaa was the WORST for these - only spawn if bloat enabled
+  useEffect(() => {
+    if (!bloatEnabled) return;
+    
     const spawnAd = () => {
       if (Math.random() < 0.5 && popupAds.length < 4) {
         setPopupAds(prev => [...prev, Date.now()]);
@@ -57,7 +66,7 @@ const KazaaApp: React.FC = () => {
       clearTimeout(timer);
       clearInterval(interval);
     };
-  }, [popupAds.length]);
+  }, [popupAds.length, bloatEnabled]);
 
   const closePopupAd = (id: number) => {
     // 50% chance to spawn another ad when closing (Kazaa was notorious!)
@@ -295,14 +304,14 @@ const KazaaApp: React.FC = () => {
       </div>
 
       {/* BonziBuddy - The infamous purple gorilla appears in sketchy apps */}
-      {showBonzi && (
+      {bloatEnabled && showBonzi && (
         <div className="absolute bottom-12 right-2">
           <BonziBuddy onDismiss={() => setShowBonzi(false)} />
         </div>
       )}
 
       {/* Popup Ads */}
-      {popupAds.map(id => (
+      {bloatEnabled && popupAds.map(id => (
         <PopupAd key={id} onClose={() => closePopupAd(id)} />
       ))}
     </div>
