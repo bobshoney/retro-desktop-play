@@ -19,7 +19,7 @@ interface Track {
 
 const NapsterApp: React.FC = () => {
   const { addDownload, downloads } = useDownloads();
-  const { bloatEnabled, setHasActiveAds } = useBloatMode();
+  const { bloatEnabled, setHasActiveAds, notifyPopupSpawn } = useBloatMode();
   const [searchQuery, setSearchQuery] = useState('');
   const [showBonzi, setShowBonzi] = useState(true);
   const [popupAds, setPopupAds] = useState<number[]>([]);
@@ -39,6 +39,14 @@ const NapsterApp: React.FC = () => {
     setHasActiveAds(popupAds.length > 0);
   }, [popupAds.length, setHasActiveAds]);
 
+  // Clear popups when bloat is disabled
+  useEffect(() => {
+    if (!bloatEnabled) {
+      setPopupAds([]);
+      setShowBonzi(false);
+    }
+  }, [bloatEnabled]);
+
   // Random popup ads - only spawn if bloat enabled
   useEffect(() => {
     if (!bloatEnabled) return;
@@ -46,6 +54,7 @@ const NapsterApp: React.FC = () => {
     const spawnAd = () => {
       if (Math.random() < 0.3 && popupAds.length < 3) {
         setPopupAds(prev => [...prev, Date.now()]);
+        notifyPopupSpawn();
       }
     };
     
@@ -60,8 +69,9 @@ const NapsterApp: React.FC = () => {
 
   const closePopupAd = (id: number) => {
     // 30% chance to spawn another ad when closing
-    if (Math.random() < 0.3 && popupAds.length < 4) {
+    if (bloatEnabled && Math.random() < 0.3 && popupAds.length < 4) {
       setPopupAds(prev => [...prev.filter(p => p !== id), Date.now()]);
+      notifyPopupSpawn();
     } else {
       setPopupAds(prev => prev.filter(p => p !== id));
     }

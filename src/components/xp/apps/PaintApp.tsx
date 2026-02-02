@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Clippy from '../Clippy';
+import { useBloatMode } from '@/contexts/BloatModeContext';
 
 const COLORS = [
   '#000000', '#808080', '#800000', '#808000', '#008000', '#008080', '#000080', '#800080',
@@ -7,6 +8,7 @@ const COLORS = [
 ];
 
 const PaintApp: React.FC = () => {
+  const { bloatEnabled } = useBloatMode();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [color, setColor] = useState('#000000');
@@ -158,8 +160,8 @@ const PaintApp: React.FC = () => {
         </div>
       </div>
 
-      {/* Clippy */}
-      {showClippy && (
+      {/* Clippy - only show when bloat enabled */}
+      {showClippy && bloatEnabled && (
         <div className="absolute bottom-12 right-2">
           <Clippy context="paint" onDismiss={() => setShowClippy(false)} />
         </div>

@@ -23,7 +23,7 @@ interface KazaaFile {
 
 const KazaaApp: React.FC = () => {
   const { addDownload, downloads } = useDownloads();
-  const { bloatEnabled, setHasActiveAds } = useBloatMode();
+  const { bloatEnabled, setHasActiveAds, notifyPopupSpawn } = useBloatMode();
   const [searchQuery, setSearchQuery] = useState('');
   const [sketchWarning, setSketchWarning] = useState<{ name: string; reason: string } | null>(null);
   const [spywareAlert, setSpywareAlert] = useState(false);
@@ -48,6 +48,14 @@ const KazaaApp: React.FC = () => {
     setHasActiveAds(popupAds.length > 0);
   }, [popupAds.length, setHasActiveAds]);
 
+  // Clear popups when bloat is disabled
+  useEffect(() => {
+    if (!bloatEnabled) {
+      setPopupAds([]);
+      setShowBonzi(false);
+    }
+  }, [bloatEnabled]);
+
   // Random popup ads - Kazaa was the WORST for these - only spawn if bloat enabled
   useEffect(() => {
     if (!bloatEnabled) return;
@@ -55,6 +63,7 @@ const KazaaApp: React.FC = () => {
     const spawnAd = () => {
       if (Math.random() < 0.5 && popupAds.length < 4) {
         setPopupAds(prev => [...prev, Date.now()]);
+        notifyPopupSpawn();
       }
     };
     
@@ -70,8 +79,9 @@ const KazaaApp: React.FC = () => {
 
   const closePopupAd = (id: number) => {
     // 50% chance to spawn another ad when closing (Kazaa was notorious!)
-    if (Math.random() < 0.5 && popupAds.length < 5) {
+    if (bloatEnabled && Math.random() < 0.5 && popupAds.length < 5) {
       setPopupAds(prev => [...prev.filter(p => p !== id), Date.now()]);
+      notifyPopupSpawn();
     } else {
       setPopupAds(prev => prev.filter(p => p !== id));
     }
