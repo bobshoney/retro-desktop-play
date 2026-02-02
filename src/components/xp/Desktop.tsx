@@ -11,6 +11,7 @@ import TourWizard from './TourWizard';
 import WindowSwitcher from './WindowSwitcher';
 import { useWindows } from '@/pages/Index';
 import { useBloatMode } from '@/contexts/BloatModeContext';
+import { useDesktopIcons } from '@/hooks/useDesktopIcons';
 import {
   ContextMenu,
   ContextMenuContent,
@@ -21,7 +22,7 @@ import {
   ContextMenuSubTrigger,
   ContextMenuTrigger,
 } from '@/components/ui/context-menu';
-import { RefreshCw, FolderPlus, Settings, Monitor, ArrowUpDown, LayoutGrid, List, Trash2 } from 'lucide-react';
+import { RefreshCw, FolderPlus, Settings, Monitor, ArrowUpDown, LayoutGrid, List, Trash2, RotateCcw } from 'lucide-react';
 
 // Import icons
 import resumeIcon from '@/assets/icons/resume-icon.png';
@@ -47,6 +48,7 @@ const Desktop: React.FC = () => {
   const [switcherIndex, setSwitcherIndex] = useState(0);
   const { windows, openWindow, minimizeWindow, focusWindow, logOff, shutDown } = useWindows();
   const { bloatEnabled } = useBloatMode();
+  const { getIconPosition, updateIconPosition, resetPositions } = useDesktopIcons();
 
   // Check if this is first boot and show tour
   useEffect(() => {
@@ -167,31 +169,25 @@ const Desktop: React.FC = () => {
     return () => clearInterval(bsodInterval);
   }, []);
 
-  // Desktop icons arranged in classic Windows XP vertical columns
+  // Desktop icons - positions managed by useDesktopIcons hook
   const desktopIcons = [
-    // Column 1 (left side)
-    { id: 'resume', title: 'My Resume', iconSrc: resumeIcon, component: 'resume', position: { top: 16, left: 16 } },
-    { id: 'about', title: 'About Me', iconSrc: userIcon, component: 'about', position: { top: 96, left: 16 } },
-    { id: 'contact', title: 'Contact', iconSrc: mailIcon, component: 'contact', position: { top: 176, left: 16 } },
-    { id: 'ie', title: 'Internet Explorer', iconSrc: ieIcon, component: 'ie', position: { top: 256, left: 16 } },
-    { id: 'aol', title: 'AOL 9.0', iconSrc: aolIcon, component: 'aol', position: { top: 336, left: 16 } },
-    
-    // Column 2
-    { id: 'napster', title: 'Napster', iconSrc: napsterIcon, component: 'napster', position: { top: 16, left: 96 } },
-    { id: 'limewire', title: 'LimeWire', iconSrc: limewireIcon, component: 'limewire', position: { top: 96, left: 96 } },
-    { id: 'kazaa', title: 'Kazaa', iconSrc: kazaaIcon, component: 'kazaa', position: { top: 176, left: 96 } },
-    { id: 'winamp', title: 'Winamp', iconSrc: winampIcon, component: 'winamp', position: { top: 256, left: 96 } },
-    { id: 'minesweeper', title: 'Minesweeper', iconSrc: minesweeperIcon, component: 'minesweeper', position: { top: 336, left: 96 } },
-    
-    // Column 3
-    { id: 'paint', title: 'Paint', iconSrc: paintIcon, component: 'paint', position: { top: 16, left: 176 } },
-    { id: 'notepad', title: 'Notepad', iconSrc: notepadIcon, component: 'notepad', position: { top: 96, left: 176 } },
-    { id: 'mediaplayer', title: 'Media Player', iconSrc: mediaplayerIcon, component: 'mediaplayer', position: { top: 176, left: 176 } },
-    { id: 'cmd', title: 'Command Prompt', iconSrc: 'cmd', component: 'cmd', position: { top: 256, left: 176 } },
-    { id: 'msn', title: 'MSN Messenger', iconSrc: 'msn', component: 'msn', position: { top: 336, left: 176 } },
-    { id: 'pinball', title: '3D Pinball', iconSrc: 'pinball', component: 'pinball', position: { top: 16, left: 256 } },
-    
-    // Recycle Bin - always bottom right
+    { id: 'resume', title: 'My Resume', iconSrc: resumeIcon, component: 'resume' },
+    { id: 'about', title: 'About Me', iconSrc: userIcon, component: 'about' },
+    { id: 'contact', title: 'Contact', iconSrc: mailIcon, component: 'contact' },
+    { id: 'ie', title: 'Internet Explorer', iconSrc: ieIcon, component: 'ie' },
+    { id: 'aol', title: 'AOL 9.0', iconSrc: aolIcon, component: 'aol' },
+    { id: 'napster', title: 'Napster', iconSrc: napsterIcon, component: 'napster' },
+    { id: 'limewire', title: 'LimeWire', iconSrc: limewireIcon, component: 'limewire' },
+    { id: 'kazaa', title: 'Kazaa', iconSrc: kazaaIcon, component: 'kazaa' },
+    { id: 'winamp', title: 'Winamp', iconSrc: winampIcon, component: 'winamp' },
+    { id: 'minesweeper', title: 'Minesweeper', iconSrc: minesweeperIcon, component: 'minesweeper' },
+    { id: 'paint', title: 'Paint', iconSrc: paintIcon, component: 'paint' },
+    { id: 'notepad', title: 'Notepad', iconSrc: notepadIcon, component: 'notepad' },
+    { id: 'mediaplayer', title: 'Media Player', iconSrc: mediaplayerIcon, component: 'mediaplayer' },
+    { id: 'cmd', title: 'Command Prompt', iconSrc: 'cmd', component: 'cmd' },
+    { id: 'msn', title: 'MSN Messenger', iconSrc: 'msn', component: 'msn' },
+    { id: 'pinball', title: '3D Pinball', iconSrc: 'pinball', component: 'pinball' },
+    // Recycle Bin - always bottom right (not draggable)
     { id: 'recyclebin', title: 'Recycle Bin', iconSrc: 'recyclebin', component: 'recyclebin', isSystemIcon: true },
   ];
 
@@ -246,21 +242,26 @@ const Desktop: React.FC = () => {
           }}
           onClick={handleDesktopClick}
         >
-          {/* Desktop Icons - Positioned to spell HELLO WORLD */}
+          {/* Desktop Icons - Draggable with grid snapping */}
           <div className="absolute inset-0" key={refreshKey}>
-            {desktopIcons.filter(icon => !('isSystemIcon' in icon) && 'position' in icon).map((icon) => (
-              <div
-                key={icon.id}
-                className="absolute"
-                style={{ top: icon.position?.top, left: icon.position?.left }}
-              >
-                <DesktopIcon
-                  title={icon.title}
-                  iconSrc={icon.iconSrc}
-                  onDoubleClick={() => handleIconDoubleClick(icon)}
-                />
-              </div>
-            ))}
+            {desktopIcons.filter(icon => !('isSystemIcon' in icon)).map((icon) => {
+              const pos = getIconPosition(icon.id);
+              return (
+                <div
+                  key={icon.id}
+                  className="absolute"
+                  style={{ top: pos.y, left: pos.x }}
+                >
+                  <DesktopIcon
+                    title={icon.title}
+                    iconSrc={icon.iconSrc}
+                    onDoubleClick={() => handleIconDoubleClick(icon)}
+                    onDragEnd={(x, y) => updateIconPosition(icon.id, x, y)}
+                    position={pos}
+                  />
+                </div>
+              );
+            })}
           </div>
           
           {/* Recycle Bin - Bottom Right */}
@@ -370,6 +371,16 @@ const Desktop: React.FC = () => {
             </ContextMenuItem>
           </ContextMenuSubContent>
         </ContextMenuSub>
+        
+        <ContextMenuSeparator className="bg-gray-400" />
+        
+        <ContextMenuItem 
+          className="flex items-center gap-2 text-xs cursor-pointer hover:bg-[#316ac5] hover:text-white"
+          onClick={resetPositions}
+        >
+          <RotateCcw className="w-4 h-4" />
+          Reset Icon Positions
+        </ContextMenuItem>
         
         <ContextMenuSeparator className="bg-gray-400" />
         

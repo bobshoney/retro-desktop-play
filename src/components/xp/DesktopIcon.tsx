@@ -1,14 +1,70 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { Terminal, MessageCircle, Gamepad2 } from 'lucide-react';
 
 interface DesktopIconProps {
   title: string;
   iconSrc: string;
   onDoubleClick: () => void;
+  onDragEnd?: (x: number, y: number) => void;
+  position?: { x: number; y: number };
 }
 
-const DesktopIcon: React.FC<DesktopIconProps> = ({ title, iconSrc, onDoubleClick }) => {
+const DesktopIcon: React.FC<DesktopIconProps> = ({ 
+  title, 
+  iconSrc, 
+  onDoubleClick,
+  onDragEnd,
+  position 
+}) => {
   const [selected, setSelected] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [currentPos, setCurrentPos] = useState({ x: 0, y: 0 });
+  const iconRef = useRef<HTMLDivElement>(null);
+
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    if (e.button !== 0) return; // Only left click
+    e.stopPropagation();
+    
+    const rect = iconRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    
+    setDragOffset({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top
+    });
+    setCurrentPos({ x: e.clientX, y: e.clientY });
+    setIsDragging(true);
+    setSelected(true);
+  }, []);
+
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    if (!isDragging) return;
+    setCurrentPos({ x: e.clientX, y: e.clientY });
+  }, [isDragging]);
+
+  const handleMouseUp = useCallback((e: MouseEvent) => {
+    if (!isDragging) return;
+    setIsDragging(false);
+    
+    if (onDragEnd) {
+      const newX = e.clientX - dragOffset.x;
+      const newY = e.clientY - dragOffset.y;
+      onDragEnd(newX, newY);
+    }
+  }, [isDragging, dragOffset, onDragEnd]);
+
+  // Attach global mouse listeners when dragging
+  React.useEffect(() => {
+    if (isDragging) {
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
+      return () => {
+        window.removeEventListener('mousemove', handleMouseMove);
+        window.removeEventListener('mouseup', handleMouseUp);
+      };
+    }
+  }, [isDragging, handleMouseMove, handleMouseUp]);
 
   const renderIcon = () => {
     if (iconSrc === 'cmd') {
@@ -43,16 +99,31 @@ const DesktopIcon: React.FC<DesktopIconProps> = ({ title, iconSrc, onDoubleClick
     );
   };
 
+  // Calculate drag position
+  const style: React.CSSProperties = isDragging
+    ? {
+        position: 'fixed',
+        left: currentPos.x - dragOffset.x,
+        top: currentPos.y - dragOffset.y,
+        zIndex: 9999,
+        opacity: 0.8,
+        pointerEvents: 'none',
+      }
+    : {};
+
   return (
     <div
-      className={`xp-desktop-icon ${selected ? 'selected' : ''}`}
+      ref={iconRef}
+      className={`xp-desktop-icon ${selected ? 'selected' : ''} ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+      style={style}
       onClick={(e) => {
         e.stopPropagation();
         setSelected(true);
       }}
+      onMouseDown={handleMouseDown}
       onDoubleClick={(e) => {
         e.stopPropagation();
-        onDoubleClick();
+        if (!isDragging) onDoubleClick();
       }}
       onBlur={() => setSelected(false)}
       tabIndex={0}
