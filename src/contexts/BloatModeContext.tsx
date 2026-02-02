@@ -1,15 +1,21 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback } from 'react';
 
 interface BloatModeContextType {
   bloatEnabled: boolean;
   setBloatEnabled: (enabled: boolean) => void;
   hasActiveAds: boolean;
   setHasActiveAds: (active: boolean) => void;
+  // New: track popup spawns to show "block popups?" notification
+  popupSpawnCount: number;
+  notifyPopupSpawn: () => void;
+  showBlockerPrompt: boolean;
+  dismissBlockerPrompt: () => void;
 }
 
 const BloatModeContext = createContext<BloatModeContextType | null>(null);
 
 const STORAGE_KEY = 'xp-bloat-mode';
+const PROMPT_THRESHOLD = 2; // Show blocker prompt after this many popups
 
 export const BloatModeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [bloatEnabled, setBloatEnabledState] = useState<boolean>(() => {
@@ -17,10 +23,36 @@ export const BloatModeProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     return stored !== null ? stored === 'true' : true; // Default to true for authentic experience
   });
   const [hasActiveAds, setHasActiveAds] = useState(false);
+  const [popupSpawnCount, setPopupSpawnCount] = useState(0);
+  const [showBlockerPrompt, setShowBlockerPrompt] = useState(false);
+  const [hasSeenPrompt, setHasSeenPrompt] = useState(false);
 
   const setBloatEnabled = useCallback((enabled: boolean) => {
     setBloatEnabledState(enabled);
     localStorage.setItem(STORAGE_KEY, String(enabled));
+    if (!enabled) {
+      setHasActiveAds(false);
+      setShowBlockerPrompt(false);
+    }
+  }, []);
+
+  const notifyPopupSpawn = useCallback(() => {
+    if (!bloatEnabled) return;
+    
+    setPopupSpawnCount(prev => {
+      const newCount = prev + 1;
+      // Show blocker prompt after threshold popups, if not already shown
+      if (newCount >= PROMPT_THRESHOLD && !hasSeenPrompt) {
+        setShowBlockerPrompt(true);
+      }
+      return newCount;
+    });
+    setHasActiveAds(true);
+  }, [bloatEnabled, hasSeenPrompt]);
+
+  const dismissBlockerPrompt = useCallback(() => {
+    setShowBlockerPrompt(false);
+    setHasSeenPrompt(true);
   }, []);
 
   return (
@@ -28,7 +60,11 @@ export const BloatModeProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       bloatEnabled,
       setBloatEnabled,
       hasActiveAds,
-      setHasActiveAds
+      setHasActiveAds,
+      popupSpawnCount,
+      notifyPopupSpawn,
+      showBlockerPrompt,
+      dismissBlockerPrompt,
     }}>
       {children}
     </BloatModeContext.Provider>

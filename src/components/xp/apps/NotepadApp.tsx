@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import Clippy from '../Clippy';
+import { useBloatMode } from '@/contexts/BloatModeContext';
 
 const NotepadApp: React.FC = () => {
+  const { bloatEnabled } = useBloatMode();
   const [text, setText] = useState(`Welcome to Notepad!
   
 This is a simple text editor, just like the one from Windows XP.
@@ -73,8 +75,8 @@ P.S. - Have you updated your LiveJournal mood today?`);
         Ln 1, Col 1
       </div>
 
-      {/* Clippy */}
-      {showClippy && (
+      {/* Clippy - only show when bloat enabled */}
+      {showClippy && bloatEnabled && (
         <div className="absolute bottom-8 right-2">
           <Clippy context="notepad" onDismiss={() => setShowClippy(false)} />
         </div>

@@ -22,7 +22,7 @@ interface TorrentFile {
 
 const LimeWireApp: React.FC = () => {
   const { addDownload, downloads } = useDownloads();
-  const { bloatEnabled, setHasActiveAds } = useBloatMode();
+  const { bloatEnabled, setHasActiveAds, notifyPopupSpawn } = useBloatMode();
   const [searchQuery, setSearchQuery] = useState('');
   const [showBonzi, setShowBonzi] = useState(true);
   const [popupAds, setPopupAds] = useState<number[]>([]);
@@ -46,6 +46,14 @@ const LimeWireApp: React.FC = () => {
     setHasActiveAds(popupAds.length > 0);
   }, [popupAds.length, setHasActiveAds]);
 
+  // Clear popups when bloat is disabled
+  useEffect(() => {
+    if (!bloatEnabled) {
+      setPopupAds([]);
+      setShowBonzi(false);
+    }
+  }, [bloatEnabled]);
+
   // Random popup ads - only spawn if bloat enabled
   useEffect(() => {
     if (!bloatEnabled) return;
@@ -53,6 +61,7 @@ const LimeWireApp: React.FC = () => {
     const spawnAd = () => {
       if (Math.random() < 0.4 && popupAds.length < 3) {
         setPopupAds(prev => [...prev, Date.now()]);
+        notifyPopupSpawn();
       }
     };
     
@@ -67,8 +76,9 @@ const LimeWireApp: React.FC = () => {
 
   const closePopupAd = (id: number) => {
     // 40% chance to spawn another ad when closing (LimeWire was notorious for this!)
-    if (Math.random() < 0.4 && popupAds.length < 4) {
+    if (bloatEnabled && Math.random() < 0.4 && popupAds.length < 4) {
       setPopupAds(prev => [...prev.filter(p => p !== id), Date.now()]);
+      notifyPopupSpawn();
     } else {
       setPopupAds(prev => prev.filter(p => p !== id));
     }

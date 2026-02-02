@@ -7,6 +7,7 @@ import Window from './Window';
 import Screensaver from './Screensaver';
 import BlueScreen from './BlueScreen';
 import BalloonNotification from './BalloonNotification';
+import PopupBlockerPrompt from './PopupBlockerPrompt';
 import TourWizard from './TourWizard';
 import WindowSwitcher from './WindowSwitcher';
 import { useWindows } from '@/pages/Index';
@@ -311,6 +312,9 @@ const Desktop: React.FC = () => {
       
       {/* Balloon Notifications - Only show when bloat enabled */}
       {bloatEnabled && <BalloonNotification />}
+      
+      {/* Popup Blocker Prompt - Shows when popups spawn */}
+      <PopupBlockerPrompt />
       
       {/* Blue Screen of Death */}
       {showBSOD && <BlueScreen onDismiss={() => setShowBSOD(false)} />}

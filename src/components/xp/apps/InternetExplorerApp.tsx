@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { ArrowLeft, ArrowRight, RotateCcw, Home, Star, Search, Globe, Mail, Printer, History, X, AlertTriangle, Gift, Download, Trophy, Skull } from 'lucide-react';
 import Clippy from '../Clippy';
 import DialUpConnection from '../DialUpConnection';
+import { useBloatMode } from '@/contexts/BloatModeContext';
 
 type PageType = 'home' | 'google' | 'askjeeves' | 'myspace' | 'newgrounds' | 'ebaumsworld' | 'geocities' | 'aim';
 
@@ -34,6 +35,7 @@ const InternetExplorerApp: React.FC = () => {
   const [popups, setPopups] = useState<PopupAd[]>([]);
   const [popupIdCounter, setPopupIdCounter] = useState(0);
   const [showClippy, setShowClippy] = useState(true);
+  const { bloatEnabled, notifyPopupSpawn, setHasActiveAds } = useBloatMode();
 
   const handleConnected = () => {
     setIsConnecting(false);
@@ -83,6 +85,8 @@ const InternetExplorerApp: React.FC = () => {
   };
 
   const spawnPopup = useCallback(() => {
+    if (!bloatEnabled) return; // Don't spawn if bloat is disabled
+    
     const template = popupTemplates[Math.floor(Math.random() * popupTemplates.length)];
     const newPopup: PopupAd = {
       id: popupIdCounter,
@@ -95,12 +99,19 @@ const InternetExplorerApp: React.FC = () => {
     };
     setPopupIdCounter(prev => prev + 1);
     setPopups(prev => [...prev, newPopup]);
-  }, [popupIdCounter]);
+    notifyPopupSpawn(); // Notify context about popup spawn
+  }, [popupIdCounter, bloatEnabled, notifyPopupSpawn]);
 
   const closePopup = (id: number, spawnMore: boolean = false) => {
-    setPopups(prev => prev.filter(p => p.id !== id));
+    setPopups(prev => {
+      const newPopups = prev.filter(p => p.id !== id);
+      if (newPopups.length === 0) {
+        setHasActiveAds(false);
+      }
+      return newPopups;
+    });
     // Sometimes closing spawns more popups!
-    if (spawnMore && Math.random() > 0.5) {
+    if (spawnMore && bloatEnabled && Math.random() > 0.5) {
       setTimeout(() => {
         spawnPopup();
         if (Math.random() > 0.7) {
@@ -110,8 +121,17 @@ const InternetExplorerApp: React.FC = () => {
     }
   };
 
+  // Clear popups when bloat is disabled
+  useEffect(() => {
+    if (!bloatEnabled) {
+      setPopups([]);
+    }
+  }, [bloatEnabled]);
+
   // Spawn popups randomly while browsing
   useEffect(() => {
+    if (!bloatEnabled) return;
+    
     const interval = setInterval(() => {
       if (Math.random() > 0.7 && popups.length < 5) {
         spawnPopup();
@@ -129,14 +149,14 @@ const InternetExplorerApp: React.FC = () => {
       clearInterval(interval);
       clearTimeout(initialTimeout);
     };
-  }, [spawnPopup, popups.length]);
+  }, [spawnPopup, popups.length, bloatEnabled]);
 
   // Spawn popup on navigation
   useEffect(() => {
-    if (Math.random() > 0.5) {
+    if (bloatEnabled && Math.random() > 0.5) {
       setTimeout(spawnPopup, 1000);
     }
-  }, [currentPage]);
+  }, [currentPage, bloatEnabled]);
 
   const renderPopupContent = (popup: PopupAd) => {
     switch (popup.type) {
@@ -851,8 +871,8 @@ const InternetExplorerApp: React.FC = () => {
         </div>
       </div>
 
-      {/* Clippy */}
-      {showClippy && (
+      {/* Clippy - only show when bloat enabled */}
+      {showClippy && bloatEnabled && (
         <div className="absolute bottom-8 right-2 z-[200]">
           <Clippy context="browser" onDismiss={() => setShowClippy(false)} />
         </div>
