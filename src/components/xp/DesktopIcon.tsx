@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback } from 'react';
-import { Terminal, MessageCircle, Gamepad2 } from 'lucide-react';
+import { Terminal, MessageCircle, Gamepad2, Trash2 } from 'lucide-react';
 
 interface DesktopIconProps {
   title: string;
@@ -18,9 +18,11 @@ const DesktopIcon: React.FC<DesktopIconProps> = ({
 }) => {
   const [selected, setSelected] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [hasDragged, setHasDragged] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [currentPos, setCurrentPos] = useState({ x: 0, y: 0 });
   const iconRef = useRef<HTMLDivElement>(null);
+  const dragStartPos = useRef({ x: 0, y: 0 });
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     if (e.button !== 0) return; // Only left click
@@ -33,13 +35,23 @@ const DesktopIcon: React.FC<DesktopIconProps> = ({
       x: e.clientX - rect.left,
       y: e.clientY - rect.top
     });
+    dragStartPos.current = { x: e.clientX, y: e.clientY };
     setCurrentPos({ x: e.clientX, y: e.clientY });
     setIsDragging(true);
+    setHasDragged(false);
     setSelected(true);
   }, []);
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
     if (!isDragging) return;
+    
+    // Check if we've moved enough to consider it a drag (5px threshold)
+    const dx = Math.abs(e.clientX - dragStartPos.current.x);
+    const dy = Math.abs(e.clientY - dragStartPos.current.y);
+    if (dx > 5 || dy > 5) {
+      setHasDragged(true);
+    }
+    
     setCurrentPos({ x: e.clientX, y: e.clientY });
   }, [isDragging]);
 
@@ -47,12 +59,13 @@ const DesktopIcon: React.FC<DesktopIconProps> = ({
     if (!isDragging) return;
     setIsDragging(false);
     
-    if (onDragEnd) {
+    // Only call onDragEnd if we actually dragged
+    if (hasDragged && onDragEnd) {
       const newX = e.clientX - dragOffset.x;
       const newY = e.clientY - dragOffset.y;
       onDragEnd(newX, newY);
     }
-  }, [isDragging, dragOffset, onDragEnd]);
+  }, [isDragging, hasDragged, dragOffset, onDragEnd]);
 
   // Attach global mouse listeners when dragging
   React.useEffect(() => {
@@ -65,6 +78,15 @@ const DesktopIcon: React.FC<DesktopIconProps> = ({
       };
     }
   }, [isDragging, handleMouseMove, handleMouseUp]);
+
+  const handleDoubleClick = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    // Only trigger if we haven't dragged
+    if (!hasDragged) {
+      onDoubleClick();
+    }
+  }, [hasDragged, onDoubleClick]);
 
   const renderIcon = () => {
     if (iconSrc === 'cmd') {
@@ -88,6 +110,11 @@ const DesktopIcon: React.FC<DesktopIconProps> = ({
         </div>
       );
     }
+    if (iconSrc === 'recyclebin') {
+      return (
+        <Trash2 className="w-10 h-10 text-gray-600 drop-shadow-lg" />
+      );
+    }
     
     return (
       <img 
@@ -99,8 +126,8 @@ const DesktopIcon: React.FC<DesktopIconProps> = ({
     );
   };
 
-  // Calculate drag position
-  const style: React.CSSProperties = isDragging
+  // Calculate drag position - only show dragging style if we've actually moved
+  const style: React.CSSProperties = (isDragging && hasDragged)
     ? {
         position: 'fixed',
         left: currentPos.x - dragOffset.x,
@@ -114,17 +141,14 @@ const DesktopIcon: React.FC<DesktopIconProps> = ({
   return (
     <div
       ref={iconRef}
-      className={`xp-desktop-icon ${selected ? 'selected' : ''} ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+      className={`xp-desktop-icon ${selected ? 'selected' : ''} ${isDragging && hasDragged ? 'cursor-grabbing' : 'cursor-pointer'}`}
       style={style}
       onClick={(e) => {
         e.stopPropagation();
         setSelected(true);
       }}
       onMouseDown={handleMouseDown}
-      onDoubleClick={(e) => {
-        e.stopPropagation();
-        if (!isDragging) onDoubleClick();
-      }}
+      onDoubleClick={handleDoubleClick}
       onBlur={() => setSelected(false)}
       tabIndex={0}
     >
