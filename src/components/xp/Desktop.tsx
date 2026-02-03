@@ -9,6 +9,7 @@ import BlueScreen from './BlueScreen';
 import BalloonNotification from './BalloonNotification';
 import PopupBlockerPrompt from './PopupBlockerPrompt';
 import TourWizard from './TourWizard';
+import ActivationWizard from './ActivationWizard';
 import WindowSwitcher from './WindowSwitcher';
 import { useWindows } from '@/pages/Index';
 import { useBloatMode } from '@/contexts/BloatModeContext';
@@ -45,6 +46,7 @@ const Desktop: React.FC = () => {
   const [refreshKey, setRefreshKey] = useState(0);
   const [showBSOD, setShowBSOD] = useState(false);
   const [showTour, setShowTour] = useState(false);
+  const [showActivation, setShowActivation] = useState(false);
   const [showSwitcher, setShowSwitcher] = useState(false);
   const [switcherIndex, setSwitcherIndex] = useState(0);
   const { windows, openWindow, minimizeWindow, focusWindow, logOff, shutDown } = useWindows();
@@ -168,6 +170,31 @@ const Desktop: React.FC = () => {
     }, 60000);
 
     return () => clearInterval(bsodInterval);
+  }, []);
+
+  // Random Activation Wizard trigger (3% chance every 45 seconds, only if not activated)
+  useEffect(() => {
+    const hasActivated = localStorage.getItem('xp-windows-activated');
+    if (hasActivated) return;
+
+    // Initial popup after 30 seconds
+    const initialTimer = setTimeout(() => {
+      if (!localStorage.getItem('xp-windows-activated')) {
+        setShowActivation(true);
+      }
+    }, 30000);
+
+    // Then random chance every 45 seconds
+    const activationInterval = setInterval(() => {
+      if (Math.random() < 0.03 && !localStorage.getItem('xp-windows-activated')) {
+        setShowActivation(true);
+      }
+    }, 45000);
+
+    return () => {
+      clearTimeout(initialTimer);
+      clearInterval(activationInterval);
+    };
   }, []);
 
   // Desktop icons - positions managed by useDesktopIcons hook
@@ -318,6 +345,16 @@ const Desktop: React.FC = () => {
       
       {/* Blue Screen of Death */}
       {showBSOD && <BlueScreen onDismiss={() => setShowBSOD(false)} />}
+      
+      {/* Windows Activation Wizard */}
+      {showActivation && (
+        <ActivationWizard 
+          onClose={() => {
+            setShowActivation(false);
+            localStorage.setItem('xp-windows-activated', 'true');
+          }} 
+        />
+      )}
       
       {/* XP Tour Wizard */}
       {showTour && <TourWizard onComplete={handleTourComplete} onSkip={handleTourSkip} />}
