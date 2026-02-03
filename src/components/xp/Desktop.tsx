@@ -215,6 +215,7 @@ const Desktop: React.FC = () => {
     { id: 'cmd', title: 'Command Prompt', iconSrc: 'cmd', component: 'cmd' },
     { id: 'msn', title: 'MSN Messenger', iconSrc: 'msn', component: 'msn' },
     { id: 'pinball', title: '3D Pinball', iconSrc: 'pinball', component: 'pinball' },
+    { id: 'solitaire', title: 'Solitaire', iconSrc: 'solitaire', component: 'solitaire' },
     // Recycle Bin - always bottom right (not draggable)
     { id: 'recyclebin', title: 'Recycle Bin', iconSrc: 'recyclebin', component: 'recyclebin', isSystemIcon: true },
   ];
@@ -233,6 +234,7 @@ const Desktop: React.FC = () => {
       cmd: [650, 420],
       msn: [350, 500],
       pinball: [520, 680],
+      solitaire: [620, 480],
     };
     return sizes[id] || [500, 400];
   };

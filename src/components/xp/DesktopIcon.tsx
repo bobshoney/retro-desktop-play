@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback } from 'react';
-import { Terminal, MessageCircle, Gamepad2, Trash2 } from 'lucide-react';
+import { Terminal, MessageCircle, Gamepad2, Trash2, Spade } from 'lucide-react';
 
 interface DesktopIconProps {
   title: string;
@@ -113,6 +113,13 @@ const DesktopIcon: React.FC<DesktopIconProps> = ({
     if (iconSrc === 'recyclebin') {
       return (
         <Trash2 className="w-10 h-10 text-gray-600 drop-shadow-lg" />
+      );
+    }
+    if (iconSrc === 'solitaire') {
+      return (
+        <div className="w-10 h-10 bg-gradient-to-br from-green-600 to-green-800 rounded flex items-center justify-center border border-green-900">
+          <Spade className="w-6 h-6 text-white" />
+        </div>
       );
     }
     
