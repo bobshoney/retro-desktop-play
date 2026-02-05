@@ -85,6 +85,77 @@ const notificationPool: Notification[] = [
     icon: 'warning',
     type: 'warning',
   },
+  // New chaos notifications
+  {
+    id: '11',
+    title: 'CRITICAL UPDATE REQUIRED',
+    message: 'Your Windows license will expire in 30 days! Click here to activate Windows now.',
+    icon: 'warning',
+    type: 'error',
+  },
+  {
+    id: '12',
+    title: 'Windows Genuine Advantage',
+    message: 'This copy of Windows is not genuine. You may be a victim of software counterfeiting.',
+    icon: 'shield',
+    type: 'error',
+  },
+  {
+    id: '13',
+    title: 'Internet Explorer Toolbar',
+    message: 'BonziBuddy Search Toolbar wants to be your default search provider. Click to install!',
+    icon: 'download',
+    type: 'info',
+  },
+  {
+    id: '14',
+    title: 'You have (1) unread message!',
+    message: 'A hot single in your area wants to chat! Click here to meet singles near you.',
+    icon: 'warning',
+    type: 'warning',
+  },
+  {
+    id: '15',
+    title: 'FREE iPod nano!!!',
+    message: 'Congratulations! You are the 1,000,000th visitor! Click to claim your prize!',
+    icon: 'download',
+    type: 'info',
+  },
+  {
+    id: '16',
+    title: 'Virus Detected!',
+    message: 'CRITICAL: 47 viruses found on your system! Download AntiVirus2003 NOW to remove them!',
+    icon: 'bug',
+    type: 'error',
+  },
+  {
+    id: '17',
+    title: 'System Performance Alert',
+    message: 'Your PC is running 340% slower than normal. Download SpeedBooster Pro to fix!',
+    icon: 'warning',
+    type: 'error',
+  },
+  {
+    id: '18',
+    title: 'Windows Messenger',
+    message: 'Your buddy SmarterChild is now online! Would you like to chat?',
+    icon: 'info',
+    type: 'info',
+  },
+  {
+    id: '19',
+    title: 'RealPlayer Update',
+    message: 'A new version of RealPlayer is available. Update now for enhanced media features!',
+    icon: 'download',
+    type: 'info',
+  },
+  {
+    id: '20',
+    title: 'AOL Instant Messenger',
+    message: 'You have been idle for 10 minutes. Your away message is now active.',
+    icon: 'info',
+    type: 'info',
+  },
 ];
 
 const BalloonNotification: React.FC<BalloonNotificationProps> = ({ onDismiss }) => {
