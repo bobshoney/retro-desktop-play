@@ -24,6 +24,9 @@ import CommandPromptApp from './apps/CommandPromptApp';
 import MSNMessengerApp from './apps/MSNMessengerApp';
 import PinballApp from './apps/PinballApp';
 import SolitaireApp from './apps/SolitaireApp';
+import CalculatorApp from './apps/CalculatorApp';
+import MyComputerApp from './apps/MyComputerApp';
+import SystemPropertiesApp from './apps/SystemPropertiesApp';
 
 interface WindowProps {
   window: {
@@ -170,6 +173,9 @@ const Window: React.FC<WindowProps> = ({ window: win }) => {
       case 'msn': return <MSNMessengerApp />;
       case 'pinball': return <PinballApp />;
       case 'solitaire': return <SolitaireApp />;
+      case 'calc': return <CalculatorApp />;
+      case 'mycomputer': return <MyComputerApp />;
+      case 'sysprops': return <SystemPropertiesApp />;
       default: return <div className="p-4">Unknown application</div>;
     }
   };

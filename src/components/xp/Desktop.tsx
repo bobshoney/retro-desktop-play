@@ -199,6 +199,7 @@ const Desktop: React.FC = () => {
 
   // Desktop icons - positions managed by useDesktopIcons hook
   const desktopIcons = [
+    { id: 'mycomputer', title: 'My Computer', iconSrc: 'mycomputer', component: 'mycomputer' },
     { id: 'resume', title: 'My Resume', iconSrc: resumeIcon, component: 'resume' },
     { id: 'about', title: 'About Me', iconSrc: userIcon, component: 'about' },
     { id: 'contact', title: 'Contact', iconSrc: mailIcon, component: 'contact' },
@@ -212,6 +213,7 @@ const Desktop: React.FC = () => {
     { id: 'paint', title: 'Paint', iconSrc: paintIcon, component: 'paint' },
     { id: 'notepad', title: 'Notepad', iconSrc: notepadIcon, component: 'notepad' },
     { id: 'mediaplayer', title: 'Media Player', iconSrc: mediaplayerIcon, component: 'mediaplayer' },
+    { id: 'calc', title: 'Calculator', iconSrc: 'calc', component: 'calc' },
     { id: 'cmd', title: 'Command Prompt', iconSrc: 'cmd', component: 'cmd' },
     { id: 'msn', title: 'MSN Messenger', iconSrc: 'msn', component: 'msn' },
     { id: 'pinball', title: '3D Pinball', iconSrc: 'pinball', component: 'pinball' },
@@ -235,6 +237,9 @@ const Desktop: React.FC = () => {
       msn: [350, 500],
       pinball: [520, 680],
       solitaire: [620, 480],
+      calc: [260, 320],
+      mycomputer: [600, 450],
+      sysprops: [400, 450],
     };
     return sizes[id] || [500, 400];
   };

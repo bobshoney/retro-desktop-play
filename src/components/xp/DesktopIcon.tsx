@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback } from 'react';
-import { Terminal, MessageCircle, Gamepad2, Trash2, Spade } from 'lucide-react';
+import { Terminal, MessageCircle, Gamepad2, Trash2, Spade, Monitor, Calculator } from 'lucide-react';
 
 interface DesktopIconProps {
   title: string;
@@ -119,6 +119,20 @@ const DesktopIcon: React.FC<DesktopIconProps> = ({
       return (
         <div className="w-10 h-10 bg-gradient-to-br from-green-600 to-green-800 rounded flex items-center justify-center border border-green-900">
           <Spade className="w-6 h-6 text-white" />
+        </div>
+      );
+    }
+    if (iconSrc === 'mycomputer') {
+      return (
+        <div className="w-10 h-10 bg-gradient-to-br from-gray-100 to-gray-300 rounded flex items-center justify-center border border-gray-400 shadow-sm">
+          <Monitor className="w-6 h-6 text-gray-700" />
+        </div>
+      );
+    }
+    if (iconSrc === 'calc') {
+      return (
+        <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-700 rounded flex items-center justify-center border border-blue-800">
+          <Calculator className="w-6 h-6 text-white" />
         </div>
       );
     }
