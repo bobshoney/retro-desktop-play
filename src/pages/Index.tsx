@@ -51,9 +51,8 @@ const Index = () => {
   const [zCounter, setZCounter] = useState(100);
   const { playLogoff } = useXPSounds();
 
-  useEffect(() => {
-    const bootTimer = setTimeout(() => setAppState('login'), 3500);
-    return () => clearTimeout(bootTimer);
+  const handleBootComplete = useCallback(() => {
+    setAppState('login');
   }, []);
 
   const openWindow = useCallback((id: string, title: string, component: string, iconSrc?: string, width = 500, height = 400) => {
@@ -153,10 +152,10 @@ const Index = () => {
     setAppState('shutdown');
     setTimeout(() => {
       setAppState('boot');
-    }, 3500);
+    }, 4000);
   }, [playLogoff]);
 
-  if (appState === 'boot') return <BootScreen />;
+  if (appState === 'boot') return <BootScreen onComplete={handleBootComplete} />;
   if (appState === 'login') return <LoginScreen onLogin={handleLogin} />;
   if (appState === 'shutdown') return <ShutdownScreen />;
 
