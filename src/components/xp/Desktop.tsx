@@ -24,7 +24,7 @@ import {
   ContextMenuSubTrigger,
   ContextMenuTrigger,
 } from '@/components/ui/context-menu';
-import { RefreshCw, FolderPlus, Settings, Monitor, ArrowUpDown, LayoutGrid, List, Trash2, RotateCcw } from 'lucide-react';
+import { RefreshCw, FolderPlus, Settings, Monitor, ArrowUpDown, LayoutGrid, List, Trash2, RotateCcw, X } from 'lucide-react';
 
 // Import icons
 import resumeIcon from '@/assets/icons/resume-icon.png';
@@ -53,14 +53,15 @@ const Desktop: React.FC = () => {
   const { bloatEnabled } = useBloatMode();
   const { getIconPosition, updateIconPosition, resetPositions } = useDesktopIcons();
 
-  // Check if this is first boot and show tour
+  const [showWelcomeBalloon, setShowWelcomeBalloon] = useState(false);
+
+  // Check if this is first boot and show welcome balloon notification
   useEffect(() => {
     const hasSeenTour = localStorage.getItem('xp-tour-completed');
     if (!hasSeenTour) {
-      // Small delay to let desktop load first
       const timer = setTimeout(() => {
-        setShowTour(true);
-      }, 1500);
+        setShowWelcomeBalloon(true);
+      }, 2000);
       return () => clearTimeout(timer);
     }
   }, []);
@@ -363,6 +364,53 @@ const Desktop: React.FC = () => {
         />
       )}
       
+      {/* Welcome Balloon Notification */}
+      {showWelcomeBalloon && (
+        <div 
+          className="fixed bottom-10 right-2 z-[9998] animate-in slide-in-from-bottom-4"
+          style={{ animation: 'slideUp 0.3s ease-out' }}
+        >
+          <div className="relative bg-[#ffffe1] border-2 border-blue-400 rounded-lg shadow-lg max-w-xs cursor-pointer hover:bg-[#fffff0] transition-colors"
+            onClick={() => {
+              setShowWelcomeBalloon(false);
+              setShowTour(true);
+            }}
+          >
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowWelcomeBalloon(false);
+                localStorage.setItem('xp-tour-completed', 'true');
+              }}
+              className="absolute top-1 right-1 text-gray-500 hover:text-gray-700 hover:bg-gray-200 rounded p-0.5"
+            >
+              <X className="w-3 h-3" />
+            </button>
+            <div className="p-3 pr-6">
+              <div className="flex gap-3">
+                <div className="flex-shrink-0 mt-0.5">
+                  <div className="w-8 h-8 bg-gradient-to-br from-[#0054e3] to-[#003399] rounded-lg flex items-center justify-center">
+                    <Monitor className="w-5 h-5 text-white" />
+                  </div>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="font-bold text-sm text-gray-900 mb-1">
+                    Welcome to Windows XP!
+                  </div>
+                  <div className="text-xs text-gray-700 leading-relaxed">
+                    Click here to take a tour of Windows XP and learn about all the exciting features!
+                  </div>
+                  <div className="text-xs text-blue-600 underline mt-2 hover:text-blue-800">
+                    Click here to begin the tour →
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="absolute -bottom-2 right-8 w-4 h-4 bg-[#ffffe1] border-r-2 border-b-2 border-blue-400 transform rotate-45" />
+          </div>
+        </div>
+      )}
+
       {/* XP Tour Wizard */}
       {showTour && <TourWizard onComplete={handleTourComplete} onSkip={handleTourSkip} />}
       

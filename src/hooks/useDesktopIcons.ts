@@ -10,26 +10,29 @@ export interface IconPosition {
 }
 
 const defaultPositions: IconPosition[] = [
-  // Column 1
-  { id: 'resume', x: 16, y: 16 },
-  { id: 'about', x: 16, y: 96 },
-  { id: 'contact', x: 16, y: 176 },
-  { id: 'ie', x: 16, y: 256 },
-  { id: 'aol', x: 16, y: 336 },
-  // Column 2
-  { id: 'napster', x: 96, y: 16 },
-  { id: 'limewire', x: 96, y: 96 },
-  { id: 'kazaa', x: 96, y: 176 },
-  { id: 'winamp', x: 96, y: 256 },
-  { id: 'minesweeper', x: 96, y: 336 },
-  // Column 3
-  { id: 'paint', x: 176, y: 16 },
-  { id: 'notepad', x: 176, y: 96 },
-  { id: 'mediaplayer', x: 176, y: 176 },
-  { id: 'cmd', x: 176, y: 256 },
-  { id: 'msn', x: 176, y: 336 },
-  // Column 4
-  { id: 'pinball', x: 256, y: 16 },
+  // Column 1 - System & Personal
+  { id: 'mycomputer', x: 16, y: 16 },
+  { id: 'resume', x: 16, y: 96 },
+  { id: 'about', x: 16, y: 176 },
+  { id: 'contact', x: 16, y: 256 },
+  { id: 'notepad', x: 16, y: 336 },
+  { id: 'calc', x: 16, y: 416 },
+  // Column 2 - Internet & Communication
+  { id: 'ie', x: 96, y: 16 },
+  { id: 'aol', x: 96, y: 96 },
+  { id: 'msn', x: 96, y: 176 },
+  { id: 'cmd', x: 96, y: 256 },
+  // Column 3 - P2P & Music
+  { id: 'napster', x: 176, y: 16 },
+  { id: 'limewire', x: 176, y: 96 },
+  { id: 'kazaa', x: 176, y: 176 },
+  { id: 'winamp', x: 176, y: 256 },
+  { id: 'mediaplayer', x: 176, y: 336 },
+  // Column 4 - Games & Creative
+  { id: 'minesweeper', x: 256, y: 16 },
+  { id: 'solitaire', x: 256, y: 96 },
+  { id: 'pinball', x: 256, y: 176 },
+  { id: 'paint', x: 256, y: 256 },
 ];
 
 export const useDesktopIcons = () => {
