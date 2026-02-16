@@ -27,6 +27,7 @@ import SolitaireApp from './apps/SolitaireApp';
 import CalculatorApp from './apps/CalculatorApp';
 import MyComputerApp from './apps/MyComputerApp';
 import SystemPropertiesApp from './apps/SystemPropertiesApp';
+import SecurityChecklistApp from './apps/SecurityChecklistApp';
 
 interface WindowProps {
   window: {
@@ -176,6 +177,7 @@ const Window: React.FC<WindowProps> = ({ window: win }) => {
       case 'calc': return <CalculatorApp />;
       case 'mycomputer': return <MyComputerApp />;
       case 'sysprops': return <SystemPropertiesApp />;
+      case 'securitychecklist': return <SecurityChecklistApp />;
       default: return <div className="p-4">Unknown application</div>;
     }
   };

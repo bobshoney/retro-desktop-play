@@ -71,6 +71,7 @@ const StartMenu = forwardRef<HTMLDivElement, StartMenuProps>(({ onClose, onLogOf
     { category: 'System' },
     { label: 'My Computer', id: 'mycomputer', component: 'mycomputer', iconType: 'mycomputer' },
     { label: 'System Properties', id: 'sysprops', component: 'sysprops', iconType: 'sysprops' },
+    { label: 'Security Checklist', id: 'securitychecklist', component: 'securitychecklist', iconType: 'security' },
   ];
 
   const rightItems = [
@@ -109,6 +110,7 @@ const StartMenu = forwardRef<HTMLDivElement, StartMenuProps>(({ onClose, onLogOf
       calc: [260, 320],
       mycomputer: [600, 450],
       sysprops: [400, 450],
+      securitychecklist: [480, 520],
     };
     return sizes[id] || [500, 400];
   };
@@ -142,6 +144,7 @@ const StartMenu = forwardRef<HTMLDivElement, StartMenuProps>(({ onClose, onLogOf
       case 'cmd': return <div className="w-5 h-5 bg-black rounded flex items-center justify-center"><Terminal className="w-3 h-3 text-gray-300" /></div>;
       case 'mycomputer': return <div className="w-5 h-5 bg-gradient-to-br from-gray-100 to-gray-300 rounded flex items-center justify-center border border-gray-400"><Monitor className="w-3 h-3 text-gray-700" /></div>;
       case 'sysprops': return <Settings className="w-5 h-5 text-gray-600" />;
+      case 'security': return <div className="w-5 h-5 bg-gradient-to-br from-green-500 to-green-700 rounded flex items-center justify-center"><Settings className="w-3 h-3 text-white" /></div>;
       default: return <Folder className="w-5 h-5 text-yellow-500" />;
     }
   };
