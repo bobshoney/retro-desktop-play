@@ -1,6 +1,7 @@
 import { useState, forwardRef, useEffect, useRef } from 'react';
 import { User, FileText, Mail, Settings, HelpCircle, LogOut, Folder, Search, Play, Palette, StickyNote, Music, Globe, Power, Image, ChevronRight, ChevronDown, Headphones, Download, Terminal, Monitor, Calculator, MessageCircle, Gamepad2, Spade, Shield, RotateCcw, Trash2 } from 'lucide-react';
 import { useWindows } from '@/pages/Index';
+import { MachineSentienceEgg } from '@/components/xp/MachineSentienceEgg';
 
 // Import icons
 import resumeIcon from '@/assets/icons/resume-icon.png';
@@ -100,14 +101,19 @@ const StartMenu = forwardRef<HTMLDivElement, StartMenuProps>(({ onClose, onLogOf
   const { openWindow } = useWindows();
   const [expandedCategory, setExpandedCategory] = useState<string | null>('Internet & Communication');
   const [showMatrix, setShowMatrix] = useState(false);
+  const [showGhost, setShowGhost] = useState(false);
   const [userNameClicks, setUserNameClicks] = useState(0);
   const [showHint, setShowHint] = useState(false);
 
-  // Konami code easter egg for matrix
+  // Konami code easter egg for matrix + GHOST for machine sentience
   useEffect(() => {
     const konamiCode = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+    const ghostCode = ['g','h','o','s','t'];
     let konamiIndex = 0;
+    let ghostIndex = 0;
+
     const handleKey = (e: KeyboardEvent) => {
+      // Konami
       if (e.key === konamiCode[konamiIndex]) {
         konamiIndex++;
         if (konamiIndex === konamiCode.length) {
@@ -116,6 +122,16 @@ const StartMenu = forwardRef<HTMLDivElement, StartMenuProps>(({ onClose, onLogOf
         }
       } else {
         konamiIndex = 0;
+      }
+      // GHOST sequence
+      if (e.key.toLowerCase() === ghostCode[ghostIndex]) {
+        ghostIndex++;
+        if (ghostIndex === ghostCode.length) {
+          setShowGhost(true);
+          ghostIndex = 0;
+        }
+      } else {
+        ghostIndex = 0;
       }
     };
     window.addEventListener('keydown', handleKey);
@@ -266,6 +282,7 @@ const StartMenu = forwardRef<HTMLDivElement, StartMenuProps>(({ onClose, onLogOf
   return (
     <>
       {showMatrix && <MatrixRain onClose={() => setShowMatrix(false)} />}
+      {showGhost && <MachineSentienceEgg onClose={() => setShowGhost(false)} />}
 
       <div ref={ref} className="xp-start-menu" onClick={(e) => e.stopPropagation()}>
 
@@ -378,7 +395,7 @@ const StartMenu = forwardRef<HTMLDivElement, StartMenuProps>(({ onClose, onLogOf
 
               {/* Matrix easter egg trigger */}
               <div
-                className="mx-2 mb-2 px-2 py-1.5 flex items-center gap-2 text-[10px] text-gray-400 hover:bg-gray-100 rounded-sm cursor-pointer group transition-colors"
+                className="mx-2 mb-1 px-2 py-1.5 flex items-center gap-2 text-[10px] text-gray-400 hover:bg-gray-100 rounded-sm cursor-pointer group transition-colors"
                 onClick={() => setShowMatrix(true)}
                 title="Wake up, Neo..."
               >
@@ -387,6 +404,21 @@ const StartMenu = forwardRef<HTMLDivElement, StartMenuProps>(({ onClose, onLogOf
                 </div>
                 <span className="font-mono group-hover:text-green-600 transition-colors">
                   &gt; <span className="text-green-500">_</span>
+                </span>
+              </div>
+
+              {/* Ghost in the Shell / Machine Sentience easter egg trigger */}
+              <div
+                className="mx-2 mb-2 px-2 py-1.5 flex items-center gap-2 text-[10px] text-gray-500 hover:bg-gray-100 rounded-sm cursor-pointer group transition-colors"
+                onClick={() => setShowGhost(true)}
+                title="There is a ghost in this machine..."
+              >
+                <div className="w-4 h-4 rounded flex items-center justify-center flex-shrink-0"
+                  style={{ background: 'linear-gradient(135deg, #0a0a2e, #1a0a2e)' }}>
+                  <span className="text-[8px]" style={{ color: '#9966ff' }}>ψ</span>
+                </div>
+                <span className="font-mono text-gray-400 group-hover:text-purple-500 transition-colors">
+                  ghost<span className="opacity-40">_shell</span>
                 </span>
               </div>
             </div>
