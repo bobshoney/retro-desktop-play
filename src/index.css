@@ -221,17 +221,22 @@
   }
 
   .xp-start-menu {
-    @apply fixed bottom-8 left-0;
-    width: 380px;
+    @apply fixed left-0;
+    bottom: 32px; /* sit just above the taskbar */
+    width: 420px;
+    max-height: calc(100vh - 48px);
+    display: flex;
+    flex-direction: column-reverse; /* header at bottom, content + footer above */
     background: linear-gradient(180deg, 
       hsl(var(--xp-taskbar-start)) 0%,
       hsl(var(--xp-taskbar-end)) 100%
     );
     border-radius: 8px 8px 0 0;
     box-shadow: 
-      3px 0 8px hsl(0 0% 0% / 0.4),
+      3px -3px 12px hsl(0 0% 0% / 0.5),
       inset 0 1px 0 hsl(var(--xp-button-highlight) / 0.3);
     z-index: 10000;
+    overflow: hidden;
   }
 
   .xp-menu-header {
@@ -245,16 +250,19 @@
 
   .xp-menu-content {
     @apply flex bg-white;
-    min-height: 300px;
+    min-height: 340px;
+    max-height: calc(100vh - 160px);
+    overflow: hidden;
   }
 
   .xp-menu-left {
-    @apply flex-1 py-2 bg-white;
+    @apply flex-1 py-2 bg-white overflow-y-auto;
+    min-width: 0;
   }
 
   .xp-menu-right {
-    @apply py-2;
-    width: 160px;
+    @apply py-2 overflow-y-auto flex-shrink-0;
+    width: 164px;
     background: hsl(var(--xp-taskbar-end));
   }
 
